@@ -1,0 +1,18 @@
+approvals_reviewer = "auto_review"
+check_for_update_on_startup = false
+model = "gpt-6.1-sol"
+model_reasoning_effort = "medium"
+plan_mode_reasoning_effort = "xhigh"
+service_tier = "default"
+suppress_unstable_features_warning = true
+
+[features]
+daemon_auto_start = false
+default_mode_request_user_input = true
+hooks = true
+
+[notice]
+hide_rate_limit_model_nudge = true
+
+[tui]
+fullscreen_transcript = true

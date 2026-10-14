@@ -1,0 +1,14 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- $config := deepCopy $original -}}
+{{- $headers := includeTemplate "mcp-headers" . | fromJson -}}
+{{- range $name, $server := .mcp -}}
+{{- $config = setValueAtPath (list "mcpServers" $name "disabled") false $config -}}
+{{- $config = setValueAtPath (list "mcpServers" $name "serverUrl") $server.url $config -}}
+{{- $config = setValueAtPath (list "mcpServers" $name "headers" "Authorization") (index $headers $name "Authorization") $config -}}
+{{- end -}}
+{{- if deepEqual $original $config -}}
+{{ .chezmoi.stdin -}}
+{{- else -}}
+{{ $config | toPrettyJson -}}
+{{- end -}}

@@ -1,40 +1,60 @@
 # Dotfiles
 
-Workstation configuration for macOS. Active application paths link to this checkout;
-edit the files here to change preferences. Shared agent instructions, skills and
-skill discovery remain in the separate [Agents repository](https://github.com/maxexcloo/agents).
+Workstation preferences for macOS, managed by [chezmoi](https://www.chezmoi.io/)
+and installed through Mise. Shared agent instructions, skills and discovery remain
+in the separate [Agents repository](https://github.com/maxexcloo/agents).
 
 ## Configuration
 
-`config/` owns Atuin, Fish, Ghostty, Git, Hammerspoon, Mise, OpenCode display,
-SSH client and Visual Studio Code preferences. `links.json` maps each source to
-its existing path under the user's home directory.
+`.chezmoiroot` selects `home/` as the source root. Its directory tree mirrors the
+home directory using chezmoi attributes: `dot_config/` maps to `~/.config/`, and
+`private_` restricts access to private files and directories.
 
-Credential-bearing Codex, Antigravity and OpenCode configurations live in ignored
-`private/` files with mode `600`. Their active paths remain symlinks. Secret-free
-templates in `templates/` document their structure; these are examples, not active
-configuration. Keep authentication material in 1Password and resolve it locally.
-Do not commit resolved values. Template placeholders are not working credentials.
-Refresh templates separately when changing the corresponding private preferences.
+Edit preferences in `home/`, then apply them. Ordinary preferences become regular
+files at their application paths; edits in the checkout take effect after apply.
+Codex, Antigravity and OpenCode use native modify templates to merge managed
+preferences and MCP settings while preserving local application state and other
+provider settings. Generated hook hashes, onboarding state and project trust
+entries remain local.
 
-Orca-managed Codex hooks, accounts, caches, history, SSH host inventories and
-application databases remain application-managed. Git's existing signing settings
-and SSH's existing agent configuration are preserved.
+MCP endpoints and 1Password field references are defined once in
+`home/.chezmoidata.toml`. Chezmoi resolves the credentials locally through the
+1Password CLI and writes private application files with mode `600`. Keep resolved
+values out of Git and command output. Use `status` to review pending changes
+without rendering credentials. The existing ignored `private/` directory is no
+longer an active configuration source.
+
+Orca hooks and plugins, accounts, caches, history, SSH host inventories and
+application databases remain application-managed. The OpenCode TUI integration is
+not managed here. Git signing and SSH agent preferences are preserved.
 
 ## Usage
 
-From this directory:
+Install Mise, the required applications and globally managed tools, including
+Prek and the 1Password CLI. Enable the 1Password desktop integration and unlock
+the vault containing the referenced MCP fields. Homebrew is not required for
+chezmoi.
+
+From this checkout:
 
 ```sh
+mise install
+mise run setup
 mise run check
-mise run link
+mise run status
+mise run apply
+mise run verify
 ```
 
-The link task checks every destination before creating links. It refuses to
-overwrite existing files. On a new workstation, provision the three private files
-from their templates and 1Password first; review existing destination files and
-move them aside before linking. Install the required applications and globally
-managed Mise tools separately.
+`setup` configures chezmoi to use this checkout. `check` runs Prek's built-in
+configuration and hygiene checks plus Fish's native syntax check; it does not
+require a provisioned workstation or vault access. `apply` uses chezmoi's normal
+conflict handling. `verify` checks the live workstation and requires vault access.
+
+To sync another workstation, clone this repository, pull the desired revision,
+and run the same commands. Changes to the live files are not automatically
+imported into the repository. Edit managed preferences at their source; keep
+application-generated state local.
 
 ## Global Tasks
 

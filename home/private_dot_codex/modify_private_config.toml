@@ -1,0 +1,15 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $original := .chezmoi.stdin | fromToml -}}
+{{- $config := deepCopy $original -}}
+{{- $preferences := includeTemplate "codex.toml" . | fromToml -}}
+{{- $config = mergeOverwrite $config $preferences -}}
+{{- $headers := includeTemplate "mcp-headers" . | fromJson -}}
+{{- range $name, $server := .mcp -}}
+{{- $config = setValueAtPath (list "mcp_servers" $name "url") $server.url $config -}}
+{{- $config = setValueAtPath (list "mcp_servers" $name "http_headers" "Authorization") (index $headers $name "Authorization") $config -}}
+{{- end -}}
+{{- if deepEqual $original $config -}}
+{{ .chezmoi.stdin -}}
+{{- else -}}
+{{ $config | toToml -}}
+{{- end -}}
