@@ -1,0 +1,10 @@
+[tools]
+# python = "latest" # Inherited from the global Mise configuration.
+
+[tasks.check]
+description = "Check configuration syntax & workstation links"
+run = "python scripts/check.py"
+
+[tasks.link]
+description = "Link configuration after reviewing existing destinations"
+run = "python scripts/link.py"

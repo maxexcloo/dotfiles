@@ -1,0 +1,13 @@
+[commit]
+gpgsign = true
+
+[gpg]
+format = ssh
+
+[gpg "ssh"]
+program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+
+[user]
+email = max@excloo.com
+name = Max Schaefer
+signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIaF+DCJq1CyGrafKzDMtNjW02M5XJoH5MLFFSlHPjyz

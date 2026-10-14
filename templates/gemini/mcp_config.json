@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "home_assistant": {
+      "disabled": false,
+      "serverUrl": "https://litellm.excloo.com/mcp/home_assistant",
+      "headers": {
+        "Authorization": "REPLACE_LOCALLY_FROM_1PASSWORD"
+      }
+    },
+    "unifi_network": {
+      "disabled": false,
+      "serverUrl": "https://litellm.excloo.com/mcp/unifi_network",
+      "headers": {
+        "Authorization": "REPLACE_LOCALLY_FROM_1PASSWORD"
+      }
+    }
+  }
+}

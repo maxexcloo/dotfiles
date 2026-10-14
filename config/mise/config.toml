@@ -1,0 +1,72 @@
+[settings]
+cache_prune_age = "1d"
+minimum_release_age = "0"
+trusted_config_paths = ["~/Projects"]
+
+[settings.upgrade]
+prune_after = "0s"
+
+[tools]
+1password-cli = "latest"
+antigravity-cli = "latest"
+codex = "latest"
+gh = "latest"
+helm = "latest"
+k9s = "latest"
+kubectl = "latest"
+node = "latest"
+opencode = { version = "latest", allow_builds = ["@opencode/cli"] }
+opentofu = "latest"
+prek = "latest"
+python = "latest"
+rclone = "latest"
+ruff = "latest"
+talosctl = "latest"
+updatecli = "latest"
+uv = "latest"
+yq = "latest"
+
+[tasks."dependencies:apply"]
+description = "Apply Reviewed Local Dependency Updates"
+dir = "{{cwd}}"
+hide = true
+usage = "flag \"--labels <labels>\" help=\"Select Updatecli groups, such as group:tools\""
+run = """
+GITHUB_TOKEN="$(gh auth token)"
+export GITHUB_TOKEN
+set --
+if [ -n "${usage_labels:-}" ]; then
+  set -- --labels "$usage_labels"
+fi
+updatecli pipeline apply --config .updatecli.d --disable-changelog --disable-udash-report --unique-tmp-dir "$@"
+"""
+
+[tasks."dependencies:check"]
+description = "Preview Local Dependency Updates"
+dir = "{{cwd}}"
+run = """
+GITHUB_TOKEN="$(gh auth token)"
+export GITHUB_TOKEN
+updatecli pipeline diff --config .updatecli.d --disable-changelog --disable-udash-report --unique-tmp-dir
+"""
+
+[tasks."dependencies:update"]
+description = "Apply Reviewed Local Dependency Updates"
+dir = "{{cwd}}"
+usage = "flag \"--labels <labels>\" help=\"Select Updatecli groups, such as group:tools\""
+run = [{ task = "dependencies:apply", args = ["--labels", "{{usage.labels | default(value='')}}"] }]
+
+[tasks."hooks:check"]
+description = "Run All Git Hooks"
+dir = "{{cwd}}"
+run = "prek run --all-files"
+
+[tasks."hooks:install"]
+description = "Install Git Hooks"
+dir = "{{cwd}}"
+run = "prek install"
+
+[tasks.review]
+description = "Review Changes In Orca"
+dir = "{{cwd}}"
+run = "orca file open-changed --focus --mode diff --worktree current"

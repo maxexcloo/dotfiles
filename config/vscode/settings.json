@@ -1,0 +1,56 @@
+{
+  "chat.agentHost.allowSignedOutWhenUsable": true,
+  "chat.agentHost.codexAgent.enabled": true,
+  "chat.agentsControl.enabled": "compact",
+  "chat.editor.codex.preferAgentHost": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.fontFamily": "'Hack Nerd Font Mono'",
+  "editor.fontSize": 14,
+  "editor.formatOnSave": true,
+  "editor.renderWhitespace": "boundary",
+  "editor.tabSize": 2,
+  "explorer.autoReveal": false,
+  "explorer.compactFolders": false,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "extensions.ignoreRecommendations": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.openRepositoryInParentFolders": "never",
+  "github.copilot.nextEditSuggestions.enabled": false,
+  "python-envs.terminal.autoActivationType": "off",
+  "redhat.telemetry.enabled": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "telemetry.telemetryLevel": "off",
+  "terminal.integrated.fontSize": 14,
+  "update.showReleaseNotes": false,
+  "window.density.layout": "compact",
+  "window.openFilesInNewWindow": "on",
+  "window.restoreWindows": "folders",
+  "workbench.colorTheme": "GitHub Dark Default",
+  "workbench.editor.empty.hint": "hidden",
+  "workbench.enableExperiments": false,
+  "workbench.iconTheme": "vs-minimal",
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "workbench.settings.enableNaturalLanguageSearch": false,
+  "workbench.startupEditor": "none",
+  "workbench.tips.enabled": false,
+  "[dockercompose]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-containers"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.tabSize": 4
+  },
+  "extensions.allowed": {
+    "*": true,
+    "anthropic.claude-code": false
+  },
+  "files.exclude": {
+    "**/.stfolder": true
+  },
+  "github.copilot.enable": {
+    "*": false
+  }
+}

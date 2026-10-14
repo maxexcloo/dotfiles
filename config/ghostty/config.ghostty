@@ -1,0 +1,12 @@
+background-blur = true
+background-opacity = 0.9
+font-family = Hack Nerd Font Mono
+font-size = 14
+font-thicken = true
+font-thicken-strength = 32
+initial-window = false
+keybind = global:ctrl+space=toggle_quick_terminal
+quick-terminal-animation-duration = 0
+quick-terminal-size = 80%
+shell-integration-features = ssh-env,ssh-terminfo,sudo
+theme = Modus Vivendi
