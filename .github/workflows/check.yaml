@@ -21,5 +21,9 @@ jobs:
           persist-credentials: false
       - name: Set Up Shared Tools & Tasks
         uses: ./.github/actions/mise
+      - name: Install Fish
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes fish
       - name: Run Checks
         run: mise run check
