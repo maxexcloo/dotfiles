@@ -14,7 +14,9 @@ def main():
     parser.add_argument("--labels", default="")
     arguments = parser.parse_args()
     environment = os.environ.copy()
-    if arguments.action != "validate" and not environment.get("GITHUB_TOKEN"):
+    if arguments.action == "validate":
+        environment["GITHUB_TOKEN"] = "validation-placeholder"
+    elif not environment.get("GITHUB_TOKEN"):
         environment["GITHUB_TOKEN"] = (
             environment.get("GH_TOKEN")
             or subprocess.check_output(
@@ -37,9 +39,7 @@ def main():
             )
             if any(Path(directory).glob("*.yaml")):
                 command += ["--config", directory]
-        if arguments.action == "validate":
-            command += ["--disable-templating"]
-        else:
+        if arguments.action != "validate":
             command += ["--disable-changelog", "--disable-udash-report"]
         if arguments.labels:
             command += ["--labels", arguments.labels]

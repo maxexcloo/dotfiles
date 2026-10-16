@@ -99,7 +99,6 @@ class SharedMiseTests(unittest.TestCase):
                         "validate",
                         "--config",
                         ".updatecli.d",
-                        "--disable-templating",
                         "--strict",
                         "--unique-tmp-dir",
                     ],
@@ -125,6 +124,47 @@ class SharedMiseTests(unittest.TestCase):
                 ["format", "components"],
             ],
         )
+
+    def test_ci_configuration_checks_a_real_python_consumer(self):
+        for name in ("ci.toml", "tools.toml"):
+            shutil.copy(ROOT / "home/dot_config/mise" / name, self.configuration)
+        self.environment["MISE_GLOBAL_CONFIG_FILE"] = str(
+            self.configuration / "ci.toml"
+        )
+        self.environment["UPDATECLI_DISABLE_VERSION_CHECK"] = "true"
+        for name in ("ruff", "updatecli"):
+            executable = subprocess.check_output(
+                [self.mise, "which", name], text=True
+            ).strip()
+            (self.bin / name).unlink()
+            (self.bin / name).symlink_to(executable)
+        (self.project / "mise.toml").write_text(
+            '[tasks.check]\ndepends = ["check:python", "check:updates"]\n'
+            'run = "python -B -m unittest discover -s tests"\n'
+        )
+        (self.project / ".updatecli.d").mkdir()
+        policy = self.project / ".updatecli.d/local.yaml"
+        policy.write_text(
+            "name: Local Consumer\nsources:\n  version:\n    kind: shell\n"
+            "    spec:\n      command: echo 1\n"
+        )
+        (self.project / "tests").mkdir()
+        (self.project / "tests/test_consumer.py").write_text(
+            "import unittest\n\n\nclass ConsumerTest(unittest.TestCase):\n"
+            "    def test_consumer(self):\n        self.assertEqual(2 + 2, 4)\n"
+        )
+        consumer = self.project / "consumer.py"
+        consumer.write_text("import os\n")
+        result = self.run_task("check")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("F401", result.stdout + result.stderr)
+        consumer.write_text("VALUE = 4\n")
+        result = self.run_task("check")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Ran 1 test", result.stdout + result.stderr)
+        policy.write_text("name: Invalid Consumer\nsources: [invalid\n")
+        result = self.run_task("check")
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_failed_shared_check_prevents_repository_check(self):
         (self.project / "mise.toml").write_text(
