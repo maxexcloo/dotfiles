@@ -70,8 +70,8 @@ Python tasks accept repository `vars.python_paths`, `vars.python_test_directory`
 `vars.python_test_runner` and `vars.ruff_args`. The unittest runner defaults to
 `python -B`; repositories can select their locked uv environment or requirements.
 ShellCheck accepts `vars.shell_paths`, defaulting to `scripts/*.sh`. The Actions
-check accepts `vars.actionlint_args` for compatibility exceptions. Node setup
-accepts `vars.node_install_args`.
+check accepts `vars.actionlint_args` for compatibility exceptions. Repositories
+run npm commands directly for setup, development, builds and tests.
 
 ```toml
 [tasks.check]
@@ -87,8 +87,13 @@ configuration before running repository tasks.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The composite
 action loads only `ci.toml`, the portable tools and shared tasks from its own
-checkout, then installs Mise and the effective toolchain. It does not apply
-workstation preferences or resolve credentials. The action and task library come
+checkout, then installs Mise and the tools selected by the workflow's
+`with.tools` list.
+Tool names resolve their versions from the shared configuration and repository
+overrides. CI disables automatic tool installation, so later tasks do not install
+the remaining workstation toolchain. List every tool used by the job, including
+commands run by nested tasks or scripts. The action does not apply workstation
+preferences or resolve credentials. The action and task library come
 from the same action revision; publish shared changes before dependent workflows.
 The `main` reference follows the shared configuration, so review shared changes as
 changes to all consumers. No workflow extracts configuration from comments.
@@ -104,7 +109,6 @@ apply. No repository implements its own Updatecli runner.
 
 | Task | Purpose |
 | --- | --- |
-| `build:node` | Run the package build. |
 | `check:actions` | Lint GitHub Actions workflows. |
 | `check:mise` | Check Mise formatting. |
 | `check:prettier` | Check file formatting. |
@@ -115,14 +119,11 @@ apply. No repository implements its own Updatecli runner.
 | `check:whitespace` | Check diff whitespace. |
 | `dependencies:check --labels <labels>` | Preview local Updatecli changes. |
 | `dependencies:update --labels <labels>` | Apply reviewed updates, optionally selecting policy groups. |
-| `dev:node` | Run the package development server. |
 | `fmt:mise` | Format Mise configuration. |
 | `fmt:prettier` | Format project files. |
 | `fmt:python` | Sort imports and format Python. |
 | `hooks:check` | Run all configured Prek hooks. |
 | `hooks:install` | Install the repository's configured Git hooks. |
-| `setup:node` | Install locked npm dependencies. |
-| `test:node` | Run package tests. |
 | `test:python` | Run Python unittest discovery. |
 
 Dependency tasks resolve GitHub authentication inside their child process. The AI

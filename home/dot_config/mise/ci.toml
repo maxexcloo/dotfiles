@@ -1,4 +1,8 @@
 include = ["tools.toml"]
 
 [settings]
+auto_install = false
 minimum_release_age = "0"
+
+[settings.task]
+run_auto_install = false

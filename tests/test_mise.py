@@ -31,7 +31,7 @@ class SharedMiseTests(unittest.TestCase):
         self.bin = self.root / "bin"
         self.bin.mkdir()
         (self.bin / "python").symlink_to(sys.executable)
-        for name in ("prek", "ruff", "shellcheck", "updatecli"):
+        for name in ("node", "prek", "ruff", "shellcheck", "updatecli"):
             executable = self.bin / name
             executable.write_text(
                 f"#!{sys.executable}\n"
@@ -140,6 +140,20 @@ class SharedMiseTests(unittest.TestCase):
         result = self.run_task("hooks:check")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(self.commands()[0][::2], ["prek", ["run", "--all-files"]])
+
+    def test_ci_tasks_and_nested_exec_do_not_install_unselected_tools(self):
+        for name in ("ci.toml", "tools.toml"):
+            shutil.copy(ROOT / "home/dot_config/mise" / name, self.configuration)
+        self.environment["MISE_GLOBAL_CONFIG_FILE"] = str(
+            self.configuration / "ci.toml"
+        )
+        (self.project / "mise.toml").write_text(
+            '[tasks.check]\nrun = ["node", "mise exec -- node"]\n'
+        )
+        result = self.run_task("check")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual([command[0] for command in self.commands()], ["node", "node"])
+        self.assertFalse((self.root / "data/installs").exists())
 
     def test_shellcheck_expands_repository_patterns_and_preserves_spaces(self):
         (self.project / "scripts").mkdir()

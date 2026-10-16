@@ -21,6 +21,8 @@ jobs:
           persist-credentials: false
       - name: Set Up Shared Tools & Tasks
         uses: ./.github/actions/mise
+        with:
+          tools: actionlint chezmoi prek python ruff updatecli
       - name: Install Fish
         run: |
           sudo apt-get update
