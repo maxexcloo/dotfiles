@@ -1,0 +1,19 @@
+["build:node"]
+dir = "{{cwd}}"
+run = "npm run build"
+
+["dev:node"]
+dir = "{{cwd}}"
+run = "npm run dev"
+
+["setup:node"]
+dir = "{{cwd}}"
+run = "npm ci {{vars.node_install_args | default(value='')}}"
+
+["test:node"]
+dir = "{{cwd}}"
+run = "npm test"
+
+["test:python"]
+dir = "{{cwd}}"
+run = "{{vars.python_test_runner | default(value='python -B')}} -m unittest discover -s \"{{vars.python_test_directory | default(value='tests')}}\""

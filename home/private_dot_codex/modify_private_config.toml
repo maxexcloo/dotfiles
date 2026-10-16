@@ -3,7 +3,7 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := includeTemplate "codex.toml" . | fromToml -}}
 {{- $config = mergeOverwrite $config $preferences -}}
-{{- $headers := includeTemplate "mcp-headers" . | fromJson -}}
+{{- $headers := includeTemplate "mcp-headers" (dict "mcp" .mcp "credentialReference" .mcpCredentials.codex) | fromJson -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp_servers" $name "url") $server.url $config -}}
 {{- $config = setValueAtPath (list "mcp_servers" $name "http_headers" "Authorization") (index $headers $name "Authorization") $config -}}

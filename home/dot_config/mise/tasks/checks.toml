@@ -1,0 +1,50 @@
+["check:actions"]
+dir = "{{cwd}}"
+run = "actionlint {{vars.actionlint_args | default(value='')}}"
+
+["check:mise"]
+dir = "{{cwd}}"
+run = "mise fmt --check"
+
+["check:prettier"]
+dir = "{{cwd}}"
+run = "prettier --check ."
+
+["check:python"]
+dir = "{{cwd}}"
+run = """
+ruff check {{vars.ruff_args | default(value='')}} {{vars.python_paths | default(value='.')}}
+ruff format --check {{vars.python_paths | default(value='.')}}
+"""
+
+["check:shell"]
+dir = "{{cwd}}"
+run = "shellcheck {{vars.shell_paths | default(value='scripts/*.sh')}}"
+
+["check:typescript"]
+dir = "{{cwd}}"
+run = "tsc --noEmit"
+
+["check:updates"]
+dir = "{{cwd}}"
+env.UPDATECLI_DISCOVERY = "{{vars.updatecli_discovery | default(value='')}}"
+run = 'python "{{env.MISE_CONFIG_DIR | default(value=env.HOME ~ "/.config/mise")}}/lib/updatecli.py" validate'
+
+["check:whitespace"]
+dir = "{{cwd}}"
+run = "git diff --check"
+
+["fmt:mise"]
+dir = "{{cwd}}"
+run = "mise fmt"
+
+["fmt:prettier"]
+dir = "{{cwd}}"
+run = "prettier --write ."
+
+["fmt:python"]
+dir = "{{cwd}}"
+run = """
+ruff check --fix --select I {{vars.python_paths | default(value='.')}}
+ruff format {{vars.python_paths | default(value='.')}}
+"""

@@ -1,23 +1,26 @@
 [tools]
-# prek = "latest" # Inherited from the global Mise configuration.
 chezmoi = "latest"
 
 [tasks.apply]
-description = "Apply Workstation Preferences"
 run = 'chezmoi --source "{{config_root}}" apply'
 
 [tasks.check]
-description = "Check Configuration Syntax & Repository Hygiene"
-run = "prek run --all-files"
+depends = [
+  "check:actions",
+  "check:python",
+  "check:updates",
+  "hooks:check",
+  "test:python",
+]
+
+[tasks.fmt]
+depends = ["fmt:python"]
 
 [tasks.setup]
-description = "Initialise Chezmoi"
 run = 'chezmoi --source "{{config_root}}" init'
 
 [tasks.status]
-description = "Show Pending Workstation Changes"
 run = 'chezmoi --source "{{config_root}}" status'
 
 [tasks.verify]
-description = "Verify Applied Workstation Preferences"
 run = 'chezmoi --source "{{config_root}}" verify'

@@ -1,0 +1,25 @@
+["dependencies:check"]
+dir = "{{cwd}}"
+env.UPDATECLI_DISCOVERY = "{{vars.updatecli_discovery | default(value='')}}"
+usage = 'flag "--labels <labels>" help="Select Updatecli Groups"'
+run = '''
+python "{{env.MISE_CONFIG_DIR | default(value=env.HOME ~ "/.config/mise")}}/lib/updatecli.py" diff --labels "${usage_labels:-}"
+'''
+
+["dependencies:update"]
+dir = "{{cwd}}"
+env.UPDATECLI_DISCOVERY = "{{vars.updatecli_discovery | default(value='')}}"
+usage = 'flag "--labels <labels>" help="Select Updatecli Groups"'
+run = '''
+set -eu
+python "{{env.MISE_CONFIG_DIR | default(value=env.HOME ~ "/.config/mise")}}/lib/updatecli.py" apply --labels "${usage_labels:-}"
+{{vars.updatecli_refresh | default(value='true')}}
+'''
+
+["hooks:check"]
+dir = "{{cwd}}"
+run = "prek run --all-files"
+
+["hooks:install"]
+dir = "{{cwd}}"
+run = "prek install"

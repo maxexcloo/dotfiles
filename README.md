@@ -17,11 +17,11 @@ preferences and MCP settings while preserving local application state and other
 provider settings. Generated hook hashes, onboarding state and project trust
 entries remain local.
 
-MCP endpoints and 1Password field references are defined once in
-`home/.chezmoidata.toml`. Chezmoi resolves the credentials locally through the
-1Password CLI and writes private application files with mode `600`. Keep resolved
-values out of Git and command output. Use `status` to review pending changes
-without rendering credentials. The existing ignored `private/` directory is no
+MCP endpoints and client-specific 1Password field references are defined once in
+`home/.chezmoidata.toml`. Each client uses its own LiteLLM key. Chezmoi resolves
+credentials locally through the 1Password CLI and writes private application
+files with mode `600`. Keep resolved values out of Git and command output. Use
+`status` to review pending changes without rendering credentials. The existing ignored `private/` directory is no
 longer an active configuration source.
 
 Orca hooks and plugins, accounts, caches, history, SSH host inventories and
@@ -40,40 +40,94 @@ From this checkout:
 ```sh
 mise install
 mise run setup
+mise exec -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise run check
 mise run status
 mise run apply
 mise run verify
 ```
 
-`setup` configures chezmoi to use this checkout. `check` runs Prek's built-in
-configuration and hygiene checks plus Fish's native syntax check; it does not
-require a provisioned workstation or vault access. `apply` uses chezmoi's normal
-conflict handling. `verify` checks the live workstation and requires vault access.
+`setup` configures chezmoi to use this checkout. `check` runs shared-task integration
+tests, Actionlint, Updatecli policy validation and Prek's configuration, hygiene
+and Fish syntax checks. It needs the shared Mise configuration, but does not
+require vault access. Bootstrap or refresh only the shared Mise directory before
+checking. `apply` uses chezmoi's normal conflict handling. `verify` checks the live
+workstation and requires vault access.
 
 To sync another workstation, clone this repository, pull the desired revision,
 and run the same commands. Changes to the live files are not automatically
 imported into the repository. Edit managed preferences at their source; keep
 application-generated state local.
 
-## Global Tasks
+## Shared Tools & Tasks
 
-Run these tasks from the repository root. The global Mise configuration owns their
-implementation; repository Updatecli policies and Prek hooks remain local.
+`home/dot_config/mise/tools.toml` owns the portable development toolchain. The
+workstation's global `config.toml` includes it and adds personal applications.
+Mise automatically loads the shared checks and formatters from `tasks/` globally;
+repositories select them through `depends` and keep their own tests, build steps,
+operational tasks and compatibility overrides. Run tasks from the repository root.
+Python tasks accept repository `vars.python_paths`, `vars.python_test_directory`,
+`vars.python_test_runner` and `vars.ruff_args`. The unittest runner defaults to
+`python -B`; repositories can select their locked uv environment or requirements.
+ShellCheck accepts `vars.shell_paths`, defaulting to `scripts/*.sh`. The Actions
+check accepts `vars.actionlint_args` for compatibility exceptions. Node setup
+accepts `vars.node_install_args`.
+
+```toml
+[tasks.check]
+depends = ["check:python", "check:updates", "test:python"]
+
+[tasks.fmt]
+depends = ["fmt:python"]
+```
+
+Apply the Mise directory after pulling dotfiles to install shared task changes.
+A missing shared task fails explicitly; a fresh workstation needs this global
+configuration before running repository tasks.
+
+GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The composite
+action loads only `ci.toml`, the portable tools and shared tasks from its own
+checkout, then installs Mise and the effective toolchain. It does not apply
+workstation preferences or resolve credentials. The action and task library come
+from the same action revision; publish shared changes before dependent workflows.
+The `main` reference follows the shared configuration, so review shared changes as
+changes to all consumers. No workflow extracts configuration from comments.
+
+The local Updatecli policies here own shared tool pins and the composite action's
+Mise version; repository policies continue to own project-specific tools.
+`dependencies:check` previews updates and `dependencies:update` applies reviewed
+updates. Both accept `--labels`. Authentication, Updatecli invocation and temporary
+manifest cleanup live in `lib/updatecli.py`. Images and Kubelab provide only
+`vars.updatecli_discovery`, a command that writes extra manifests to its supplied
+directory. AI provides `vars.updatecli_refresh`, which runs only after a successful
+apply. No repository implements its own Updatecli runner.
 
 | Task | Purpose |
 | --- | --- |
-| `dependencies:check` | Preview local Updatecli changes. |
+| `build:node` | Run the package build. |
+| `check:actions` | Lint GitHub Actions workflows. |
+| `check:mise` | Check Mise formatting. |
+| `check:prettier` | Check file formatting. |
+| `check:python` | Lint Python and check formatting. |
+| `check:shell` | Check configured shell script paths. |
+| `check:typescript` | Check TypeScript types. |
+| `check:updates` | Validate local Updatecli policies. |
+| `check:whitespace` | Check diff whitespace. |
+| `dependencies:check --labels <labels>` | Preview local Updatecli changes. |
 | `dependencies:update --labels <labels>` | Apply reviewed updates, optionally selecting policy groups. |
+| `dev:node` | Run the package development server. |
+| `fmt:mise` | Format Mise configuration. |
+| `fmt:prettier` | Format project files. |
+| `fmt:python` | Sort imports and format Python. |
 | `hooks:check` | Run all configured Prek hooks. |
 | `hooks:install` | Install the repository's configured Git hooks. |
+| `setup:node` | Install locked npm dependencies. |
+| `test:node` | Run package tests. |
+| `test:python` | Run Python unittest discovery. |
 
 Dependency tasks resolve GitHub authentication inside their child process. The AI
-repository adds its Python requirements and lockfile refresh after a successful
-shared update. The hidden `dependencies:apply` task holds that shared implementation.
-Project `check` and `setup` tasks retain direct Prek commands where needed for fresh
-checkouts and CI without this personal configuration. Install this global config
-on any workstation that should run the shared dependency tasks.
+repository refreshes its Python requirements and lockfile after shared updates.
+Project-specific Prek hooks, formatter settings and Updatecli policies remain local.
 
 ## Review Changes
 

@@ -1,0 +1,16 @@
+name: Set Up Shared Mise
+description: Load shared tools and tasks without applying workstation preferences.
+runs:
+  using: composite
+  steps:
+    - name: Configure Shared Mise
+      env:
+        SHARED_MISE_DIRECTORY: ${{ github.action_path }}/../../../home/dot_config/mise
+      run: |
+        echo "MISE_CONFIG_DIR=$SHARED_MISE_DIRECTORY" >> "$GITHUB_ENV"
+        echo "MISE_GLOBAL_CONFIG_FILE=$SHARED_MISE_DIRECTORY/ci.toml" >> "$GITHUB_ENV"
+      shell: bash
+    - name: Set Up Tools
+      uses: jdx/mise-action@v5
+      with:
+        version: 2026.10.9

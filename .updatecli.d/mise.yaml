@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=https://www.updatecli.io/schema/latest/policy/manifest/config.json
+name: Update Shared Mise Tools
+pipelineid: update-shared-mise-tools
+labels:
+  group: mise
+targets:
+  tools:
+    disablesourceinput: true
+    kind: shell
+    spec:
+      command: |
+        export MISE_GLOBAL_CONFIG_FILE="$PWD/home/dot_config/mise/tools.toml"
+        updates=$(mise outdated --bump --global --json) || exit "$?"
+        if [ "$updates" = "{}" ]; then
+          exit 0
+        fi
+        if [ "$DRY_RUN" = false ]; then
+          mise upgrade --bump --global --no-prune || exit "$?"
+        fi
+        printf '%s\n' "$updates"
