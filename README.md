@@ -1,8 +1,9 @@
 # Dotfiles
 
 Workstation preferences for macOS, managed by [chezmoi](https://www.chezmoi.io/)
-and installed through Mise. Shared agent instructions, skills and discovery remain
-in the separate [Agents repository](https://github.com/maxexcloo/agents).
+and installed through Mise. Shared agent instructions and self-written skills live
+in the separate [Agents repository](https://github.com/maxexcloo/agents); their
+workstation links and skill discovery configuration are managed here.
 
 ## Configuration
 
@@ -58,6 +59,20 @@ To sync another workstation, clone this repository, pull the desired revision,
 and run the same commands. Changes to the live files are not automatically
 imported into the repository. Edit managed preferences at their source; keep
 application-generated state local.
+
+## Shared Agent Guidance
+
+Clone the Agents repository beside this checkout. Chezmoi links its shared
+instructions and self-written skills into `~/.agents`, then links `AGENTS.md`
+into Antigravity, Codex, OpenCode and Pi. Antigravity's discovery configuration
+is managed at `home/private_dot_gemini/config/skills.json`.
+
+`home/.chezmoiexternal.toml.tmpl` owns pinned upstream skill packages. Chezmoi
+installs Orca, TerraShark and Web Awesome under `~/.local/share/agent-skills`
+and links their skills into the same `~/.agents/skills` discovery directory.
+Change package pins there and apply through Chezmoi; no other project needs
+its own copy. Personal activation and preview rules stay in the Agents
+repository's `AGENTS.md`, so upstream packages remain unmodified.
 
 ## Shared Tools & Tasks
 
