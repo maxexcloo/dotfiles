@@ -6,6 +6,10 @@ run = "actionlint {{vars.actionlint_args | default(value='')}}"
 dir = "{{cwd}}"
 run = "mise fmt --check"
 
+["check:oxfmt"]
+dir = "{{cwd}}"
+run = "oxfmt --check --no-error-on-unmatched-pattern ."
+
 ["check:prettier"]
 dir = "{{cwd}}"
 run = "prettier --check ."
@@ -37,6 +41,10 @@ run = "git diff --check"
 ["fmt:mise"]
 dir = "{{cwd}}"
 run = "mise fmt"
+
+["fmt:oxfmt"]
+dir = "{{cwd}}"
+run = "oxfmt --write --no-error-on-unmatched-pattern ."
 
 ["fmt:prettier"]
 dir = "{{cwd}}"
