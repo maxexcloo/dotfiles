@@ -10,10 +10,6 @@ run = "mise fmt --check"
 dir = "{{cwd}}"
 run = "oxfmt --check --no-error-on-unmatched-pattern ."
 
-["check:prettier"]
-dir = "{{cwd}}"
-run = "prettier --check ."
-
 ["check:python"]
 dir = "{{cwd}}"
 run = """
@@ -45,10 +41,6 @@ run = "mise fmt"
 ["fmt:oxfmt"]
 dir = "{{cwd}}"
 run = "oxfmt --write --no-error-on-unmatched-pattern ."
-
-["fmt:prettier"]
-dir = "{{cwd}}"
-run = "prettier --write ."
 
 ["fmt:python"]
 dir = "{{cwd}}"

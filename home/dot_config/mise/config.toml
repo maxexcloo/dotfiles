@@ -9,7 +9,7 @@ trusted_config_paths = ["~/Projects"]
 prune_after = "0s"
 
 [tools]
-antigravity-cli = "latest"
+chezmoi = "latest"
 codex = "latest"
 k9s = "latest"
 opencode = { version = "latest", allow_builds = ["@opencode/cli"] }

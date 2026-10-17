@@ -18,8 +18,8 @@ python "{{env.MISE_CONFIG_DIR | default(value=env.HOME ~ "/.config/mise")}}/lib/
 
 ["hooks:check"]
 dir = "{{cwd}}"
-run = "prek run --all-files"
+run = "hk check --all"
 
 ["hooks:install"]
 dir = "{{cwd}}"
-run = "prek install"
+run = "hk install --mise"

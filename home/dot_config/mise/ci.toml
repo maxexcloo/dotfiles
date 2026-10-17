@@ -1,8 +1,25 @@
-include = ["tools.toml"]
-
 [settings]
 auto_install = false
 minimum_release_age = "0"
 
 [settings.task]
 run_auto_install = false
+
+# CI upgrades are reviewed together; workstation defaults remain latest.
+[tools]
+1password-cli = "2.41.0"
+actionlint = "1.7.12"
+chezmoi = "2.73.1"
+gh = "2.102.0"
+helm = "4.3.0"
+hk = "2.7.0"
+jq = "1.8.2"
+node = "26.11.1"
+opentofu = "1.13.1"
+oxfmt = "0.73.0"
+python = "3.15.0"
+ruff = "0.17.0"
+shellcheck = "0.11.0"
+updatecli = "0.122.1"
+uv = "0.13.1"
+yq = "4.54.1"

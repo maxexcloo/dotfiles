@@ -32,7 +32,7 @@ not managed here. Git signing and SSH agent preferences are preserved.
 ## Usage
 
 Install Mise, the required applications and globally managed tools, including
-Prek and the 1Password CLI. Enable the 1Password desktop integration and unlock
+Hk and the 1Password CLI. Enable the 1Password desktop integration and unlock
 the vault containing the referenced MCP fields. Homebrew is not required for
 chezmoi.
 
@@ -48,9 +48,9 @@ mise run apply
 mise run verify
 ```
 
-`setup` configures chezmoi to use this checkout. `check` runs shared-task integration
-tests, Actionlint, Updatecli policy validation and Prek's configuration, hygiene
-and Fish syntax checks. It needs the shared Mise configuration, but does not
+`setup` configures chezmoi to use this checkout. `check` runs Actionlint, Ruff,
+Updatecli policy validation and Hk's formatting, hygiene and Fish syntax checks.
+It needs the shared Mise configuration, but does not
 require vault access. Bootstrap or refresh only the shared Mise directory before
 checking. `apply` uses chezmoi's normal conflict handling. `verify` checks the live
 workstation and requires vault access.
@@ -76,8 +76,12 @@ repository's `AGENTS.md`, so upstream packages remain unmodified.
 
 ## Shared Tools & Tasks
 
-`home/dot_config/mise/tools.toml` owns the portable development toolchain. The
-workstation's global `config.toml` includes it and adds personal applications.
+`home/dot_config/mise/tools.toml` owns the shared workstation tools, using `latest`.
+The global `config.toml` includes it and adds personal applications. Run
+`mise upgrade --global` to update workstation tools. Repositories inherit these
+defaults and declare exact versions only for project-specific tools or genuine
+compatibility requirements. Platform client pins follow their platform's update
+policy rather than unrestricted tool bumps.
 Mise automatically loads the shared checks and formatters from `tasks/` globally;
 repositories select them through `depends` and keep their own tests, build steps,
 operational tasks and compatibility overrides. Run tasks from the repository root.
@@ -101,20 +105,20 @@ A missing shared task fails explicitly; a fresh workstation needs this global
 configuration before running repository tasks.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The composite
-action loads only `ci.toml`, the portable tools and shared tasks from its own
-checkout, then installs Mise and the tools selected by the workflow's
-`with.tools` list.
-Tool names resolve their versions from the shared configuration and repository
-overrides. CI disables automatic tool installation, so later tasks do not install
-the remaining workstation toolchain. List every tool used by the job, including
+action loads only `ci.toml` and shared tasks from its own checkout, then installs
+Mise and the tools selected by the workflow's `with.tools` list. `ci.toml` pins the
+shared CI tools to exact versions, independently of workstation updates. Project
+pins override this baseline. CI disables automatic tool installation, so later
+tasks do not install the remaining workstation toolchain. List every tool used by the job, including
 commands run by nested tasks or scripts. The action does not apply workstation
 preferences or resolve credentials. The action and task library come
 from the same action revision; publish shared changes before dependent workflows.
 The `main` reference follows the shared configuration, so review shared changes as
 changes to all consumers. No workflow extracts configuration from comments.
 
-The local Updatecli policies here own shared tool pins and the composite action's
-Mise version; repository policies continue to own project-specific tools.
+The local Updatecli policies here own the shared CI tool pins and the composite
+action's Mise version; repository policies continue to own project-specific
+tools. Review shared CI tool upgrades as one batch.
 `dependencies:check` previews updates and `dependencies:update` applies reviewed
 updates. Both accept `--labels`. Authentication, Updatecli invocation and temporary
 manifest cleanup live in `lib/updatecli.py`. Images and Kubelab provide only
@@ -122,28 +126,28 @@ manifest cleanup live in `lib/updatecli.py`. Images and Kubelab provide only
 directory. AI provides `vars.updatecli_refresh`, which runs only after a successful
 apply. No repository implements its own Updatecli runner.
 
-| Task | Purpose |
-| --- | --- |
-| `check:actions` | Lint GitHub Actions workflows. |
-| `check:mise` | Check Mise formatting. |
-| `check:prettier` | Check file formatting. |
-| `check:python` | Lint Python and check formatting. |
-| `check:shell` | Check configured shell script paths. |
-| `check:typescript` | Check TypeScript types. |
-| `check:updates` | Validate local Updatecli policies. |
-| `check:whitespace` | Check diff whitespace. |
-| `dependencies:check --labels <labels>` | Preview local Updatecli changes. |
+| Task                                    | Purpose                                                     |
+| --------------------------------------- | ----------------------------------------------------------- |
+| `check:actions`                         | Lint GitHub Actions workflows.                              |
+| `check:mise`                            | Check Mise formatting.                                      |
+| `check:oxfmt`                           | Check file formatting.                                      |
+| `check:python`                          | Lint Python and check formatting.                           |
+| `check:shell`                           | Check configured shell script paths.                        |
+| `check:typescript`                      | Check TypeScript types.                                     |
+| `check:updates`                         | Validate local Updatecli policies.                          |
+| `check:whitespace`                      | Check diff whitespace.                                      |
+| `dependencies:check --labels <labels>`  | Preview local Updatecli changes.                            |
 | `dependencies:update --labels <labels>` | Apply reviewed updates, optionally selecting policy groups. |
-| `fmt:mise` | Format Mise configuration. |
-| `fmt:prettier` | Format project files. |
-| `fmt:python` | Sort imports and format Python. |
-| `hooks:check` | Run all configured Prek hooks. |
-| `hooks:install` | Install the repository's configured Git hooks. |
-| `test:python` | Run Python unittest discovery. |
+| `fmt:mise`                              | Format Mise configuration.                                  |
+| `fmt:oxfmt`                             | Format project files.                                       |
+| `fmt:python`                            | Sort imports and format Python.                             |
+| `hooks:check`                           | Run all configured Hk steps.                                |
+| `hooks:install`                         | Install the repository's configured Git hooks.              |
+| `test:python`                           | Run Python unittest discovery.                              |
 
 Dependency tasks resolve GitHub authentication inside their child process. The AI
 repository refreshes its Python requirements and lockfile after shared updates.
-Project-specific Prek hooks, formatter settings and Updatecli policies remain local.
+Project-specific Hk steps, formatter settings and Updatecli policies remain local.
 
 ## Review Changes
 

@@ -1,0 +1,15 @@
+amends "package://github.com/jdx/hk/releases/download/v2.7.0/hk@2.7.0#/Config.pkl"
+
+import "package://github.com/jdx/hk/releases/download/v2.7.0/hk@2.7.0#/Builtins.pkl"
+
+steps {
+  ["check-merge-conflict"] = Builtins.check_merge_conflict
+  ["detect-private-key"] = Builtins.detect_private_key
+  ["fish-syntax"] {
+    check = "fish --no-execute {{files}}"
+    glob = List("**/*.fish")
+  }
+  ["newlines"] = Builtins.newlines
+  ["oxfmt"] = Builtins.oxfmt
+  ["trailing-whitespace"] = Builtins.trailing_whitespace
+}
