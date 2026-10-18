@@ -1,6 +1,9 @@
 name: Set Up Shared Mise
 description: Load shared tools and tasks without applying workstation preferences.
 inputs:
+  project-tools:
+    default: "false"
+    description: Also install every tool declared in the repository's own Mise configuration.
   tools:
     default: ""
     description: Space-separated tools to install from the shared and repository configurations.
@@ -18,3 +21,12 @@ runs:
       uses: jdx/mise-action@v5
       with:
         install_args: ${{ inputs.tools }}
+    - name: Install Project Tools
+      if: inputs.project-tools == 'true'
+      run: |
+        tools=$(mise ls --local --json | jq -r 'keys | join(" ")')
+        if [ -n "$tools" ]; then
+          # shellcheck disable=SC2086
+          mise install $tools
+        fi
+      shell: bash
