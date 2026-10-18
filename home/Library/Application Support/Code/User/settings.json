@@ -21,6 +21,7 @@
   "github.copilot.nextEditSuggestions.enabled": false,
   "python-envs.terminal.autoActivationType": "off",
   "redhat.telemetry.enabled": false,
+  "scm.repositories.selectionMode": "single",
   "security.workspace.trust.untrustedFiles": "open",
   "telemetry.telemetryLevel": "off",
   "terminal.integrated.fontSize": 14,
