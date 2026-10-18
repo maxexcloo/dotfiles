@@ -5,5 +5,5 @@ url = "https://litellm.excloo.com/mcp/home_assistant"
 url = "https://litellm.excloo.com/mcp/unifi_network"
 
 [mcpCredentials]
-codex = "op://6bit6kovpdqaja5qilki5u2hvm/a7lyhpxy7g2wf2lbmtba2lbdiy/mcp-api-key-codex"
-opencode = "op://6bit6kovpdqaja5qilki5u2hvm/a7lyhpxy7g2wf2lbmtba2lbdiy/mcp-api-key-opencode"
+codex = "op://6bit6kovpdqaja5qilki5u2hvm/a7lyhpxy7g2wf2lbmtba2lbdiy/virtual-key-codex"
+opencode = "op://6bit6kovpdqaja5qilki5u2hvm/a7lyhpxy7g2wf2lbmtba2lbdiy/virtual-key-opencode"
