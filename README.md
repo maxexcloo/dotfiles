@@ -75,9 +75,8 @@ repository's `AGENTS.md`, so upstream packages remain unmodified.
 
 ## Shared Tools & Tasks
 
-`home/dot_config/mise/tools.toml` owns all workstation tools, using `latest`.
-The global `config.toml` contains settings and includes the tools file. Run
-`mise upgrade --global` to update workstation tools. Repositories inherit these
+`home/dot_config/mise/config.toml` owns workstation settings and tools, using
+`latest`. Run `mise upgrade --global` to update workstation tools. Repositories inherit these
 defaults and declare exact versions only for project-specific tools or genuine
 compatibility requirements. Platform client pins follow their platform's update
 policy rather than unrestricted tool bumps.

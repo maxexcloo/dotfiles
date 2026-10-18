@@ -1,5 +1,3 @@
-include = ["tools.toml"]
-
 [settings]
 cache_prune_age = "1d"
 minimum_release_age = "0"
@@ -7,3 +5,29 @@ trusted_config_paths = ["~/Projects"]
 
 [settings.upgrade]
 prune_after = "0s"
+
+[tools]
+1password-cli = "latest"
+actionlint = "latest"
+chezmoi = "latest"
+claude-code = "latest"
+codex = "latest"
+gh = "latest"
+helm = "latest"
+hk = "latest"
+jq = "latest"
+k9s = "latest"
+node = "latest"
+opencode = "latest"
+opentofu = "latest"
+oxfmt = "latest"
+pi = "latest"
+python = "latest"
+rclone = "latest"
+ripgrep = "latest"
+ruff = "latest"
+shellcheck = "latest"
+talosctl = "latest"
+updatecli = "latest"
+uv = "latest"
+yq = "latest"
