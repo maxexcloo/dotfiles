@@ -18,4 +18,3 @@ runs:
       uses: jdx/mise-action@v5
       with:
         install_args: ${{ inputs.tools }}
-        version: 2026.10.9
