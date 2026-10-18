@@ -1,12 +1,25 @@
 ["check:actions"]
 description = "Lint GitHub Actions Workflows"
 dir = "{{cwd}}"
-run = "actionlint {{vars.actionlint_args | default(value='')}}"
+run = '''
+if [ ! -d .github/workflows ]; then
+  echo "No GitHub Actions workflows found; skipping."
+  exit 0
+fi
+actionlint {{vars.actionlint_args | default(value='')}}
+'''
 
 ["check:mise"]
 description = "Check Mise Formatting"
 dir = "{{cwd}}"
-run = "mise fmt --check"
+run = '''
+for config in .config/mise.toml .config/mise/config.toml .mise.toml .mise/config.toml mise.toml mise/config.toml; do
+  if [ -f "$config" ]; then
+    exec mise fmt --check
+  fi
+done
+echo "No Mise configuration found; skipping."
+'''
 
 ["check:oxfmt"]
 description = "Check File Formatting"
@@ -16,15 +29,31 @@ run = "oxfmt --check --no-error-on-unmatched-pattern ."
 ["check:python"]
 description = "Lint Python & Check Formatting"
 dir = "{{cwd}}"
-run = """
+run = '''
+if [ -z "$(git ls-files -- '*.py')" ]; then
+  echo "No Python files found; skipping."
+  exit 0
+fi
 ruff check {{vars.ruff_args | default(value='')}} {{vars.python_paths | default(value='.')}}
 ruff format --check {{vars.python_paths | default(value='.')}}
-"""
+'''
 
 ["check:shell"]
 description = "Check Shell Scripts"
 dir = "{{cwd}}"
-run = "shellcheck {{vars.shell_paths | default(value='scripts/*.sh')}}"
+run = '''
+set --
+for path in {{vars.shell_paths | default(value='scripts/*.sh')}}; do
+  if [ -e "$path" ]; then
+    set -- "$@" "$path"
+  fi
+done
+if [ "$#" -eq 0 ]; then
+  echo "No shell scripts found; skipping."
+  exit 0
+fi
+shellcheck "$@"
+'''
 
 ["check:typescript"]
 description = "Check TypeScript Types"
@@ -35,7 +64,14 @@ run = "tsc --noEmit"
 description = "Validate Updatecli Policies"
 dir = "{{cwd}}"
 env.GITHUB_TOKEN = "validation-placeholder"
-run = "updatecli manifest validate --config .updatecli.d --strict --unique-tmp-dir"
+run = '''
+set -eu
+if [ ! -d .updatecli.d ]; then
+  echo "No Updatecli policies found; skipping."
+  exit 0
+fi
+updatecli manifest validate --config .updatecli.d --strict --unique-tmp-dir
+'''
 
 ["check:whitespace"]
 description = "Check Tracked File Whitespace"
