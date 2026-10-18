@@ -83,7 +83,14 @@ if [ ! -d .updatecli.d ]; then
   echo "No Updatecli policies found; skipping."
   exit 0
 fi
-updatecli manifest validate --config .updatecli.d --strict --unique-tmp-dir
+set -- --config .updatecli.d
+{% if vars.updatecli_generator is defined -%}
+directory=$(mktemp -d)
+trap 'rm -rf -- "$directory"' EXIT
+{{vars.updatecli_generator}} "$directory"
+set -- "$@" --config "$directory"
+{% endif -%}
+updatecli manifest validate "$@" --strict --unique-tmp-dir
 '''
 
 ["check:whitespace"]

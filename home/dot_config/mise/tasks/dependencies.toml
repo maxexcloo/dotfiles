@@ -34,6 +34,12 @@ if [ -z "$GITHUB_TOKEN" ] && command -v gh >/dev/null 2>&1; then
 fi
 export GITHUB_TOKEN
 set -- --config .updatecli.d
+{% if vars.updatecli_generator is defined -%}
+directory=$(mktemp -d)
+trap 'rm -rf -- "$directory"' EXIT
+{{vars.updatecli_generator}} "$directory"
+set -- "$@" --config "$directory"
+{% endif -%}
 if [ -n "${usage_labels:-}" ]; then
   set -- "$@" --labels "$usage_labels"
 fi
