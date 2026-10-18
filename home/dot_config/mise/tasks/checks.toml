@@ -19,7 +19,8 @@ if [ ! -d .github/workflows ]; then
   echo "No GitHub Actions workflows found; skipping."
   exit 0
 fi
-actionlint {{vars.actionlint_args | default(value='')}}
+# Actionlint does not recognise native concurrency queues yet.
+actionlint -ignore 'unexpected key "queue" for "concurrency" section' {{vars.actionlint_args | default(value='')}}
 '''
 
 ["check:mise"]
