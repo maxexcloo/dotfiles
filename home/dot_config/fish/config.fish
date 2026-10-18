@@ -1,7 +1,7 @@
 fish_add_path /opt/homebrew/bin
 fish_add_path $HOME/.local/bin
 set -gx XDG_CACHE_HOME $HOME/Library/Caches
-source $HOME/.orbstack/shell/init2.fish
+test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
 
 set -gx EDITOR nano
 set -gx FZF_CTRL_R_COMMAND ""

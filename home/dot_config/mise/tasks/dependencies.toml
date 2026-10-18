@@ -1,20 +1,7 @@
 ["dependencies:check"]
 description = "Preview Dependency Updates"
-dir = "{{cwd}}"
 usage = 'flag "--labels <labels>" help="Select Updatecli Groups (group:actions)"'
-run = '''
-set -eu
-GITHUB_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
-if [ -z "$GITHUB_TOKEN" ] && command -v gh >/dev/null 2>&1; then
-  GITHUB_TOKEN=$(gh auth token)
-fi
-export GITHUB_TOKEN
-set --
-if [ -n "${usage_labels:-}" ]; then
-  set -- --labels "$usage_labels"
-fi
-updatecli pipeline diff --config .updatecli.d --disable-changelog --disable-udash-report --unique-tmp-dir "$@"
-'''
+run = [{ task = "dependencies:updatecli", args = ["diff", "{{usage.labels}}"] }]
 
 ["dependencies:mise:check"]
 description = "Preview Project Tool Updates"
@@ -28,8 +15,17 @@ run = "mise upgrade --bump --local --no-prune"
 
 ["dependencies:update"]
 description = "Apply Reviewed Dependency Updates"
-dir = "{{cwd}}"
 usage = 'flag "--labels <labels>" help="Select Updatecli Groups (group:actions)"'
+run = [{ task = "dependencies:updatecli", args = ["apply", "{{usage.labels}}"] }]
+
+["dependencies:updatecli"]
+description = "Run An Updatecli Pipeline Command"
+dir = "{{cwd}}"
+hide = true
+usage = '''
+arg "<command>" help="Updatecli Pipeline Command (diff or apply)"
+arg "[labels]" help="Select Updatecli Groups"
+'''
 run = '''
 set -eu
 GITHUB_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
@@ -37,9 +33,15 @@ if [ -z "$GITHUB_TOKEN" ] && command -v gh >/dev/null 2>&1; then
   GITHUB_TOKEN=$(gh auth token)
 fi
 export GITHUB_TOKEN
-set --
+set -- --config .updatecli.d
+{% if vars.updatecli_generator is defined -%}
+directory=$(mktemp -d)
+trap 'rm -rf -- "$directory"' EXIT
+{{vars.updatecli_generator}} "$directory"
+set -- "$@" --config "$directory"
+{% endif -%}
 if [ -n "${usage_labels:-}" ]; then
-  set -- --labels "$usage_labels"
+  set -- "$@" --labels "$usage_labels"
 fi
-updatecli pipeline apply --config .updatecli.d --disable-changelog --disable-udash-report --unique-tmp-dir "$@"
+updatecli pipeline "$usage_command" "$@" --disable-changelog --disable-udash-report --unique-tmp-dir
 '''
