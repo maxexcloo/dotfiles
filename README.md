@@ -160,7 +160,7 @@ Project-specific Hk steps, formatter settings and Updatecli policies remain loca
 From an Orca-registered repository or worktree, run:
 
 ```sh
-mise run review
+mise run orca:review
 ```
 
 This global task uses Orca's native command to open changed files as focused GUI
