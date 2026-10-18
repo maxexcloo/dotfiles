@@ -62,7 +62,9 @@ so reconcile those edits back into `home/`.
 
 Clone the Agents repository beside this checkout. Chezmoi links its shared
 instructions and self-written skills into `~/.agents`, then links `AGENTS.md`
-into Claude Code (as `CLAUDE.md`), Codex, OpenCode and Pi.
+into Claude Code (as `CLAUDE.md`), Codex, OpenCode and Pi. A run-on-change script also
+links each skill under `home/dot_agents/skills` into `~/.claude/skills`, leaving
+Claude's synced skills untouched; delete links for removed skills by hand.
 
 This repository owns upstream skills; the Agents repository owns self-written
 skills. `home/.chezmoiexternal.toml.tmpl` pins and checksums the Orca, TerraShark
