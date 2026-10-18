@@ -9,12 +9,18 @@ stripComponents = 1
 url = "https://github.com/stablyai/orca/archive/{{ $orcaRevision }}.tar.gz"
 include = ["*/LICENSE*", "*/skills", "*/skills/orca-cli/**", "*/skills/orchestration/**"]
 
+[".local/share/agent-skills/orca".checksum]
+sha512 = "43c4020012e01b83c139a4f8c840b9b17d305d0db560e0a08c4e0076f7ea81db636b188a956418b27dc5ab8f614bd27d3a3f6458a5346a6974d50e90f3e28742"
+
 [".local/share/agent-skills/terrashark"]
 type = "archive"
 exact = true
 stripComponents = 1
 url = "https://github.com/LukasNiessen/terrashark/archive/{{ $terrasharkRevision }}.tar.gz"
 include = ["*/LICENSE", "*/README.md", "*/SKILL.md", "*/references/**"]
+
+[".local/share/agent-skills/terrashark".checksum]
+sha512 = "a96e9baae1cffc2e21cd439f006cd09dff5c0e8b2ce40d333a6a38cce161c361a1106ec6cd7a7729de3e439c7787ef593b181bc68a2474cfe9652a8a92036424"
 
 [".local/share/agent-skills/webawesome"]
 type = "archive"
