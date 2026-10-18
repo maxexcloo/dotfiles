@@ -64,7 +64,7 @@ application-generated state local.
 
 Clone the Agents repository beside this checkout. Chezmoi links its shared
 instructions and self-written skills into `~/.agents`, then links `AGENTS.md`
-into Codex, OpenCode and Pi.
+into Claude Code (as `CLAUDE.md`), Codex, OpenCode and Pi.
 
 `home/.chezmoiexternal.toml.tmpl` owns pinned upstream skill packages. Chezmoi
 installs Orca, TerraShark and Web Awesome under `~/.local/share/agent-skills`
