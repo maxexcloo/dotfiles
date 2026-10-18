@@ -1,3 +1,6 @@
+# Upstream skill packages, relative to the home directory.
+agentSkillsPath = ".local/share/agent-skills"
+
 [mcp.home_assistant]
 url = "https://litellm.excloo.com/mcp/home_assistant"
 
