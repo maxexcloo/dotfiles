@@ -1,0 +1,8 @@
+#!/bin/sh
+# Link each shared skill into Claude Code, leaving its synced skills untouched.
+set -eu
+mkdir -p {{ joinPath .chezmoi.homeDir ".claude" "skills" | quote }}
+{{ range glob (joinPath .chezmoi.sourceDir "dot_agents" "skills" "symlink_*.tmpl") -}}
+{{ $name := base . | trimPrefix "symlink_" | trimSuffix ".tmpl" -}}
+ln -sfn {{ joinPath $.chezmoi.homeDir ".agents" "skills" $name | quote }} {{ joinPath $.chezmoi.homeDir ".claude" "skills" $name | quote }}
+{{ end -}}
