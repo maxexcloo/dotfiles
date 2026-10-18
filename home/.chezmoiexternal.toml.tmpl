@@ -2,32 +2,32 @@
 {{- $terrasharkRevision := "21f2c18b912818b6a8e2b7bdbf25a275ecb894b1" -}}
 {{- $webawesomeVersion := "3.14.0" -}}
 
-[".local/share/agent-skills/orca"]
+[{{ joinPath .agentSkillsPath "orca" | quote }}]
 type = "archive"
 exact = true
 stripComponents = 1
 url = "https://github.com/stablyai/orca/archive/{{ $orcaRevision }}.tar.gz"
 include = ["*/LICENSE*", "*/skills", "*/skills/orca-cli/**", "*/skills/orchestration/**"]
 
-[".local/share/agent-skills/orca".checksum]
+[{{ joinPath .agentSkillsPath "orca" | quote }}.checksum]
 sha512 = "99f01c7b99a42f0d4435d018c701f9b829f49462e6e7be8f476ba5a9addca5d7e986430d7931ee90cdd8ed54b38e40309268edc0fc12e55bfcdb3eef62d9f522"
 
-[".local/share/agent-skills/terrashark"]
+[{{ joinPath .agentSkillsPath "terrashark" | quote }}]
 type = "archive"
 exact = true
 stripComponents = 1
 url = "https://github.com/LukasNiessen/terrashark/archive/{{ $terrasharkRevision }}.tar.gz"
 include = ["*/LICENSE", "*/README.md", "*/SKILL.md", "*/references/**"]
 
-[".local/share/agent-skills/terrashark".checksum]
+[{{ joinPath .agentSkillsPath "terrashark" | quote }}.checksum]
 sha512 = "a96e9baae1cffc2e21cd439f006cd09dff5c0e8b2ce40d333a6a38cce161c361a1106ec6cd7a7729de3e439c7787ef593b181bc68a2474cfe9652a8a92036424"
 
-[".local/share/agent-skills/webawesome"]
+[{{ joinPath .agentSkillsPath "webawesome" | quote }}]
 type = "archive"
 exact = true
 stripComponents = 1
 url = "https://registry.npmjs.org/@awesome.me/webawesome/-/webawesome-{{ $webawesomeVersion }}.tgz"
 include = ["package/LICENSE.md", "package/dist", "package/dist/skills", "package/dist/skills/webawesome/**", "package/dist/skills/webawesome-design/**"]
 
-[".local/share/agent-skills/webawesome".checksum]
+[{{ joinPath .agentSkillsPath "webawesome" | quote }}.checksum]
 sha512 = "9b9ad318b2bf88ebda5453a46314638813a9f25c2b05aa79b6ffb3cf582ca8b800c657f076f12507b0551a3b3e2dff600e9b3b6d644f4e41b4170664e349a4d8"

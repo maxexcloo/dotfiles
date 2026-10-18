@@ -1,0 +1,4 @@
+# Targets whose source was removed or renamed.
+.config/mise/tasks/git.toml
+.config/mise/tools.toml
+.gemini/AGENTS.md
