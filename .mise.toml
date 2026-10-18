@@ -5,10 +5,10 @@
 run = 'chezmoi --source "{{config_root}}" apply'
 
 [tasks.check]
-depends = ["check:actions", "check:python", "check:updates", "hooks:check"]
+depends = ["check:actions", "check:updates", "hooks:check"]
 
 [tasks.fmt]
-depends = ["fmt:oxfmt", "fmt:python"]
+depends = ["fmt:oxfmt"]
 
 [tasks.setup]
 run = 'chezmoi --source "{{config_root}}" init'

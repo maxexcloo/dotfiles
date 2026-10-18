@@ -48,7 +48,7 @@ mise run apply
 mise run verify
 ```
 
-`setup` configures chezmoi to use this checkout. `check` runs Actionlint, Ruff,
+`setup` configures chezmoi to use this checkout. `check` runs Actionlint,
 Updatecli policy validation and Hk's formatting, hygiene and Fish syntax checks.
 It needs the shared Mise configuration, but does not
 require vault access. Bootstrap or refresh only the shared Mise directory before
