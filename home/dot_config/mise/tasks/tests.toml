@@ -1,3 +1,4 @@
 ["test:python"]
+description = "Run Python Unit Tests"
 dir = "{{cwd}}"
 run = "{{vars.python_test_runner | default(value='python -B')}} -m unittest discover -s \"{{vars.python_test_directory | default(value='tests')}}\""

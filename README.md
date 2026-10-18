@@ -13,7 +13,7 @@ home directory using chezmoi attributes: `dot_config/` maps to `~/.config/`, and
 
 Edit preferences in `home/`, then apply them. Ordinary preferences become regular
 files at their application paths; edits in the checkout take effect after apply.
-Codex, Antigravity and OpenCode use native modify templates to merge managed
+Codex and OpenCode use native modify templates to merge managed
 preferences and MCP settings while preserving local application state and other
 provider settings. Generated hook hashes, onboarding state and project trust
 entries remain local.
@@ -64,8 +64,7 @@ application-generated state local.
 
 Clone the Agents repository beside this checkout. Chezmoi links its shared
 instructions and self-written skills into `~/.agents`, then links `AGENTS.md`
-into Antigravity, Codex, OpenCode and Pi. Antigravity's discovery configuration
-is managed at `home/private_dot_gemini/config/skills.json`.
+into Codex, OpenCode and Pi.
 
 `home/.chezmoiexternal.toml.tmpl` owns pinned upstream skill packages. Chezmoi
 installs Orca, TerraShark and Web Awesome under `~/.local/share/agent-skills`
@@ -76,13 +75,14 @@ repository's `AGENTS.md`, so upstream packages remain unmodified.
 
 ## Shared Tools & Tasks
 
-`home/dot_config/mise/tools.toml` owns the shared workstation tools, using `latest`.
-The global `config.toml` includes it and adds personal applications. Run
+`home/dot_config/mise/tools.toml` owns all workstation tools, using `latest`.
+The global `config.toml` contains settings and includes the tools file. Run
 `mise upgrade --global` to update workstation tools. Repositories inherit these
 defaults and declare exact versions only for project-specific tools or genuine
 compatibility requirements. Platform client pins follow their platform's update
 policy rather than unrestricted tool bumps.
-Mise automatically loads the shared checks and formatters from `tasks/` globally;
+Mise automatically loads shared tasks from `tasks/` globally. Files group them
+into checks, dependencies, formatting, Git operations and tests;
 repositories select them through `depends` and keep their own tests, build steps,
 operational tasks and compatibility overrides. Run tasks from the repository root.
 Python tasks accept repository `vars.python_paths`, `vars.python_test_directory`,
@@ -120,11 +120,10 @@ The local Updatecli policies here own the shared CI tool pins and the composite
 action's Mise version; repository policies continue to own project-specific
 tools. Review shared CI tool upgrades as one batch.
 `dependencies:check` previews updates and `dependencies:update` applies reviewed
-updates. Both accept `--labels`. Authentication, Updatecli invocation and temporary
-manifest cleanup live in `lib/updatecli.py`. Images and Kubelab provide only
-`vars.updatecli_discovery`, a command that writes extra manifests to its supplied
-directory. AI provides `vars.updatecli_refresh`, which runs only after a successful
-apply. No repository implements its own Updatecli runner.
+updates. Both accept `--labels` and invoke Updatecli directly. Images and Kubelab
+override these tasks and `check:updates` locally to generate additional policies
+in a temporary directory and clean them up when the command exits. AI provides
+`vars.updatecli_refresh`, which runs only after a successful apply.
 
 | Task                                    | Purpose                                                     |
 | --------------------------------------- | ----------------------------------------------------------- |

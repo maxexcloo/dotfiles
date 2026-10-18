@@ -1,0 +1,30 @@
+["dependencies:check"]
+description = "Preview Dependency Updates"
+dir = "{{cwd}}"
+usage = 'flag "--labels <labels>" help="Select Updatecli Groups"'
+run = '''
+set -eu
+GITHUB_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-$(gh auth token)}}"
+export GITHUB_TOKEN
+set --
+if [ -n "${usage_labels:-}" ]; then
+  set -- --labels "$usage_labels"
+fi
+updatecli pipeline diff --config .updatecli.d --disable-changelog --disable-udash-report --unique-tmp-dir "$@"
+'''
+
+["dependencies:update"]
+description = "Apply Reviewed Dependency Updates"
+dir = "{{cwd}}"
+usage = 'flag "--labels <labels>" help="Select Updatecli Groups"'
+run = '''
+set -eu
+GITHUB_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-$(gh auth token)}}"
+export GITHUB_TOKEN
+set --
+if [ -n "${usage_labels:-}" ]; then
+  set -- --labels "$usage_labels"
+fi
+updatecli pipeline apply --config .updatecli.d --disable-changelog --disable-udash-report --unique-tmp-dir "$@"
+{{vars.updatecli_refresh | default(value='true')}}
+'''

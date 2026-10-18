@@ -1,0 +1,17 @@
+["fmt:mise"]
+description = "Format Mise Configuration"
+dir = "{{cwd}}"
+run = "mise fmt"
+
+["fmt:oxfmt"]
+description = "Format Project Files"
+dir = "{{cwd}}"
+run = "oxfmt --write --no-error-on-unmatched-pattern ."
+
+["fmt:python"]
+description = "Sort Python Imports & Format Code"
+dir = "{{cwd}}"
+run = """
+ruff check --fix --select I {{vars.python_paths | default(value='.')}}
+ruff format {{vars.python_paths | default(value='.')}}
+"""

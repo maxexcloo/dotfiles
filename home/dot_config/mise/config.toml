@@ -7,15 +7,3 @@ trusted_config_paths = ["~/Projects"]
 
 [settings.upgrade]
 prune_after = "0s"
-
-[tools]
-chezmoi = "latest"
-codex = "latest"
-k9s = "latest"
-opencode = { version = "latest", allow_builds = ["@opencode/cli"] }
-rclone = "latest"
-ripgrep = "latest"
-
-[tasks.review]
-dir = "{{cwd}}"
-run = "orca file open-changed --focus --mode diff --worktree current"

@@ -1,16 +1,20 @@
 ["check:actions"]
+description = "Lint GitHub Actions Workflows"
 dir = "{{cwd}}"
 run = "actionlint {{vars.actionlint_args | default(value='')}}"
 
 ["check:mise"]
+description = "Check Mise Formatting"
 dir = "{{cwd}}"
 run = "mise fmt --check"
 
 ["check:oxfmt"]
+description = "Check File Formatting"
 dir = "{{cwd}}"
 run = "oxfmt --check --no-error-on-unmatched-pattern ."
 
 ["check:python"]
+description = "Lint Python & Check Formatting"
 dir = "{{cwd}}"
 run = """
 ruff check {{vars.ruff_args | default(value='')}} {{vars.python_paths | default(value='.')}}
@@ -18,33 +22,22 @@ ruff format --check {{vars.python_paths | default(value='.')}}
 """
 
 ["check:shell"]
+description = "Check Shell Scripts"
 dir = "{{cwd}}"
 run = "shellcheck {{vars.shell_paths | default(value='scripts/*.sh')}}"
 
 ["check:typescript"]
+description = "Check TypeScript Types"
 dir = "{{cwd}}"
 run = "tsc --noEmit"
 
 ["check:updates"]
+description = "Validate Updatecli Policies"
 dir = "{{cwd}}"
-env.UPDATECLI_DISCOVERY = "{{vars.updatecli_discovery | default(value='')}}"
-run = 'python "{{env.MISE_CONFIG_DIR | default(value=env.HOME ~ "/.config/mise")}}/lib/updatecli.py" validate'
+env.GITHUB_TOKEN = "validation-placeholder"
+run = "updatecli manifest validate --config .updatecli.d --strict --unique-tmp-dir"
 
 ["check:whitespace"]
+description = "Check Diff Whitespace"
 dir = "{{cwd}}"
 run = "git diff --check"
-
-["fmt:mise"]
-dir = "{{cwd}}"
-run = "mise fmt"
-
-["fmt:oxfmt"]
-dir = "{{cwd}}"
-run = "oxfmt --write --no-error-on-unmatched-pattern ."
-
-["fmt:python"]
-dir = "{{cwd}}"
-run = """
-ruff check --fix --select I {{vars.python_paths | default(value='.')}}
-ruff format {{vars.python_paths | default(value='.')}}
-"""

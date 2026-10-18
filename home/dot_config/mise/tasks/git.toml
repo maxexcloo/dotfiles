@@ -1,0 +1,14 @@
+["hooks:check"]
+description = "Run All Configured Git Checks"
+dir = "{{cwd}}"
+run = "hk check --all"
+
+["hooks:install"]
+description = "Install Git Hooks"
+dir = "{{cwd}}"
+run = "hk install --mise"
+
+[review]
+description = "Review Changes In Orca"
+dir = "{{cwd}}"
+run = "orca file open-changed --focus --mode diff --worktree current"
