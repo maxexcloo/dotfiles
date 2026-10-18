@@ -1,12 +1,39 @@
+# Repositories without their own check task run every applicable shared check.
+[check]
+description = "Run Applicable Shared Checks"
+depends = [
+  "check:actions",
+  "check:mise",
+  "check:oxfmt",
+  "check:python",
+  "check:shell",
+  "check:updates",
+  "check:whitespace",
+]
+
 ["check:actions"]
 description = "Lint GitHub Actions Workflows"
 dir = "{{cwd}}"
-run = "actionlint {{vars.actionlint_args | default(value='')}}"
+run = '''
+if [ ! -d .github/workflows ]; then
+  echo "No GitHub Actions workflows found; skipping."
+  exit 0
+fi
+# Actionlint does not recognise native concurrency queues yet.
+actionlint -ignore 'unexpected key "queue" for "concurrency" section' {{vars.actionlint_args | default(value='')}}
+'''
 
 ["check:mise"]
 description = "Check Mise Formatting"
 dir = "{{cwd}}"
-run = "mise fmt --check"
+run = '''
+for config in .config/mise.toml .config/mise/config.toml .mise.toml .mise/config.toml mise.toml mise/config.toml; do
+  if [ -f "$config" ]; then
+    exec mise fmt --check
+  fi
+done
+echo "No Mise configuration found; skipping."
+'''
 
 ["check:oxfmt"]
 description = "Check File Formatting"
@@ -16,15 +43,31 @@ run = "oxfmt --check --no-error-on-unmatched-pattern ."
 ["check:python"]
 description = "Lint Python & Check Formatting"
 dir = "{{cwd}}"
-run = """
-ruff check {{vars.ruff_args | default(value='')}} {{vars.python_paths | default(value='.')}}
+run = '''
+if [ -z "$(git ls-files -- '*.py')" ]; then
+  echo "No Python files found; skipping."
+  exit 0
+fi
+ruff check --extend-select I {{vars.ruff_args | default(value='')}} {{vars.python_paths | default(value='.')}}
 ruff format --check {{vars.python_paths | default(value='.')}}
-"""
+'''
 
 ["check:shell"]
 description = "Check Shell Scripts"
 dir = "{{cwd}}"
-run = "shellcheck {{vars.shell_paths | default(value='scripts/*.sh')}}"
+run = '''
+set --
+for path in {{vars.shell_paths | default(value='scripts/*.sh')}}; do
+  if [ -e "$path" ]; then
+    set -- "$@" "$path"
+  fi
+done
+if [ "$#" -eq 0 ]; then
+  echo "No shell scripts found; skipping."
+  exit 0
+fi
+shellcheck "$@"
+'''
 
 ["check:typescript"]
 description = "Check TypeScript Types"
@@ -35,9 +78,24 @@ run = "tsc --noEmit"
 description = "Validate Updatecli Policies"
 dir = "{{cwd}}"
 env.GITHUB_TOKEN = "validation-placeholder"
-run = "updatecli manifest validate --config .updatecli.d --strict --unique-tmp-dir"
+run = '''
+set -eu
+if [ ! -d .updatecli.d ]; then
+  echo "No Updatecli policies found; skipping."
+  exit 0
+fi
+set -- --config .updatecli.d
+{% if vars.updatecli_generator is defined -%}
+directory=$(mktemp -d)
+trap 'rm -rf -- "$directory"' EXIT
+{{vars.updatecli_generator}} "$directory"
+set -- "$@" --config "$directory"
+{% endif -%}
+updatecli manifest validate "$@" --strict --unique-tmp-dir
+'''
 
 ["check:whitespace"]
-description = "Check Diff Whitespace"
+description = "Check Tracked File Whitespace"
 dir = "{{cwd}}"
-run = "git diff --check"
+# Compare with the empty tree so clean checkouts still check every tracked file.
+run = 'git diff --check "$(git hash-object -t tree /dev/null)"'
