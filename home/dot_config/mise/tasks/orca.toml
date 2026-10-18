@@ -1,0 +1,4 @@
+["orca:review"]
+description = "Review Changes In Orca"
+dir = "{{cwd}}"
+run = "orca file open-changed --focus --mode diff --worktree current"
