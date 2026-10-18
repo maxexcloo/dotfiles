@@ -1,3 +1,16 @@
+# Repositories without their own check task run every applicable shared check.
+[check]
+description = "Run Applicable Shared Checks"
+depends = [
+  "check:actions",
+  "check:mise",
+  "check:oxfmt",
+  "check:python",
+  "check:shell",
+  "check:updates",
+  "check:whitespace",
+]
+
 ["check:actions"]
 description = "Lint GitHub Actions Workflows"
 dir = "{{cwd}}"
