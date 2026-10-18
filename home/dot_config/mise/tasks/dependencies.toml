@@ -1,10 +1,13 @@
 ["dependencies:check"]
 description = "Preview Dependency Updates"
 dir = "{{cwd}}"
-usage = 'flag "--labels <labels>" help="Select Updatecli Groups"'
+usage = 'flag "--labels <labels>" help="Select Updatecli Groups (group:actions)"'
 run = '''
 set -eu
-GITHUB_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-$(gh auth token)}}"
+GITHUB_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
+if [ -z "$GITHUB_TOKEN" ] && command -v gh >/dev/null 2>&1; then
+  GITHUB_TOKEN=$(gh auth token)
+fi
 export GITHUB_TOKEN
 set --
 if [ -n "${usage_labels:-}" ]; then
@@ -13,18 +16,30 @@ fi
 updatecli pipeline diff --config .updatecli.d --disable-changelog --disable-udash-report --unique-tmp-dir "$@"
 '''
 
+["dependencies:mise:check"]
+description = "Preview Project Tool Updates"
+dir = "{{cwd}}"
+run = "mise upgrade --bump --dry-run --local --no-prune"
+
+["dependencies:mise:update"]
+description = "Apply Reviewed Project Tool Updates"
+dir = "{{cwd}}"
+run = "mise upgrade --bump --local --no-prune"
+
 ["dependencies:update"]
 description = "Apply Reviewed Dependency Updates"
 dir = "{{cwd}}"
-usage = 'flag "--labels <labels>" help="Select Updatecli Groups"'
+usage = 'flag "--labels <labels>" help="Select Updatecli Groups (group:actions)"'
 run = '''
 set -eu
-GITHUB_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-$(gh auth token)}}"
+GITHUB_TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
+if [ -z "$GITHUB_TOKEN" ] && command -v gh >/dev/null 2>&1; then
+  GITHUB_TOKEN=$(gh auth token)
+fi
 export GITHUB_TOKEN
 set --
 if [ -n "${usage_labels:-}" ]; then
   set -- --labels "$usage_labels"
 fi
 updatecli pipeline apply --config .updatecli.d --disable-changelog --disable-udash-report --unique-tmp-dir "$@"
-{{vars.updatecli_refresh | default(value='true')}}
 '''

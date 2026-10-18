@@ -18,3 +18,14 @@ run = 'chezmoi --source "{{config_root}}" status'
 
 [tasks.verify]
 run = 'chezmoi --source "{{config_root}}" verify'
+
+# Dependencies
+[tasks."dependencies:mise:check"]
+env.MISE_CONFIG_DIR = "{{config_root}}/home/dot_config/mise"
+env.MISE_GLOBAL_CONFIG_FILE = "{{config_root}}/home/dot_config/mise/ci.toml"
+run = "mise upgrade --bump --dry-run --global --no-prune"
+
+[tasks."dependencies:mise:update"]
+env.MISE_CONFIG_DIR = "{{config_root}}/home/dot_config/mise"
+env.MISE_GLOBAL_CONFIG_FILE = "{{config_root}}/home/dot_config/mise/ci.toml"
+run = "mise upgrade --bump --global --no-prune"

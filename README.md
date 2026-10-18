@@ -116,14 +116,16 @@ from the same action revision; publish shared changes before dependent workflows
 The `main` reference follows the shared configuration, so review shared changes as
 changes to all consumers. No workflow extracts configuration from comments.
 
-The local Updatecli policies here own the shared CI tool pins and the composite
-action's Mise version; repository policies continue to own project-specific
-tools. Review shared CI tool upgrades as one batch.
-`dependencies:check` previews updates and `dependencies:update` applies reviewed
-updates. Both accept `--labels` and invoke Updatecli directly. Images and Kubelab
-override these tasks and `check:updates` locally to generate additional policies
-in a temporary directory and clean them up when the command exits. AI provides
-`vars.updatecli_refresh`, which runs only after a successful apply.
+Update shared CI tool pins with `dependencies:mise:check` and
+`dependencies:mise:update`; this repository scopes those native Mise commands to
+`home/dot_config/mise/ci.toml`. Elsewhere they select project-local tools, with
+local overrides for compatibility exclusions. Review shared CI upgrades as one batch.
+
+`dependencies:check` previews Updatecli changes and `dependencies:update` applies
+reviewed groups, for example `--labels group:actions`. Keep native dependency
+commands in Mise tasks; reserve explicit Updatecli policies for embedded pins and
+versions that must change together. Images and Kubelab generate additional
+policies for recipe metadata and embedded image pins during previews and applies.
 
 | Task                                    | Purpose                                                     |
 | --------------------------------------- | ----------------------------------------------------------- |
@@ -136,6 +138,8 @@ in a temporary directory and clean them up when the command exits. AI provides
 | `check:updates`                         | Validate local Updatecli policies.                          |
 | `check:whitespace`                      | Check diff whitespace.                                      |
 | `dependencies:check --labels <labels>`  | Preview local Updatecli changes.                            |
+| `dependencies:mise:check`               | Preview native Mise tool upgrades.                          |
+| `dependencies:mise:update`              | Apply reviewed native Mise tool upgrades.                   |
 | `dependencies:update --labels <labels>` | Apply reviewed updates, optionally selecting policy groups. |
 | `fmt:mise`                              | Format Mise configuration.                                  |
 | `fmt:oxfmt`                             | Format project files.                                       |
@@ -144,8 +148,11 @@ in a temporary directory and clean them up when the command exits. AI provides
 | `hooks:install`                         | Install the repository's configured Git hooks.              |
 | `test:python`                           | Run Python unittest discovery.                              |
 
-Dependency tasks resolve GitHub authentication inside their child process. The AI
-repository refreshes its Python requirements and lockfile after shared updates.
+Updatecli tasks use `GITHUB_TOKEN` or `GH_TOKEN`, falling back to GitHub CLI
+authentication when available, inside their child process. After
+applying embedded Python pins in AI, use its native `dependencies:python:check`
+and `dependencies:python:update` tasks to review and refresh requirements and the
+lockfile before running project checks.
 Project-specific Hk steps, formatter settings and Updatecli policies remain local.
 
 ## Review Changes
