@@ -38,6 +38,7 @@ env.GITHUB_TOKEN = "validation-placeholder"
 run = "updatecli manifest validate --config .updatecli.d --strict --unique-tmp-dir"
 
 ["check:whitespace"]
-description = "Check Diff Whitespace"
+description = "Check Tracked File Whitespace"
 dir = "{{cwd}}"
-run = "git diff --check"
+# Compare with the empty tree so clean checkouts still check every tracked file.
+run = 'git diff --check "$(git hash-object -t tree /dev/null)"'
