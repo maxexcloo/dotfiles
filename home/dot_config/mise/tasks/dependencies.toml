@@ -1,3 +1,62 @@
+["dependencies:actions"]
+description = "Generate GitHub Action Updatecli Manifests"
+dir = "{{cwd}}"
+hide = true
+usage = 'arg "<directory>" help="Manifest Output Directory"'
+# Updatecli's github/action crawler rewrites whole YAML files, so pins are edited
+# as text. Each pin keeps its shape: major tags stay major, exact releases exact.
+run = '''#!/usr/bin/env python3
+{% raw -%}
+import os
+import re
+import subprocess
+from pathlib import Path
+
+PIN = re.compile(r"""uses:\s*["']?([\w.-]+/[\w.-]+)(?:/[^@\s"']+)?@(v?)([0-9]+(?:\.[0-9]+){0,2})(?=[\s"']|$)""", re.M)
+
+
+def quote(value):
+    return "'" + value.replace("'", "''") + "'"
+
+
+paths = subprocess.check_output(["git", "ls-files", "--", ".github/*.yaml", ".github/*.yml"], text=True)
+pins = {}
+for path in paths.splitlines():
+    for action, prefix, version in PIN.findall(Path(path).read_text()):
+        pins.setdefault((action, prefix, version.count(".")), set()).add(path)
+
+for index, ((action, prefix, dots), files) in enumerate(sorted(pins.items())):
+    version = re.escape(prefix) + "([0-9]+" + r"\.[0-9]+" * dots + ")"
+    shape = prefix + ".".join("x" * (dots + 1))
+    slug = re.sub(r"[^a-z0-9]+", "-", f"{action}-{shape}".lower())
+    match = rf"""(?m)(uses:\s*["']?{re.escape(action)}(?:/[^@\s"']+)?@){version}([\s"']|$)"""
+    manifest = f"""name: {quote("Update Action " + action)}
+pipelineid: {quote("update-action-" + slug)}
+labels:
+  group: actions
+sources:
+  version:
+    kind: gittag
+    spec:
+      lsremote: true
+      url: {quote(f"https://github.com/{action}.git")}
+      versionfilter:
+        kind: regex/semver
+        pattern: "*"
+        regex: {quote("^" + version + "$")}
+targets:
+  pin:
+    kind: file
+    sourceid: version
+    spec:
+      files: [{", ".join(map(quote, sorted(files)))}]
+      matchpattern: {quote(match)}
+      replacepattern: '${{1}}{{{{ source "version" }}}}${{3}}'
+"""
+    Path(os.environ["usage_directory"], f"actions-{index:03}.yaml").write_text(manifest)
+{%- endraw %}
+'''
+
 ["dependencies:check"]
 description = "Preview Dependency Updates"
 usage = 'flag "--labels <labels>" help="Select Updatecli Groups (group:actions)"'
@@ -33,13 +92,25 @@ if [ -z "$GITHUB_TOKEN" ] && command -v gh >/dev/null 2>&1; then
   GITHUB_TOKEN=$(gh auth token)
 fi
 export GITHUB_TOKEN
-set -- --config .updatecli.d
-{% if vars.updatecli_generator is defined -%}
 directory=$(mktemp -d)
 trap 'rm -rf -- "$directory"' EXIT
-{{vars.updatecli_generator}} "$directory"
-set -- "$@" --config "$directory"
+mkdir "$directory/actions"
+mise run --quiet dependencies:actions "$directory/actions"
+set --
+if [ -n "$(ls -A "$directory/actions")" ]; then
+  set -- --config "$directory/actions"
+fi
+if [ -d .updatecli.d ]; then
+  set -- "$@" --config .updatecli.d
+fi
+{% if vars.updatecli_generator is defined -%}
+{{vars.updatecli_generator}} "$directory/generated"
+set -- "$@" --config "$directory/generated"
 {% endif -%}
+if [ "$#" -eq 0 ]; then
+  echo "No Updatecli policies found; skipping."
+  exit 0
+fi
 if [ -n "${usage_labels:-}" ]; then
   set -- "$@" --labels "$usage_labels"
 fi
