@@ -3,12 +3,10 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := includeTemplate "opencode.json" . | fromJson -}}
 {{- $config = mergeOverwrite $config $preferences -}}
-{{- $headers := includeTemplate "mcp-headers" (dict "mcp" .mcp "credentialReference" .mcpCredentials.opencode) | fromJson -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp" $name "oauth") false $config -}}
 {{- $config = setValueAtPath (list "mcp" $name "type") "remote" $config -}}
 {{- $config = setValueAtPath (list "mcp" $name "url") $server.url $config -}}
-{{- $config = setValueAtPath (list "mcp" $name "headers" "Authorization") (index $headers $name "Authorization") $config -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
