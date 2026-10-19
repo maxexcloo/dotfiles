@@ -20,6 +20,8 @@ runs:
     - name: Set Up Tools
       uses: jdx/mise-action@v5
       with:
+        # Save at job end so project tools installed below are cached too.
+        cache_save_post: true
         install_args: ${{ inputs.tools }}
     - name: Install Project Tools
       if: inputs.project-tools == 'true'
