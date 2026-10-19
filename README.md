@@ -119,7 +119,9 @@ depends = ["check:python", "check:updates", "test:python"]
 ## Dependency Updates
 
 Every repository has a `renovate.json5` that extends the shared preset in
-`renovate/default.json5`, adding only its own exceptions. Renovate's native
+`renovate/default.json5`, adding only its own exceptions. Home Assistant
+integrations also extend `renovate/home-assistant.json5`, which keeps the minimum
+Home Assistant version and its test fixtures in step. Renovate's native
 managers discover Actions, containers, Kubernetes, Flux, Helm, Mise, npm, Python,
 Go and OpenTofu dependencies. The preset adds generic managers for Pkl packages,
 raw GitHub files pinned to a commit, image references outside `image` fields and

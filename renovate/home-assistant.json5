@@ -1,0 +1,25 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  description: "Home Assistant integrations whose minimum version is also the tested version",
+  customManagers: [
+    {
+      customType: "regex",
+      datasourceTemplate: "pypi",
+      depNameTemplate: "homeassistant",
+      description: "Minimum Home Assistant version in HACS metadata and the README",
+      managerFilePatterns: ["/^README\\.md$/", "/^hacs\\.json$/"],
+      matchStrings: [
+        '"homeassistant":\\s*"(?<currentValue>[^"]+)"',
+        "Requires Home Assistant \\**(?<currentValue>\\d+(?:\\.\\d+)+)",
+      ],
+    },
+  ],
+  packageRules: [
+    {
+      // The test fixtures pin one Home Assistant release, so both must move together.
+      groupName: "Home Assistant",
+      matchDepNames: ["homeassistant", "pytest-homeassistant-custom-component"],
+      separateMajorMinor: false,
+    },
+  ],
+}

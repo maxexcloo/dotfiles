@@ -7,6 +7,14 @@
     ":prConcurrentLimitNone",
     ":prHourlyLimitNone",
   ],
+  packageRules: [
+    {
+      description: "Let npm releases settle before proposing them",
+      matchDatasources: ["npm"],
+      minimumReleaseAge: "1 day",
+    },
+  ],
+  postUpdateOptions: ["gomodTidy"],
   // These managers only scan fixed filenames by default; Kubernetes, Flux and
   // Crossplane resources can live in any YAML file.
   crossplane: { managerFilePatterns: ["/\\.ya?ml$/"] },
