@@ -129,7 +129,10 @@ depends = ["check:python", "check:updates", "test:python"]
 | `test:python`                           | Run Python unittest discovery.                             |
 
 Updatecli tasks read `GITHUB_TOKEN` or `GH_TOKEN`, falling back to GitHub CLI
-authentication inside their child process.
+authentication inside their child process. They also generate a policy for each
+versioned GitHub Action pin under `.github` (group `actions`), so repositories need
+no actions policy. Pins are edited as text, leaving the rest of each file intact,
+and keep their shape: major tags stay major and exact releases stay exact.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The action
 loads only `ci.toml` and the shared tasks from its own revision, then installs the
