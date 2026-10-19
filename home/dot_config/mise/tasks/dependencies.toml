@@ -1,7 +1,9 @@
-# Renovate supports only its tested Node.js major.
+# Renovate supports only its tested Node.js major. Mise installs it without running
+# build scripts, so its optional RE2 module is skipped in favour of native RegExp.
 ["dependencies:check"]
 description = "Preview Dependency Updates"
 dir = "{{cwd}}"
+env.RENOVATE_X_IGNORE_RE2 = "true"
 tools = { node = "24" }
 run = '''
 set -eu
@@ -10,11 +12,16 @@ trap 'rm -f -- "$report"' EXIT
 RENOVATE_GITHUB_COM_TOKEN=$(gh auth token)
 export RENOVATE_GITHUB_COM_TOKEN
 LOG_LEVEL=warn renovate --platform=local --report-path="$report" --report-type=file
-jq -r '
+updates=$(jq -r '
   .repositories[].packageFiles[][] | .packageFile as $file | .deps[]
   | select(.updates | length > 0)
   | "\($file): \(.depName) \(.currentValue // .currentDigest[0:7]) -> \(.updates | map(.newValue // .newDigest[0:7]) | join(", "))"
-' "$report"
+' "$report")
+if [ -n "$updates" ]; then
+  printf '%s\n' "$updates"
+else
+  echo "No dependency updates found."
+fi
 '''
 
 ["dependencies:mise:check"]
@@ -30,6 +37,7 @@ run = "mise upgrade --bump --local --no-prune"
 ["dependencies:update"]
 description = "Open Dependency Update Pull Requests"
 dir = "{{cwd}}"
+env.RENOVATE_X_IGNORE_RE2 = "true"
 tools = { node = "24" }
 run = '''
 set -eu

@@ -71,6 +71,7 @@ run = "tsc --noEmit"
 ["check:updates"]
 description = "Validate Renovate Configuration"
 dir = "{{cwd}}"
+env.RENOVATE_X_IGNORE_RE2 = "true"
 tools = { node = "24" }
 # Shared presets live under renovate/.
 run = '''
