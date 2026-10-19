@@ -75,6 +75,10 @@ env.RENOVATE_X_IGNORE_RE2 = "true"
 tools = { node = "24" }
 # Shared presets live under renovate/.
 run = '''
+if [ ! -f renovate.json5 ]; then
+  echo "No Renovate configuration found; skipping."
+  exit 0
+fi
 renovate-config-validator --no-global --strict renovate.json5 $(git ls-files -- 'renovate/*.json5')
 '''
 
