@@ -1,4 +1,10 @@
 ["test:python"]
 description = "Run Python Unit Tests"
 dir = "{{cwd}}"
-run = "{{vars.python_test_runner | default(value='python -B')}} -m unittest discover -s \"{{vars.python_test_directory | default(value='tests')}}\""
+# Projects with a uv lockfile test inside their locked environment.
+run = '''
+if [ -f uv.lock ]; then
+  exec uv run --locked python -B -m unittest discover -s tests
+fi
+exec python -B -m unittest discover -s tests
+'''

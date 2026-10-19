@@ -47,7 +47,7 @@ mise run verify
 ```
 
 `setup` configures chezmoi to use this checkout. `check` runs Actionlint,
-Updatecli policy validation and Hk's formatting, hygiene and Fish syntax checks;
+Renovate configuration validation and Hk's formatting, hygiene and Fish syntax checks;
 it needs the shared Mise configuration but not vault access. `status` lists
 pending changes without printing credentials, but still needs vault access to
 render templates. `apply` uses chezmoi's normal conflict handling. `verify`
@@ -84,54 +84,57 @@ Mise loads the shared tasks in `tasks/` globally. Repositories select them throu
 `depends` and keep their own tests, builds and operational tasks. Run tasks from
 the repository root. Each check skips when its inputs are absent, and the global
 `check` runs every shared check except TypeScript; a repository `check` task
-replaces it.
+replaces it. Checks discover their inputs: ShellCheck reads every tracked `*.sh`
+file, Ruff reads the project's own configuration, and Python tests run from
+`tests/`, inside the locked environment when `uv.lock` exists.
 
 ```toml
-[vars]
-python_paths = "components"
-updatecli_generator = "python -B scripts/updates.py"
-
 [tasks.check]
 depends = ["check:python", "check:updates", "test:python"]
 ```
 
-| Variable                | Used By                           | Purpose                                                                       |
-| ----------------------- | --------------------------------- | ----------------------------------------------------------------------------- |
-| `actionlint_args`       | `check:actions`                   | Extra Actionlint options; concurrency queues are already ignored.             |
-| `python_paths`          | `check:python`, `fmt:python`      | Paths for Ruff, defaulting to `.`.                                            |
-| `python_test_directory` | `test:python`                     | Unittest discovery directory, defaulting to `tests`.                          |
-| `python_test_runner`    | `test:python`                     | Python command, defaulting to `python -B`.                                    |
-| `shell_paths`           | `check:shell`                     | ShellCheck globs, defaulting to `scripts/*.sh`.                               |
-| `updatecli_generator`   | `check:updates`, `dependencies:*` | Command that writes extra policies into the directory passed as its argument. |
+| Task                       | Purpose                                                    |
+| -------------------------- | ---------------------------------------------------------- |
+| `check`                    | Run every applicable shared check.                         |
+| `check:actions`            | Lint GitHub Actions workflows.                             |
+| `check:mise`               | Check Mise formatting.                                     |
+| `check:oxfmt`              | Check file formatting.                                     |
+| `check:python`             | Lint Python, including import order, and check formatting. |
+| `check:shell`              | Check tracked shell scripts.                               |
+| `check:typescript`         | Check TypeScript types.                                    |
+| `check:updates`            | Validate `renovate.json5` and presets under `renovate/`.   |
+| `check:whitespace`         | Check whitespace in tracked files.                         |
+| `dependencies:check`       | Preview Renovate updates from the local checkout.          |
+| `dependencies:mise:check`  | Preview native Mise tool upgrades.                         |
+| `dependencies:mise:update` | Apply reviewed native Mise tool upgrades.                  |
+| `dependencies:update`      | Open Renovate pull requests for the current repository.    |
+| `fmt:mise`                 | Format Mise configuration.                                 |
+| `fmt:oxfmt`                | Format project files.                                      |
+| `fmt:python`               | Sort imports and format Python.                            |
+| `hooks:check`              | Run all configured Hk steps.                               |
+| `hooks:install`            | Install the repository's configured Git hooks.             |
+| `orca:review`              | Open changed files as Orca diff tabs.                      |
+| `test:python`              | Run Python unittest discovery.                             |
 
-| Task                                    | Purpose                                                    |
-| --------------------------------------- | ---------------------------------------------------------- |
-| `check`                                 | Run every applicable shared check.                         |
-| `check:actions`                         | Lint GitHub Actions workflows.                             |
-| `check:mise`                            | Check Mise formatting.                                     |
-| `check:oxfmt`                           | Check file formatting.                                     |
-| `check:python`                          | Lint Python, including import order, and check formatting. |
-| `check:shell`                           | Check configured shell script paths.                       |
-| `check:typescript`                      | Check TypeScript types.                                    |
-| `check:updates`                         | Validate Updatecli policies.                               |
-| `check:whitespace`                      | Check whitespace in tracked files.                         |
-| `dependencies:check --labels <labels>`  | Preview Updatecli changes, optionally selecting groups.    |
-| `dependencies:mise:check`               | Preview native Mise tool upgrades.                         |
-| `dependencies:mise:update`              | Apply reviewed native Mise tool upgrades.                  |
-| `dependencies:update --labels <labels>` | Apply reviewed Updatecli changes, optionally by group.     |
-| `fmt:mise`                              | Format Mise configuration.                                 |
-| `fmt:oxfmt`                             | Format project files.                                      |
-| `fmt:python`                            | Sort imports and format Python.                            |
-| `hooks:check`                           | Run all configured Hk steps.                               |
-| `hooks:install`                         | Install the repository's configured Git hooks.             |
-| `orca:review`                           | Open changed files as Orca diff tabs.                      |
-| `test:python`                           | Run Python unittest discovery.                             |
+## Dependency Updates
 
-Updatecli tasks read `GITHUB_TOKEN` or `GH_TOKEN`, falling back to GitHub CLI
-authentication inside their child process. They also generate a policy for each
-versioned GitHub Action pin under `.github` (group `actions`), so repositories need
-no actions policy. Pins are edited as text, leaving the rest of each file intact,
-and keep their shape: major tags stay major and exact releases stay exact.
+Every repository has a `renovate.json5` that extends the shared preset in
+`renovate/default.json5`, adding only its own exceptions. Renovate's native
+managers discover Actions, containers, Kubernetes, Flux, Helm, Mise, npm, Python,
+Go and OpenTofu dependencies. The preset adds generic managers for Pkl packages,
+raw GitHub files pinned to a commit, image references outside `image` fields and
+any other pin, which is marked with a comment on the line above:
+
+```yaml
+# renovate: datasource=github-releases depName=<owner>/<repository>
+version: <version>
+```
+
+`dependencies:check` runs Renovate's local platform, which looks up updates
+without writing files. `dependencies:update` runs Renovate locally against the
+repository on GitHub and opens a pull request per update for review. Both
+resolve the GitHub token inside their own process through GitHub CLI. Presets are
+read from GitHub, so changes to the shared preset take effect once merged.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The action
 loads only `ci.toml` and the shared tasks from its own revision, then installs the

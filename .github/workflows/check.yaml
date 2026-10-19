@@ -22,7 +22,7 @@ jobs:
       - name: Set Up Shared Tools & Tasks
         uses: ./.github/actions/mise
         with:
-          tools: actionlint chezmoi hk node oxfmt updatecli
+          tools: actionlint chezmoi hk node node@24 npm:renovate oxfmt
       - name: Install Fish
         run: |
           sudo apt-get update

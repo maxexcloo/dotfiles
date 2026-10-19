@@ -1,0 +1,56 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  description: "Shared update policy for repositories owned by maxexcloo",
+  extends: [
+    "config:recommended",
+    ":disableDependencyDashboard",
+    ":prConcurrentLimitNone",
+    ":prHourlyLimitNone",
+  ],
+  // These managers only scan fixed filenames by default; Kubernetes, Flux and
+  // Crossplane resources can live in any YAML file.
+  crossplane: { managerFilePatterns: ["/\\.ya?ml$/"] },
+  flux: { managerFilePatterns: ["/\\.ya?ml$/"] },
+  kubernetes: { managerFilePatterns: ["/\\.ya?ml$/"] },
+  customManagers: [
+    {
+      customType: "regex",
+      description: "Pin the first version or commit on the line after a `renovate:` comment",
+      managerFilePatterns: ["/.*/"],
+      matchStrings: [
+        "(?:#|//)\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)(?:\\s+packageName=(?<packageName>\\S+))?(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+extractVersion=(?<extractVersion>\\S+))?\\s*\\n[^\\n]*?(?<currentValue>v?\\d+(?:\\.\\d+)+(?:-[\\w.]+)?)",
+        "(?:#|//)\\s*renovate:\\s*datasource=(?<datasource>git-refs)\\s+depName=(?<depName>\\S+)\\s*\\n[^\\n]*?(?<currentDigest>[a-f0-9]{40})",
+      ],
+    },
+    {
+      customType: "regex",
+      datasourceTemplate: "docker",
+      description: "Image references in fields other than `image`, such as CloudNativePG `imageName`",
+      managerFilePatterns: ["/\\.ya?ml$/"],
+      matchStrings: [
+        "(?:imageName|reference):\\s*[\"']?(?<depName>[\\w.-]+(?::\\d+)?/[\\w./-]+):(?<currentValue>[\\w.-]+)[\"']?",
+      ],
+    },
+    {
+      customType: "regex",
+      datasourceTemplate: "github-releases",
+      description: "Pkl packages published as GitHub release assets",
+      extractVersionTemplate: "^v(?<version>.+)$",
+      managerFilePatterns: ["/\\.pkl$/"],
+      // Match through `<package>@<version>` so both copies of the version change.
+      matchStrings: [
+        'package://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/v(?<currentValue>[^/]+)/[^@\\s]+@[^#\\s"]+',
+      ],
+    },
+    {
+      customType: "regex",
+      datasourceTemplate: "git-refs",
+      description: "Raw GitHub files pinned to a commit follow the default branch",
+      managerFilePatterns: ["/.*/"],
+      matchStrings: [
+        "https://raw\\.githubusercontent\\.com/(?<depName>[^/]+/[^/]+)/(?<currentDigest>[a-f0-9]{40})/",
+      ],
+      packageNameTemplate: "https://github.com/{{depName}}",
+    },
+  ],
+}

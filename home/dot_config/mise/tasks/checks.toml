@@ -20,7 +20,7 @@ if [ ! -d .github/workflows ]; then
   exit 0
 fi
 # Actionlint does not recognise native concurrency queues yet.
-actionlint -ignore 'unexpected key "queue" for "concurrency" section' {{vars.actionlint_args | default(value='')}}
+actionlint -ignore 'unexpected key "queue" for "concurrency" section'
 '''
 
 ["check:mise"]
@@ -48,25 +48,19 @@ if [ -z "$(git ls-files -- '*.py')" ]; then
   echo "No Python files found; skipping."
   exit 0
 fi
-ruff check --extend-select I {{vars.python_paths | default(value='.')}}
-ruff format --check {{vars.python_paths | default(value='.')}}
+ruff check --extend-select I .
+ruff format --check .
 '''
 
 ["check:shell"]
 description = "Check Shell Scripts"
 dir = "{{cwd}}"
 run = '''
-set --
-for path in {{vars.shell_paths | default(value='scripts/*.sh')}}; do
-  if [ -e "$path" ]; then
-    set -- "$@" "$path"
-  fi
-done
-if [ "$#" -eq 0 ]; then
+if [ -z "$(git ls-files -- '*.sh')" ]; then
   echo "No shell scripts found; skipping."
   exit 0
 fi
-shellcheck "$@"
+git ls-files -z -- '*.sh' | xargs -0 shellcheck
 '''
 
 ["check:typescript"]
@@ -75,31 +69,12 @@ dir = "{{cwd}}"
 run = "tsc --noEmit"
 
 ["check:updates"]
-description = "Validate Updatecli Policies"
+description = "Validate Renovate Configuration"
 dir = "{{cwd}}"
-env.GITHUB_TOKEN = "validation-placeholder"
+tools = { node = "24" }
+# Shared presets live under renovate/.
 run = '''
-set -eu
-directory=$(mktemp -d)
-trap 'rm -rf -- "$directory"' EXIT
-mkdir "$directory/actions"
-mise run --quiet dependencies:actions "$directory/actions"
-set --
-if [ -n "$(ls -A "$directory/actions")" ]; then
-  set -- --config "$directory/actions"
-fi
-if [ -d .updatecli.d ]; then
-  set -- "$@" --config .updatecli.d
-fi
-{% if vars.updatecli_generator is defined -%}
-{{vars.updatecli_generator}} "$directory/generated"
-set -- "$@" --config "$directory/generated"
-{% endif -%}
-if [ "$#" -eq 0 ]; then
-  echo "No Updatecli policies found; skipping."
-  exit 0
-fi
-updatecli manifest validate "$@" --strict --unique-tmp-dir
+renovate-config-validator --no-global --strict renovate.json5 $(git ls-files -- 'renovate/*.json5')
 '''
 
 ["check:whitespace"]

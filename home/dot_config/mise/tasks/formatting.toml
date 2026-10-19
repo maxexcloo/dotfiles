@@ -12,6 +12,6 @@ run = "oxfmt --write --no-error-on-unmatched-pattern ."
 description = "Sort Python Imports & Format Code"
 dir = "{{cwd}}"
 run = """
-ruff check --fix --select I {{vars.python_paths | default(value='.')}}
-ruff format {{vars.python_paths | default(value='.')}}
+ruff check --fix --select I .
+ruff format .
 """
