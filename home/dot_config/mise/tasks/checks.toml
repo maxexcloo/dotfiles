@@ -48,7 +48,7 @@ if [ -z "$(git ls-files -- '*.py')" ]; then
   echo "No Python files found; skipping."
   exit 0
 fi
-ruff check --extend-select I {{vars.ruff_args | default(value='')}} {{vars.python_paths | default(value='.')}}
+ruff check --extend-select I {{vars.python_paths | default(value='.')}}
 ruff format --check {{vars.python_paths | default(value='.')}}
 '''
 

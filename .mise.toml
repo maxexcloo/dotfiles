@@ -1,6 +1,3 @@
-[tools]
-# chezmoi = "latest"
-
 [tasks.apply]
 run = 'chezmoi --source "{{config_root}}" apply'
 
