@@ -1,3 +1,9 @@
+[env]
+PYTEST_ADDOPTS = "-p no:cacheprovider"
+PYTHONPYCACHEPREFIX = "{{env.HOME}}/.cache/pycache"
+RUFF_CACHE_DIR = "{{env.HOME}}/.cache/ruff"
+TF_PLUGIN_CACHE_DIR = "{{env.HOME}}/.cache/opentofu/plugins"
+
 [settings]
 cache_prune_age = "1d"
 minimum_release_age = "0"
