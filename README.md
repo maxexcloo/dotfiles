@@ -101,7 +101,6 @@ depends = ["check:python", "check:updates", "test:python"]
 | `python_paths`          | `check:python`, `fmt:python`      | Paths for Ruff, defaulting to `.`.                                            |
 | `python_test_directory` | `test:python`                     | Unittest discovery directory, defaulting to `tests`.                          |
 | `python_test_runner`    | `test:python`                     | Python command, defaulting to `python -B`.                                    |
-| `ruff_args`             | `check:python`                    | Extra `ruff check` options.                                                   |
 | `shell_paths`           | `check:shell`                     | ShellCheck globs, defaulting to `scripts/*.sh`.                               |
 | `updatecli_generator`   | `check:updates`, `dependencies:*` | Command that writes extra policies into the directory passed as its argument. |
 
