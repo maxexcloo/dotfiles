@@ -1,0 +1,10 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- $config := deepCopy $original -}}
+{{- $preferences := dict "collapseChangelog" true -}}
+{{- $config = mergeOverwrite $config $preferences -}}
+{{- if deepEqual $original $config -}}
+{{ .chezmoi.stdin -}}
+{{- else -}}
+{{ $config | toPrettyJson -}}
+{{- end -}}

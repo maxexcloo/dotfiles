@@ -4,7 +4,6 @@
 description = "Preview Dependency Updates"
 dir = "{{cwd}}"
 env.RENOVATE_X_IGNORE_RE2 = "true"
-tools = { node = "24" }
 run = '''
 set -eu
 report=$(mktemp)
@@ -23,6 +22,7 @@ else
   echo "No dependency updates found."
 fi
 '''
+tools = { node = "24" }
 
 ["dependencies:mise:check"]
 description = "Preview Project Tool Updates"
@@ -38,7 +38,6 @@ run = "mise upgrade --bump --local --no-prune"
 description = "Open Dependency Update Pull Requests"
 dir = "{{cwd}}"
 env.RENOVATE_X_IGNORE_RE2 = "true"
-tools = { node = "24" }
 run = '''
 set -eu
 repository=$(gh repo view --json nameWithOwner --jq .nameWithOwner)
@@ -46,3 +45,4 @@ RENOVATE_TOKEN=$(gh auth token)
 export RENOVATE_TOKEN
 renovate --onboarding=false --platform=github --require-config=required "$repository"
 '''
+tools = { node = "24" }

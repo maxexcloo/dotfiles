@@ -1,19 +1,14 @@
-# Editor Temporary Files
-*.swo
-*.swp
-*~
-
-# Operating System & Synchronisation State
-.DS_Store
 .Spotlight-V100/
 .Trashes/
-._*
-.stfolder/
-.stversions/
-
-# Python Tool Caches
-*.py[cod]
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+.stfolder/
+.stversions/
 __pycache__/
+*.py[cod]
+*.swo
+*.swp
+*~
+.DS_Store
+._*

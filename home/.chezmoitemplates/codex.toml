@@ -9,7 +9,6 @@ suppress_unstable_features_warning = true
 [features]
 daemon_auto_start = false
 default_mode_request_user_input = true
-hooks = true
 
 [notice]
 hide_rate_limit_model_nudge = true

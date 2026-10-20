@@ -13,15 +13,20 @@ home directory using chezmoi attributes: `dot_config/` maps to `~/.config/`, and
 
 Edit preferences in `home/`, then apply them. Ordinary preferences become regular
 files at their application paths, so edits in the checkout take effect after an
-apply. Codex and OpenCode use native modify templates to merge in managed
-preferences and MCP settings, keeping local application state and other provider
-settings. Generated hook hashes, onboarding state and project trust entries stay
-local.
+apply. Claude Code, Codex, OpenCode and Pi use native modify templates to merge in
+managed preferences, keeping local application state and other provider settings.
+Generated hook hashes, onboarding state and project trust entries stay local.
 
-MCP endpoints and client-specific 1Password field references are defined once in
-`home/.chezmoidata.toml`. Each client uses its own LiteLLM key. Chezmoi resolves
-credentials locally through the 1Password CLI and writes private application
-files with mode `600`. Keep resolved values out of Git and command output.
+Client update checks are disabled so Mise owns upgrades. Claude Code uses
+`DISABLE_AUTOUPDATER` in its settings, Codex uses `check_for_update_on_startup`,
+and OpenCode uses `update`. Pi requires `PI_SKIP_VERSION_CHECK` in the shared Mise
+environment; its settings also collapse the changelog after Mise upgrades.
+
+MCP endpoints are defined once in `home/.chezmoidata.toml`. Each client keeps its
+existing LiteLLM key in the server's Authorization header. Chezmoi updates the
+managed preferences and endpoints while preserving credentials in private
+application files. Configure credentials in each client; keep their values out
+of Git and command output.
 
 Orca hooks and plugins, accounts, caches, history, SSH host inventories and
 application databases are left to their applications. The OpenCode TUI
@@ -31,8 +36,8 @@ are kept.
 ## Usage
 
 Install Mise and the required applications. Enable the 1Password desktop
-integration and unlock the vault containing the referenced MCP fields. Homebrew
-is not required for chezmoi.
+integration for Git signing and SSH authentication. Homebrew is not required for
+chezmoi.
 
 From this checkout, bootstrap the shared Mise directory with a temporary chezmoi,
 then install the global tools it declares:
@@ -49,10 +54,10 @@ mise run verify
 
 `setup` points chezmoi at this checkout. `check` runs Actionlint, Renovate
 configuration validation and Hk's formatting, hygiene and Fish syntax checks. It
-needs the shared Mise configuration but not vault access. `status` lists pending
-changes without printing credentials, but still needs vault access to render
-templates. `apply` uses chezmoi's normal conflict handling. `verify` checks the
-live workstation and needs vault access.
+needs the shared Mise configuration. `status` lists pending changes without
+printing credentials. `apply` uses chezmoi's normal conflict handling. `verify`
+checks the live workstation. These tasks do not resolve credentials or need vault
+access.
 
 To sync another workstation, clone this repository, pull the revision you want
 and run the same commands. Changes to live files aren't imported automatically.
@@ -62,10 +67,12 @@ so copy those edits back into `home/`.
 ## Shared Agent Guidance
 
 Clone the Agents repository beside this checkout. Chezmoi links its shared
-instructions and skills into `~/.agents`, then links `AGENTS.md` into Claude Code
-(as `CLAUDE.md`), Codex, OpenCode and Pi. A run-on-change script also links each
-skill under `home/dot_agents/skills` into `~/.claude/skills` and leaves Claude's
-synced skills alone. Links for removed skills have to be deleted by hand.
+instructions and skills into `~/.agents`, then links `AGENTS.md` into Codex,
+OpenCode and Pi.
+
+The `~/.agents/skills/personal` directory link exposes the sibling Agents skill
+collection through recursive discovery. Adding or removing a skill needs no
+per-skill dotfiles entry or linking script.
 
 Upstream skills are managed here, and my own skills live in the Agents
 repository. `home/.chezmoiexternal.toml.tmpl` pins and checksums the Humanizer, Orca,

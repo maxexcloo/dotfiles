@@ -1,13 +1,11 @@
-# Shared providers for every project's fnox.toml.
 [providers.automation]
 type = "1password"
 vault = "Automation"
 token = { secret = "OP_SERVICE_ACCOUNT_TOKEN" }
 
 [providers.keychain]
-type = "keychain"
 service = "fnox"
+type = "keychain"
 
-# Read-only service account for the Automation vault; used only to reach 1Password, never exported.
 [secrets]
-OP_SERVICE_ACCOUNT_TOKEN = { provider = "keychain", value = "op-service-account-automation", env = false }
+OP_SERVICE_ACCOUNT_TOKEN = { env = false, provider = "keychain", value = "op-service-account-automation" }

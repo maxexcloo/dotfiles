@@ -3,6 +3,7 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := includeTemplate "opencode.json" . | fromJson -}}
 {{- $config = mergeOverwrite $config $preferences -}}
+{{- $config = unset $config "autoupdate" -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp" $name "oauth") false $config -}}
 {{- $config = setValueAtPath (list "mcp" $name "type") "remote" $config -}}

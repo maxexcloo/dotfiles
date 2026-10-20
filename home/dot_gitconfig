@@ -4,6 +4,11 @@ gpgsign = true
 [gpg]
 format = ssh
 
+[user]
+email = max@excloo.com
+name = Max Schaefer
+signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIaF+DCJq1CyGrafKzDMtNjW02M5XJoH5MLFFSlHPjyz
+
 [gpg "ssh"]
 program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
 
@@ -13,9 +18,4 @@ command = gitleaks git --pre-commit --staged --redact --no-banner --log-level wa
 event = pre-commit
 
 [url "git@github.com:"]
-	insteadOf = https://github.com/
-
-[user]
-email = max@excloo.com
-name = Max Schaefer
-signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIaF+DCJq1CyGrafKzDMtNjW02M5XJoH5MLFFSlHPjyz
+insteadOf = https://github.com/
