@@ -6,6 +6,12 @@
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp_servers" $name "url") $server.url $config -}}
 {{- end -}}
+{{- range $name, $server := (get $config "mcp_servers" | default dict) -}}
+{{-   if contains "litellm.excloo.com" (get $server "url" | default "") -}}
+{{-     $_ := unset $server "http_headers" -}}
+{{-     $_ := set $server "bearer_token_env_var" "LITELLM_CODEX_KEY" -}}
+{{-   end -}}
+{{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
 {{- else -}}

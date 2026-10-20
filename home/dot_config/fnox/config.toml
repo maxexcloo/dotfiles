@@ -9,3 +9,8 @@ type = "keychain"
 
 [secrets]
 OP_SERVICE_ACCOUNT_TOKEN = { env = false, provider = "keychain", value = "op-service-account-automation" }
+# LiteLLM virtual keys for the agents' MCP access; 1Password "LiteLLM Agents" (Automation) holds the originals.
+LITELLM_CLAUDE_KEY = { env = false, provider = "keychain", value = "litellm-claude" }
+LITELLM_CODEX_KEY = { env = false, provider = "keychain", value = "litellm-codex" }
+LITELLM_OPENCODE_KEY = { env = false, provider = "keychain", value = "litellm-opencode" }
+LITELLM_PI_KEY = { env = false, provider = "keychain", value = "litellm-pi" }

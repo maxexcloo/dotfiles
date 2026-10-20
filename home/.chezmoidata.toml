@@ -1,8 +1,8 @@
 # Upstream skill packages, relative to the home directory.
 agentSkillsPath = ".local/share/agent-skills"
 
-# Clients keep the LiteLLM virtual key they were given in each server's
-# Authorization header; chezmoi manages only the server URLs.
+# Each client reads its own LiteLLM virtual key at use: Codex and opencode from an
+# exported variable, Claude and pi by running fnox; the keys live in the keychain.
 [mcp.home_assistant]
 url = "https://litellm.excloo.com/mcp/home_assistant"
 
