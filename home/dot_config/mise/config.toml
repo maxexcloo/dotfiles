@@ -39,4 +39,6 @@ talosctl = "latest"
 uv = "latest"
 yq = "latest"
 # Renovate depends on this release, which lacks provenance (2025-09-18, Yarn maintainer).
-"npm:renovate" = { version = "latest", trust_policy_excludes = ["@yarnpkg/libzip@3.2.2"] }
+"npm:renovate" = { version = "latest", trust_policy_excludes = [
+  "@yarnpkg/libzip@3.2.2",
+] }

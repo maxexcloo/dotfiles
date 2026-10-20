@@ -2,10 +2,30 @@
 run = 'chezmoi --source "{{config_root}}" apply'
 
 [tasks.check]
-depends = ["check:actions", "check:updates", "hooks:check"]
+depends = ["check:actions", "check:mise", "check:updates", "hooks:check"]
+
+[tasks."check:mise"]
+run = '''
+set -eu
+status=0
+for config in .mise.toml home/dot_config/mise/*.toml home/dot_config/mise/tasks/*.toml; do
+  formatted=$(mise fmt --stdin < "$config")
+  printf '%s\n' "$formatted" | diff -u "$config" - || status=1
+done
+exit "$status"
+'''
 
 [tasks.fmt]
-depends = ["fmt:oxfmt"]
+depends = ["fmt:mise", "fmt:oxfmt"]
+
+[tasks."fmt:mise"]
+run = '''
+set -eu
+for config in .mise.toml home/dot_config/mise/*.toml home/dot_config/mise/tasks/*.toml; do
+  formatted=$(mise fmt --stdin < "$config")
+  printf '%s\n' "$formatted" > "$config"
+done
+'''
 
 [tasks.setup]
 run = 'chezmoi --source "{{config_root}}" init'

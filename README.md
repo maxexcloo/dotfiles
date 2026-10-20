@@ -52,9 +52,10 @@ mise run apply
 mise run verify
 ```
 
-`setup` points chezmoi at this checkout. `check` runs Actionlint, Renovate
-configuration validation and Hk's formatting, hygiene and Fish syntax checks. It
-needs the shared Mise configuration. `status` lists pending changes without
+`fmt` formats repository files and all shared Mise config and task files.
+`setup` points chezmoi at this checkout. `check` runs Actionlint, Mise formatting,
+Renovate validation and Hk's formatting, hygiene and Fish syntax checks. It needs
+the shared Mise configuration. `status` lists pending changes without
 printing credentials. `apply` uses chezmoi's normal conflict handling. `verify`
 checks the live workstation. These tasks do not resolve credentials or need vault
 access.
