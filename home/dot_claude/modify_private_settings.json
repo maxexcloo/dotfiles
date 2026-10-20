@@ -1,0 +1,11 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- $config := deepCopy $original -}}
+{{- $preferences := dict "env" (dict "DISABLE_AUTOUPDATER" "1") -}}
+{{- $config = mergeOverwrite $config $preferences -}}
+{{- $_ := set $config "hooks" (includeTemplate "secret-guard-hooks" (dict "hooks" (get $config "hooks") "pre" "Bash|Read|Grep" "agent" "claude") | fromJson) -}}
+{{- if deepEqual $original $config -}}
+{{ .chezmoi.stdin -}}
+{{- else -}}
+{{ $config | toPrettyJson -}}
+{{- end -}}

@@ -1,0 +1,9 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- $config := deepCopy $original -}}
+{{- $_ := set $config "hooks" (includeTemplate "secret-guard-hooks" (dict "hooks" (get $config "hooks") "pre" "Bash" "agent" "codex") | fromJson) -}}
+{{- if deepEqual $original $config -}}
+{{ .chezmoi.stdin -}}
+{{- else -}}
+{{ $config | toPrettyJson -}}
+{{- end -}}
