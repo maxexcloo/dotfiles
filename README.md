@@ -68,8 +68,8 @@ skill under `home/dot_agents/skills` into `~/.claude/skills` and leaves Claude's
 synced skills alone. Links for removed skills have to be deleted by hand.
 
 Upstream skills are managed here, and my own skills live in the Agents
-repository. `home/.chezmoiexternal.toml.tmpl` pins and checksums the Orca, TerraShark
-and Web Awesome packages, installs them under `~/.local/share/agent-skills` and
+repository. `home/.chezmoiexternal.toml.tmpl` pins and checksums the Humanizer, Orca,
+TerraShark and Web Awesome packages, installs them under `~/.local/share/agent-skills` and
 links their skills into `~/.agents/skills`. Change package pins there and apply
 through chezmoi. Personal activation and preview rules stay in the Agents
 repository's `AGENTS.md`, so the upstream packages stay unmodified.
