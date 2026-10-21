@@ -55,10 +55,10 @@ mise run verify
 
 `fmt` formats repository files and all shared Mise config and task files.
 `setup` points chezmoi at this checkout. `check` runs Actionlint, Mise formatting,
-Renovate validation and Hk's formatting, hygiene and Fish syntax checks. It needs
-the shared Mise configuration. `status` lists pending changes without
-printing credentials. `apply` uses chezmoi's normal conflict handling. `verify`
-checks the live workstation. These tasks do not resolve credentials or need vault
+Renovate validation, MCP merge fixtures and Hk's formatting, hygiene, Fish syntax
+and secret-guard ShellCheck checks. It needs the shared Mise configuration.
+`status` lists pending changes without printing credentials. `apply` uses
+chezmoi's normal conflict handling. `verify` checks the live workstation. These tasks do not resolve credentials or need vault
 access.
 
 To sync another workstation, clone this repository, pull the revision you want
@@ -78,10 +78,12 @@ per-skill dotfiles entry or linking script.
 
 Upstream skills are managed here, and my own skills live in the Agents
 repository. `home/.chezmoiexternal.toml.tmpl` pins and checksums the Humanizer, Orca,
-TerraShark and Web Awesome packages, installs them under `~/.local/share/agent-skills` and
-links their skills into `~/.agents/skills`. Change package pins there and apply
-through chezmoi. Personal activation and preview rules stay in the Agents
-repository's `AGENTS.md`, so the upstream packages stay unmodified.
+TerraShark and Web Awesome packages, installs them under
+`~/.local/share/agent-skills` and links their skills into `~/.agents/skills`.
+Dotfiles maintenance owns these updates: review upstream changes, update each pin and archive checksum together,
+verify extraction and apply through chezmoi. Renovate does not update these
+coupled pins independently. Personal activation and preview rules stay in the
+Agents repository's `AGENTS.md`, so upstream packages stay unmodified.
 
 ## Shared Tools & Tasks
 
