@@ -1,7 +1,7 @@
 # Dotfiles
 
 - Keep workstation preferences in the mirrored chezmoi source tree under `home/`.
-- Keep only 1Password references in source; never commit or print resolved credentials.
+- Keep only credential references (1Password titles or fnox keychain entries) in source; never commit or print resolved credentials.
 - Keep credential-bearing targets private and merge their preferences with native chezmoi modify templates.
 - Keep shared agent instructions and self-written skills in `../agents`. Manage their workstation links and skill discovery configuration here. Install upstream skills through native chezmoi externals; keep personal rules in the Agents repository rather than patching upstream packages.
 - Link the sibling Agents skill collection as `~/.agents/skills/personal` for recursive discovery; keep explicit templates only for upstream skill links.
