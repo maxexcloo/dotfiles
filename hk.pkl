@@ -11,9 +11,6 @@ steps {
   }
   ["newlines"] = Builtins.newlines
   ["oxfmt"] = Builtins.oxfmt
-  ["secret-guard"] {
-    check = "shellcheck {{files}}"
-    glob = List("home/dot_agents/hooks/executable_secret-guard")
-  }
+  ["shellcheck"] = Builtins.shellcheck
   ["trailing-whitespace"] = Builtins.trailing_whitespace
 }

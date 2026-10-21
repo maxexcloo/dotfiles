@@ -79,6 +79,8 @@ if [ ! -f renovate.json5 ]; then
   echo "No Renovate configuration found; skipping."
   exit 0
 fi
+# Fail when the task's Node is missing instead of validating on another Node on PATH.
+mise which node >/dev/null
 renovate-config-validator --no-global --strict renovate.json5 $(git ls-files -- 'renovate/*.json5')
 '''
 tools = { node = "24" }

@@ -56,7 +56,7 @@ mise run verify
 `fmt` formats repository files and all shared Mise config and task files.
 `setup` points chezmoi at this checkout. `check` runs Actionlint, Mise formatting,
 Renovate validation, MCP merge fixtures and Hk's formatting, hygiene, Fish syntax
-and secret-guard ShellCheck checks. It needs the shared Mise configuration.
+and ShellCheck checks. It needs the shared Mise configuration.
 `status` lists pending changes without printing credentials. `apply` uses
 chezmoi's normal conflict handling. `verify` checks the live workstation. These tasks do not resolve credentials or need vault
 access.
@@ -130,12 +130,13 @@ depends = ["check:python", "check:updates", "test:python"]
 
 ## Dependency Updates
 
-Every repository has a `renovate.json5` that extends the shared preset in
-`renovate/default.json5`, adding only its own exceptions. Home Assistant
+Every repository with dependencies has a `renovate.json5` that extends the shared
+preset in `renovate/default.json5`, adding only its own exceptions. Home Assistant
 integrations also extend `renovate/home-assistant.json5`, which keeps the minimum
 Home Assistant version and its test fixtures in step. Renovate's native
 managers find Actions, containers, Kubernetes, Flux, Helm, Mise, npm, Python, Go
-and OpenTofu dependencies. The preset adds generic managers for Pkl packages, raw
+and OpenTofu dependencies, and lockfile maintenance refreshes transitive locked
+packages. The preset adds generic managers for Pkl packages, raw
 GitHub files pinned to a commit and image references outside `image` fields. Any
 other pin gets a comment on the line above it:
 
