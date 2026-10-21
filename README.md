@@ -55,8 +55,8 @@ mise run verify
 
 `fmt` formats repository files and all shared Mise config and task files.
 `setup` points chezmoi at this checkout. `check` runs Actionlint, Mise formatting,
-Renovate validation, MCP merge fixtures and Hk's formatting, hygiene, Fish syntax
-and ShellCheck checks. It needs the shared Mise configuration.
+Renovate validation, MCP merge and secret-guard redaction fixtures and Hk's formatting,
+hygiene, Fish syntax and ShellCheck checks. It needs the shared Mise configuration.
 `status` lists pending changes without printing credentials. `apply` uses
 chezmoi's normal conflict handling. `verify` checks the live workstation. These tasks do not resolve credentials or need vault
 access.

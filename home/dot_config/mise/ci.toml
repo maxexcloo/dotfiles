@@ -10,6 +10,7 @@ run_auto_install = false
 actionlint = "latest"
 chezmoi = "latest"
 gh = "latest"
+gitleaks = "latest"
 helm = "latest"
 hk = "latest"
 jq = "latest"
