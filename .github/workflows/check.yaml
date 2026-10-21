@@ -26,7 +26,7 @@ jobs:
       - name: Set Up Shared Tools & Tasks
         uses: ./.github/actions/mise
         with:
-          tools: actionlint chezmoi hk node node@24 npm:renovate oxfmt shellcheck
+          tools: actionlint chezmoi gitleaks hk node node@24 npm:renovate oxfmt shellcheck
       - name: Install Fish
         run: |
           sudo apt-get update
