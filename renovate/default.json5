@@ -9,6 +9,12 @@
   ],
   packageRules: [
     {
+      allowedVersions: "/^v[0-9]+[.][0-9]+[.][0-9]+$/",
+      description: "Use ComfyUI Radiance source tags rather than historical packaging tags",
+      matchDatasources: ["docker"],
+      matchPackageNames: ["ghcr.io/maxexcloo/comfyui-radiance"],
+    },
+    {
       description: "Let npm releases settle before proposing them",
       matchDatasources: ["npm"],
       minimumReleaseAge: "1 day",
