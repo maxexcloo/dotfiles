@@ -2,7 +2,13 @@
 run = 'chezmoi --source "{{config_root}}" apply'
 
 [tasks.check]
-depends = ["check:actions", "check:mise", "check:updates", "hooks:check"]
+depends = [
+  "check:actions",
+  "check:mise",
+  "check:updates",
+  "hooks:check",
+  "test",
+]
 
 [tasks."check:mise"]
 run = '''
@@ -32,6 +38,9 @@ run = 'chezmoi --source "{{config_root}}" init'
 
 [tasks.status]
 run = 'chezmoi --source "{{config_root}}" status'
+
+[tasks.test]
+run = "node --test"
 
 [tasks.verify]
 run = 'chezmoi --source "{{config_root}}" verify'

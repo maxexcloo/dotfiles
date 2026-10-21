@@ -2,11 +2,12 @@
 {{- /* Claude fetches its LiteLLM key at connect time instead of storing it in the header. */ -}}
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
-{{- range $name, $server := (get $config "mcpServers" | default dict) -}}
-{{-   if contains "litellm.excloo.com" (get $server "url" | default "") -}}
-{{-     $_ := unset $server "headers" -}}
-{{-     $_ := set $server "headersHelper" "fnox get LITELLM_CLAUDE_KEY | jq -Rc '{\"x-litellm-api-key\": .}'" -}}
-{{-   end -}}
+{{- range $name, $managed := .mcp -}}
+{{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}
+{{- $server := index $config "mcpServers" $name -}}
+{{- $_ := set $server "type" "http" -}}
+{{- $_ := unset $server "headers" -}}
+{{- $_ := set $server "headersHelper" "fnox get LITELLM_CLAUDE_KEY | jq -Rc '{\"x-litellm-api-key\": .}'" -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

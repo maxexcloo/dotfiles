@@ -8,11 +8,8 @@
 {{- $config = setValueAtPath (list "mcp" $name "oauth") false $config -}}
 {{- $config = setValueAtPath (list "mcp" $name "type") "remote" $config -}}
 {{- $config = setValueAtPath (list "mcp" $name "url") $server.url $config -}}
-{{- end -}}
-{{- range $name, $server := (get $config "mcp" | default dict) -}}
-{{-   if contains "litellm.excloo.com" (get $server "url" | default "") -}}
-{{-     $_ := set $server "headers" (dict "Authorization" "Bearer {env:LITELLM_OPENCODE_KEY}") -}}
-{{-   end -}}
+{{- $server := index $config "mcp" $name -}}
+{{- $_ := set $server "headers" (dict "Authorization" "Bearer {env:LITELLM_OPENCODE_KEY}") -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
