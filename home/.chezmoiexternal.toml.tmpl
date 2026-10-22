@@ -1,47 +1,31 @@
-{{- /* Manual update owner: Dotfiles maintenance reviews upstream skill changes,
-      updates each revision/version and archive checksum together, then verifies
-      chezmoi extraction. Renovate must not change these pins independently. */ -}}
-{{- $humanizerRevision := "8c307f367c91bd974002f10f2be2965d642c13df" -}}
-{{- $orcaRevision := "eaa1ee131d65a13ca6202abcf33c7a09722ed4e3" -}}
-{{- $terrasharkRevision := "21f2c18b912818b6a8e2b7bdbf25a275ecb894b1" -}}
-{{- $webawesomeVersion := "3.14.0" -}}
-
 [{{ joinPath .agentSkillsPath "humanizer" | quote }}]
 type = "archive"
 exact = true
 stripComponents = 1
-url = "https://github.com/blader/humanizer/archive/{{ $humanizerRevision }}.tar.gz"
+# renovate: datasource=git-refs depName=https://github.com/blader/humanizer
+url = "https://github.com/blader/humanizer/archive/8c307f367c91bd974002f10f2be2965d642c13df.tar.gz"
 include = ["*/LICENSE", "*/README.md", "*/SKILL.md"]
-
-[{{ joinPath .agentSkillsPath "humanizer" | quote }}.checksum]
-sha512 = "b4b1de46b67f9fa5f68994d10bc1945d051f47bf437dd268e3390b9c23db5b2e53468c52d1a556e6fed1cbc91c33aec66f9bcc1b898c2d5368f3afa37ca59031"
 
 [{{ joinPath .agentSkillsPath "orca" | quote }}]
 type = "archive"
 exact = true
 stripComponents = 1
-url = "https://github.com/stablyai/orca/archive/{{ $orcaRevision }}.tar.gz"
+# renovate: datasource=git-refs depName=https://github.com/stablyai/orca
+url = "https://github.com/stablyai/orca/archive/eaa1ee131d65a13ca6202abcf33c7a09722ed4e3.tar.gz"
 include = ["*/LICENSE*", "*/skills", "*/skills/orca-cli/**", "*/skills/orchestration/**"]
-
-[{{ joinPath .agentSkillsPath "orca" | quote }}.checksum]
-sha512 = "99f01c7b99a42f0d4435d018c701f9b829f49462e6e7be8f476ba5a9addca5d7e986430d7931ee90cdd8ed54b38e40309268edc0fc12e55bfcdb3eef62d9f522"
 
 [{{ joinPath .agentSkillsPath "terrashark" | quote }}]
 type = "archive"
 exact = true
 stripComponents = 1
-url = "https://github.com/LukasNiessen/terrashark/archive/{{ $terrasharkRevision }}.tar.gz"
+# renovate: datasource=git-refs depName=https://github.com/LukasNiessen/terrashark
+url = "https://github.com/LukasNiessen/terrashark/archive/21f2c18b912818b6a8e2b7bdbf25a275ecb894b1.tar.gz"
 include = ["*/LICENSE", "*/README.md", "*/SKILL.md", "*/references/**"]
-
-[{{ joinPath .agentSkillsPath "terrashark" | quote }}.checksum]
-sha512 = "a96e9baae1cffc2e21cd439f006cd09dff5c0e8b2ce40d333a6a38cce161c361a1106ec6cd7a7729de3e439c7787ef593b181bc68a2474cfe9652a8a92036424"
 
 [{{ joinPath .agentSkillsPath "webawesome" | quote }}]
 type = "archive"
 exact = true
 stripComponents = 1
-url = "https://registry.npmjs.org/@awesome.me/webawesome/-/webawesome-{{ $webawesomeVersion }}.tgz"
+# renovate: datasource=npm depName=@awesome.me/webawesome
+url = "https://registry.npmjs.org/@awesome.me/webawesome/-/webawesome-3.14.0.tgz"
 include = ["package/LICENSE.md", "package/dist", "package/dist/skills", "package/dist/skills/webawesome/**", "package/dist/skills/webawesome-design/**"]
-
-[{{ joinPath .agentSkillsPath "webawesome" | quote }}.checksum]
-sha512 = "9b9ad318b2bf88ebda5453a46314638813a9f25c2b05aa79b6ffb3cf582ca8b800c657f076f12507b0551a3b3e2dff600e9b3b6d644f4e41b4170664e349a4d8"
