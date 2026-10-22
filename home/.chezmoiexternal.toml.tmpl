@@ -21,11 +21,3 @@ stripComponents = 1
 # renovate: datasource=git-refs depName=https://github.com/LukasNiessen/terrashark
 url = "https://github.com/LukasNiessen/terrashark/archive/21f2c18b912818b6a8e2b7bdbf25a275ecb894b1.tar.gz"
 include = ["*/LICENSE", "*/README.md", "*/SKILL.md", "*/references/**"]
-
-[{{ joinPath .agentSkillsPath "webawesome" | quote }}]
-type = "archive"
-exact = true
-stripComponents = 1
-# renovate: datasource=npm depName=@awesome.me/webawesome
-url = "https://registry.npmjs.org/@awesome.me/webawesome/-/webawesome-3.14.0.tgz"
-include = ["package/LICENSE.md", "package/dist", "package/dist/skills", "package/dist/skills/webawesome/**", "package/dist/skills/webawesome-design/**"]

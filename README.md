@@ -80,8 +80,8 @@ loads the Agents repository as a plugin instead, enabled through
 mirrors each upstream skill link.
 
 Upstream skills are managed here, and my own skills live in the Agents
-repository. `home/.chezmoiexternal.toml.tmpl` pins the Humanizer, Orca,
-TerraShark and Web Awesome packages for Renovate, installs them under
+repository. `home/.chezmoiexternal.toml.tmpl` pins the Humanizer, Orca
+and TerraShark packages for Renovate, installs them under
 `~/.local/share/agent-skills` and links their skills into `~/.agents/skills`.
 Personal activation and preview rules stay in the Agents repository's
 `AGENTS.md`, so upstream packages stay unmodified.
