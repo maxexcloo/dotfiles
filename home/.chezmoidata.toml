@@ -1,8 +1,6 @@
 # Upstream skill packages, relative to the home directory.
 agentSkillsPath = ".local/share/agent-skills"
 
-# Each client reads its own LiteLLM virtual key at use: Codex and opencode from an
-# exported variable, Claude and pi by running fnox; the keys live in the keychain.
 [mcp.home_assistant]
 url = "https://litellm.excloo.com/mcp/home_assistant"
 

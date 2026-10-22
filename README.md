@@ -48,18 +48,16 @@ mise exec chezmoi@latest -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise install
 mise run setup
 mise run check
-mise run status
-mise run apply
-mise run verify
+chezmoi status
+chezmoi apply
 ```
 
-`fmt` formats repository files and all shared Mise config and task files.
-`setup` points chezmoi at this checkout. `check` runs Actionlint, Mise formatting,
-Renovate validation, MCP merge and secret-guard redaction fixtures and Hk's formatting,
-hygiene, Fish syntax and ShellCheck checks. It needs the shared Mise configuration.
-`status` lists pending changes without printing credentials. `apply` uses
-chezmoi's normal conflict handling. `verify` checks the live workstation. These tasks do not resolve credentials or need vault
-access.
+`setup` points chezmoi at this checkout, so plain `chezmoi` commands work from
+anywhere afterwards. `fmt` formats repository files and all shared Mise config
+and task files. `check` runs Actionlint, Mise formatting, Renovate validation,
+MCP merge and secret-guard redaction fixtures and Hk's formatting, hygiene and
+ShellCheck checks. It needs the shared Mise configuration. None of these resolve
+credentials or need vault access.
 
 To sync another workstation, clone this repository, pull the revision you want
 and run the same commands. Changes to live files aren't imported automatically.
@@ -69,8 +67,8 @@ so copy those edits back into `home/`.
 ## Shared Agent Guidance
 
 Clone the Agents repository beside this checkout. Chezmoi links its shared
-instructions and skills into `~/.agents`, then links `AGENTS.md` into Codex,
-OpenCode and Pi.
+instructions and skills into `~/.agents`, then links `AGENTS.md` into Claude
+Code, Codex and Pi. OpenCode falls back to Claude Code's `~/.claude/CLAUDE.md`.
 
 The `~/.agents/skills/personal` directory link exposes the sibling Agents skill
 collection through recursive discovery. Adding or removing a skill needs no
@@ -82,56 +80,33 @@ loads the Agents repository as a plugin instead, enabled through
 mirrors each upstream skill link.
 
 Upstream skills are managed here, and my own skills live in the Agents
-repository. `home/.chezmoiexternal.toml.tmpl` pins and checksums the Humanizer, Orca,
-TerraShark and Web Awesome packages, installs them under
+repository. `home/.chezmoiexternal.toml.tmpl` pins the Humanizer, Orca,
+TerraShark and Web Awesome packages for Renovate, installs them under
 `~/.local/share/agent-skills` and links their skills into `~/.agents/skills`.
-Dotfiles maintenance owns these updates: review upstream changes, update each pin and archive checksum together,
-verify extraction and apply through chezmoi. Renovate does not update these
-coupled pins independently. Personal activation and preview rules stay in the
-Agents repository's `AGENTS.md`, so upstream packages stay unmodified.
+Personal activation and preview rules stay in the Agents repository's
+`AGENTS.md`, so upstream packages stay unmodified.
 
 ## Shared Tools & Tasks
 
-`home/dot_config/mise/config.toml` holds workstation settings and tools, all on
-`latest`. `ci.toml` declares the shared CI tools, also on `latest`, and turns off
-automatic installs. Repositories inherit these and only declare exact versions for
+`home/dot_config/mise/conf.d/tools.toml` declares the tools shared by the
+workstation and CI, and `config.toml` adds workstation-only settings and tools,
+all on `latest`. Repositories inherit these and only declare exact versions for
 project-specific tools or real compatibility requirements.
 
-Mise loads the shared tasks in `tasks/` globally. Repositories pick them through
-`depends` and keep their own tests, builds and operational tasks. Run tasks from
-the repository root. Each check skips itself when its inputs are missing. The
-global `check` runs every shared check except TypeScript, and a repository
-`check` task replaces it. Checks find their own inputs: ShellCheck reads every
-tracked `*.sh` file, Ruff reads the project's own configuration, and Python tests
-run from `tests/`, inside the locked environment when `uv.lock` exists.
+Mise loads the shared tasks in `tasks/` globally; `mise tasks` lists them.
+Repositories pick them through `depends` and keep their own tests, builds and
+operational tasks. Run tasks from the repository root. Each check skips itself
+when its inputs are missing. The global `check` runs every shared check except
+TypeScript, plus `test:python`, where a project's own override wins. A
+repository `check` task replaces it. Checks find their own inputs: ShellCheck
+reads every tracked `*.sh` file, Ruff reads the project's own configuration, and
+Python tests run from `tests/`, inside the locked environment when `uv.lock`
+exists.
 
 ```toml
 [tasks.check]
 depends = ["check:python", "check:updates", "test:python"]
 ```
-
-| Task                       | Purpose                                                    |
-| -------------------------- | ---------------------------------------------------------- |
-| `check`                    | Run every applicable shared check.                         |
-| `check:actions`            | Lint GitHub Actions workflows.                             |
-| `check:mise`               | Check Mise formatting.                                     |
-| `check:oxfmt`              | Check file formatting.                                     |
-| `check:python`             | Lint Python, including import order, and check formatting. |
-| `check:shell`              | Check tracked shell scripts.                               |
-| `check:typescript`         | Check TypeScript types.                                    |
-| `check:updates`            | Validate `renovate.json5` and presets under `renovate/`.   |
-| `check:whitespace`         | Check whitespace in tracked files.                         |
-| `dependencies:check`       | Preview Renovate updates from the local checkout.          |
-| `dependencies:mise:check`  | Preview native Mise tool upgrades.                         |
-| `dependencies:mise:update` | Apply reviewed native Mise tool upgrades.                  |
-| `dependencies:update`      | Open Renovate pull requests for the current repository.    |
-| `fmt:mise`                 | Format Mise configuration.                                 |
-| `fmt:oxfmt`                | Format project files.                                      |
-| `fmt:python`               | Sort imports and format Python.                            |
-| `hooks:check`              | Run all configured Hk steps.                               |
-| `hooks:install`            | Install the repository's configured Git hooks.             |
-| `orca:review`              | Open changed files as Orca diff tabs.                      |
-| `test:python`              | Run Python unittest discovery.                             |
 
 ## Dependency Updates
 
@@ -157,27 +132,13 @@ GitHub token inside their own process through GitHub CLI. Presets are read from
 GitHub, so changes to the shared preset take effect once they're merged.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The action
-loads only `ci.toml` and the shared tasks from its own revision, then installs the
+loads only the shared tools and tasks from its own revision, then installs the
 tools in the workflow's `with.tools`. List every tool the job runs, including
 ones used by nested tasks. Set `project-tools: true` to also install every tool
 the repository's own Mise configuration declares. The action doesn't apply
 workstation preferences or resolve credentials. Consumers follow `main` on
 purpose. That's a risk I accept because I control every consumer, but it means a
 shared change is a change to all of them.
-
-## Review Changes
-
-From an Orca-registered repository or worktree, run:
-
-```sh
-mise run orca:review
-```
-
-This global task uses Orca's native command to open changed files as GUI diff
-tabs. Leave inline comments or select line ranges, then use **Send To Agent** to
-submit the review as one batch. To review against an earlier baseline, pick
-another commit or branch in Orca's diff toolbar. The task only opens existing
-changes. It doesn't create commits, snapshots or agent sessions.
 
 ## Licence
 
