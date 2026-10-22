@@ -1,7 +1,7 @@
 background-blur = true
 background-opacity = 0.9
 font-family = Hack Nerd Font Mono
-font-size = 14
+font-size = 15
 font-thicken = true
 font-thicken-strength = 32
 initial-window = false
