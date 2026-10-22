@@ -76,6 +76,11 @@ The `~/.agents/skills/personal` directory link exposes the sibling Agents skill
 collection through recursive discovery. Adding or removing a skill needs no
 per-skill dotfiles entry or linking script.
 
+Claude Code doesn't read `~/.agents/skills` or recurse into collections. It
+loads the Agents repository as a plugin instead, enabled through
+`home/dot_claude/modify_private_settings.json`, and `home/dot_claude/skills/`
+mirrors each upstream skill link.
+
 Upstream skills are managed here, and my own skills live in the Agents
 repository. `home/.chezmoiexternal.toml.tmpl` pins and checksums the Humanizer, Orca,
 TerraShark and Web Awesome packages, installs them under
