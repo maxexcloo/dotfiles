@@ -5,6 +5,10 @@ dir = "{{cwd}}"
 # in parallel and print their buffered output as each finishes.
 run = '''
 set -eu
+if [ ! -d tests ]; then
+  echo "No tests found; skipping."
+  exit 0
+fi
 runner="python -B -m unittest"
 if [ -f uv.lock ]; then
   uv sync --locked --quiet

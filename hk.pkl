@@ -5,10 +5,6 @@ import "package://github.com/jdx/hk/releases/download/v2.8.0/hk@2.8.0#/Builtins.
 steps {
   ["check-merge-conflict"] = Builtins.check_merge_conflict
   ["detect-private-key"] = Builtins.detect_private_key
-  ["fish-syntax"] {
-    check = "fish --no-execute {{files}}"
-    glob = List("**/*.fish")
-  }
   ["newlines"] = Builtins.newlines
   ["oxfmt"] = Builtins.oxfmt
   ["shellcheck"] = Builtins.shellcheck

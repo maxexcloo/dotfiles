@@ -1,11 +1,6 @@
+# Shared by the workstation and, through the shared action, by CI.
 [settings]
-auto_install = false
 minimum_release_age = "0"
-# Source builds of fresh Python releases lack stdlib modules and stall CI setup.
-python.compile = false
-
-[settings.task]
-run_auto_install = false
 
 [tools]
 1password-cli = "latest"

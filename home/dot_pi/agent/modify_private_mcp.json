@@ -1,5 +1,4 @@
 {{- /* chezmoi:modify-template */ -}}
-{{- /* pi fetches its LiteLLM key when it connects instead of storing it in the header. */ -}}
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
 {{- range $name, $managed := .mcp -}}

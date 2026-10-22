@@ -1,5 +1,4 @@
 {{- /* chezmoi:modify-template */ -}}
-{{- /* Claude fetches its LiteLLM key at connect time instead of storing it in the header. */ -}}
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
 {{- range $name, $managed := .mcp -}}

@@ -1,9 +1,8 @@
 {{- /* chezmoi:modify-template */ -}}
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
-{{- $preferences := includeTemplate "opencode.json" . | fromJson -}}
+{{- $preferences := dict "$schema" "https://opencode.ai/config.json" "formatter" true "update" "disable" -}}
 {{- $config = mergeOverwrite $config $preferences -}}
-{{- $config = unset $config "autoupdate" -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp" $name "oauth") false $config -}}
 {{- $config = setValueAtPath (list "mcp" $name "type") "remote" $config -}}

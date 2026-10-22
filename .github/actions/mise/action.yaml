@@ -17,8 +17,15 @@ runs:
       env:
         SHARED_MISE_DIRECTORY: ${{ github.action_path }}/../../../home/dot_config/mise
       run: |
-        echo "MISE_CONFIG_DIR=$SHARED_MISE_DIRECTORY" >> "$GITHUB_ENV"
-        echo "MISE_GLOBAL_CONFIG_FILE=$SHARED_MISE_DIRECTORY/ci.toml" >> "$GITHUB_ENV"
+        {
+          echo "MISE_AUTO_INSTALL=false"
+          echo "MISE_CONFIG_DIR=$SHARED_MISE_DIRECTORY"
+          # Load the shared tools without the workstation configuration.
+          echo "MISE_GLOBAL_CONFIG_FILE=$SHARED_MISE_DIRECTORY/conf.d/tools.toml"
+          # Source builds of fresh Python releases lack stdlib modules and stall CI setup.
+          echo "MISE_PYTHON_COMPILE=false"
+          echo "MISE_TASK_RUN_AUTO_INSTALL=false"
+        } >> "$GITHUB_ENV"
     - name: Set Up Tools
       uses: jdx/mise-action@v5
       with:
