@@ -1,14 +1,12 @@
 # Dotfiles
 
 - Keep workstation preferences in the mirrored chezmoi source tree under `home/`.
-- Keep only credential references (1Password titles or fnox keychain entries) in source; never commit or print resolved credentials.
+- Keep only credential references (1Password titles or fnox keychain entries) in source.
 - Keep credential-bearing targets private and merge their preferences with native chezmoi modify templates.
 - Keep shared agent instructions and self-written skills in `../agents`. Manage their workstation links and skill discovery configuration here. Install upstream skills through native chezmoi externals; keep personal rules in the Agents repository rather than patching upstream packages.
-- Link the sibling Agents skill collection as `~/.agents/skills/personal` for recursive discovery; keep explicit templates only for upstream skill links.
-- Claude Code reads only `~/.claude/skills/<name>`, so mirror each upstream skill link there; the Claude settings template enables the Agents repository as a local plugin for its own skills. Claude Code reads global instructions only from `~/.claude/CLAUDE.md`, which links to the shared `AGENTS.md`.
 - Other repositories consume the shared Mise tasks and `.github/actions/mise` at `@main` (an accepted risk, as the owner controls every consumer). Check their `.mise.toml` and workflows before changing or removing shared behaviour; keep changes backwards compatible.
 - Every tool a CI job runs must be in its `with.tools` or declared by the repository with `project-tools: true`.
 - `mise use --global` and `mise upgrade --global` edit live files; reconcile those changes back into `home/`.
 - Keep application-managed hooks, caches, history, account state and generated host inventories outside this repository.
 - Preserve application destination paths and unrelated local state when changing source attributes or templates.
-- Run `mise run check` after changes. Use chezmoi's normal conflict handling for apply; do not force routine updates.
+- Use chezmoi's normal conflict handling for apply; do not force routine updates.
