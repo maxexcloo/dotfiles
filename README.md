@@ -23,7 +23,8 @@ and OpenCode uses `update`. Pi requires `PI_SKIP_VERSION_CHECK` in the shared Mi
 environment; its settings also collapse the changelog after Mise upgrades.
 
 MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
-the macOS keychain and referenced through `home/dot_config/fnox/config.toml`.
+the 1Password Automation vault and referenced through `home/dot_config/fnox/config.toml`,
+which reads them with a service account whose token is in the macOS keychain.
 Claude and Pi retrieve their own key when connecting. Codex and OpenCode read
 their keys from environment variables exported by the interactive Fish shell.
 Chezmoi replaces stored Bifrost headers with these references while preserving

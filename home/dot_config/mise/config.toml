@@ -15,7 +15,6 @@ prune_after = "0s"
 [tools]
 claude-code = "latest"
 codex = "latest"
-fnox = "latest"
 k9s = "latest"
 opencode = "latest"
 pi = "latest"
