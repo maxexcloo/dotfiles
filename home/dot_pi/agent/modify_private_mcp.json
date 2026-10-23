@@ -4,7 +4,7 @@
 {{- range $name, $managed := .mcp -}}
 {{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}
 {{- $server := index $config "mcpServers" $name -}}
-{{- $_ := set $server "headers" (dict "Authorization" "!echo Bearer $(fnox get LITELLM_PI_KEY)") -}}
+{{- $_ := set $server "headers" (dict "Authorization" "!echo Bearer $(fnox get BIFROST_PI_KEY)") -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

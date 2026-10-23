@@ -1,8 +1,14 @@
 # Upstream skill packages, relative to the home directory.
 agentSkillsPath = ".local/share/agent-skills"
 
+[mcp.actual_budget]
+url = "https://bifrost.excloo.com/mcp/actual-budget"
+
 [mcp.home_assistant]
-url = "https://litellm.excloo.com/mcp/home_assistant"
+url = "https://bifrost.excloo.com/mcp/home-assistant"
+
+[mcp.reactive_resume]
+url = "https://bifrost.excloo.com/mcp/reactive-resume"
 
 [mcp.unifi_network]
-url = "https://litellm.excloo.com/mcp/unifi_network"
+url = "https://bifrost.excloo.com/mcp/unifi-network"

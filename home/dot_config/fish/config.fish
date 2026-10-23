@@ -21,9 +21,9 @@ if status is-interactive
     mise activate fish | source
     zoxide init fish --cmd cd | source
 
-    # Codex and opencode read their LiteLLM MCP keys only from the environment.
-    set -gx LITELLM_CODEX_KEY (fnox get LITELLM_CODEX_KEY)
-    set -gx LITELLM_OPENCODE_KEY (fnox get LITELLM_OPENCODE_KEY)
+    # Codex and opencode read their Bifrost MCP keys only from the environment.
+    set -gx BIFROST_CODEX_KEY (fnox get BIFROST_CODEX_KEY)
+    set -gx BIFROST_OPENCODE_KEY (fnox get BIFROST_OPENCODE_KEY)
 
     abbr -a bash 'env HISTFILE=/dev/null bash'
     abbr -a du dust

@@ -7,7 +7,7 @@
 {{- $config = setValueAtPath (list "mcp_servers" $name "url") $server.url $config -}}
 {{- $server := index $config "mcp_servers" $name -}}
 {{- $_ := unset $server "http_headers" -}}
-{{- $_ := set $server "bearer_token_env_var" "LITELLM_CODEX_KEY" -}}
+{{- $_ := set $server "bearer_token_env_var" "BIFROST_CODEX_KEY" -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

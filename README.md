@@ -22,11 +22,11 @@ Client update checks are disabled so Mise owns upgrades. Claude Code uses
 and OpenCode uses `update`. Pi requires `PI_SKIP_VERSION_CHECK` in the shared Mise
 environment; its settings also collapse the changelog after Mise upgrades.
 
-MCP endpoints are defined in `home/.chezmoidata.toml`. LiteLLM keys are stored in
+MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
 the macOS keychain and referenced through `home/dot_config/fnox/config.toml`.
 Claude and Pi retrieve their own key when connecting. Codex and OpenCode read
 their keys from environment variables exported by the interactive Fish shell.
-Chezmoi replaces stored LiteLLM headers with these references while preserving
+Chezmoi replaces stored Bifrost headers with these references while preserving
 unrelated client settings. Keep key values out of Git and command output.
 
 Orca hooks and plugins, accounts, caches, history, SSH host inventories and

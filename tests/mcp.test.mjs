@@ -39,7 +39,7 @@ for (const [client, path, section, credential] of [
   test(`${client} provisions fresh inventory and preserves unrelated entries`, () => {
     for (const existing of [false, true]) {
       const foreign = {
-        url: "https://foreign.example/litellm.excloo.com/mcp",
+        url: "https://foreign.example/bifrost.excloo.com/mcp",
         headers: { Authorization: "fixture" },
       };
       const sameUrl = {
