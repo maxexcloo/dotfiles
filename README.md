@@ -134,12 +134,9 @@ GitHub, so changes to the shared preset take effect once they're merged.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The action
 loads only the shared tools and tasks from its own revision, then installs the
-tools in the workflow's `with.tools`. List every tool the job runs, including
-ones used by nested tasks. Set `project-tools: true` to also install every tool
-the repository's own Mise configuration declares. The action doesn't apply
-workstation preferences or resolve credentials. Consumers follow `main` on
-purpose. That's a risk I accept because I control every consumer, but it means a
-shared change is a change to all of them.
+tools in the workflow's `with.tools`. Set `project-tools: true` to also install
+every tool the repository's own Mise configuration declares. The action doesn't
+apply workstation preferences or resolve credentials.
 
 ## Licence
 
