@@ -9,8 +9,8 @@ type = "keychain"
 
 [secrets]
 OP_SERVICE_ACCOUNT_TOKEN = { env = false, provider = "keychain", value = "op-service-account-automation" }
-# Bifrost virtual keys for the agents' MCP access; 1Password "Bifrost" (Cluster: SYD) holds the originals.
-BIFROST_CLAUDE_KEY = { env = false, provider = "keychain", value = "bifrost-claude" }
-BIFROST_CODEX_KEY = { env = false, provider = "keychain", value = "bifrost-codex" }
-BIFROST_OPENCODE_KEY = { env = false, provider = "keychain", value = "bifrost-opencode" }
-BIFROST_PI_KEY = { env = false, provider = "keychain", value = "bifrost-pi" }
+# Bifrost virtual keys for the agents' MCP access; copies of 1Password "Bifrost" (Cluster: SYD), update both together.
+BIFROST_CLAUDE_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-claude" }
+BIFROST_CODEX_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-codex" }
+BIFROST_OPENCODE_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-opencode" }
+BIFROST_PI_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-pi" }
