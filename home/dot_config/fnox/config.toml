@@ -1,14 +1,16 @@
 [providers.automation]
 type = "1password"
 vault = "Automation"
-token = { secret = "OP_SERVICE_ACCOUNT_TOKEN" }
+token = { secret = "OP_AUTOMATION_TOKEN" }
 
 [providers.keychain]
 service = "fnox"
 type = "keychain"
 
 [secrets]
-OP_SERVICE_ACCOUNT_TOKEN = { env = false, provider = "keychain", value = "op-service-account-automation" }
+# Not named OP_SERVICE_ACCOUNT_TOKEN: fnox hands that name to every 1Password provider, so project configs would sign
+# in as this Automation-only account instead of through the desktop app.
+OP_AUTOMATION_TOKEN = { env = false, provider = "keychain", value = "op-service-account-automation" }
 # Bifrost virtual keys for the agents' MCP access; copies of 1Password "Bifrost" (Cluster: SYD), update both together.
 BIFROST_CLAUDE_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-claude" }
 BIFROST_CODEX_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-codex" }
