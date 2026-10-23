@@ -8,7 +8,7 @@
 {{- $config = setValueAtPath (list "mcp" $name "type") "remote" $config -}}
 {{- $config = setValueAtPath (list "mcp" $name "url") $server.url $config -}}
 {{- $server := index $config "mcp" $name -}}
-{{- $_ := set $server "headers" (dict "Authorization" "Bearer {env:LITELLM_OPENCODE_KEY}") -}}
+{{- $_ := set $server "headers" (dict "Authorization" "Bearer {env:BIFROST_OPENCODE_KEY}") -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

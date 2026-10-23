@@ -6,7 +6,7 @@
 {{- $server := index $config "mcpServers" $name -}}
 {{- $_ := set $server "type" "http" -}}
 {{- $_ := unset $server "headers" -}}
-{{- $_ := set $server "headersHelper" "fnox get LITELLM_CLAUDE_KEY | jq -Rc '{\"x-litellm-api-key\": .}'" -}}
+{{- $_ := set $server "headersHelper" "fnox get BIFROST_CLAUDE_KEY | jq -Rc '{\"x-bf-vk\": .}'" -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
