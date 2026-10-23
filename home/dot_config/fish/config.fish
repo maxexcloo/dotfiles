@@ -29,12 +29,12 @@ if status is-interactive
     abbr -a du dust
     abbr -a find fd
     abbr -a grep rg
-    alias la='eza -la --group-directories-first --icons'
-    alias ll='eza -l --group-directories-first --icons'
-    alias ls='eza --group-directories-first --icons'
+    alias la='eza -la --group-directories-first --icons=auto'
+    alias ll='eza -l --group-directories-first --icons=auto'
+    alias ls='eza --group-directories-first --icons=auto'
     abbr -a sh 'env HISTFILE=/dev/null sh'
     abbr -a top btop
-    alias tree='eza --icons --tree'
+    alias tree='eza --icons=auto --tree'
 else
     mise activate fish --shims | source
 end
