@@ -4,7 +4,12 @@
 {{- range $name, $managed := .mcp -}}
 {{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}
 {{- $server := index $config "mcpServers" $name -}}
-{{- $_ := set $server "headers" (dict "Authorization" "!echo Bearer $(fnox get BIFROST_PI_KEY)") -}}
+{{- /* Env, not a `!command`: Pi runs header commands through execSync in-process (10s cap),
+so a slow 1Password lookup freezes the TUI and an expired one sends an empty header. */ -}}
+{{- $_ := set $server "headers" (dict "Authorization" "Bearer ${BIFROST_PI_KEY}") -}}
+{{- /* Per-request cap covers the connect, so a downed endpoint fails in seconds instead of 60.
+It also bounds tool calls, hence 15s rather than the 60s default. */ -}}
+{{- $_ := set $server "timeout" 15 -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

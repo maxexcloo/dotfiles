@@ -2,7 +2,7 @@
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
 {{- $model := dict "id" "ai/text" "name" "Bento Text" "reasoning" true "input" (list "text" "image") "cost" (dict "input" 0 "output" 0 "cacheRead" 0 "cacheWrite" 0) "contextWindow" 262144 "maxTokens" 65536 -}}
-{{- $provider := dict "baseUrl" "https://bifrost.excloo.com/v1" "api" "openai-completions" "apiKey" "!fnox get BIFROST_PI_KEY" "models" (list $model) -}}
+{{- $provider := dict "baseUrl" "https://bifrost.excloo.com/v1" "api" "openai-completions" "apiKey" "${BIFROST_PI_KEY}" "models" (list $model) -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $provider $config -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
