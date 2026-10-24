@@ -30,9 +30,8 @@ their keys from environment variables exported by the interactive Fish shell.
 Chezmoi replaces stored Bifrost headers with these references while preserving
 unrelated client settings. Keep key values out of Git and command output.
 
-Pi and OpenCode also read Bifrost's model list at startup, using their own
-virtual keys, so the local text model appears under the checkpoint name Bento is
-serving rather than a fixed alias.
+Pi and OpenCode use Bifrost's stable `ai/text` alias, which forwards to whichever
+local model Bento has loaded, so a workload switch needs no client change.
 
 Orca hooks and plugins, accounts, caches, history, SSH host inventories and
 application databases are left to their applications. The OpenCode TUI
