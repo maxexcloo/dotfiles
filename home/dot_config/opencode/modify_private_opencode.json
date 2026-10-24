@@ -10,7 +10,8 @@
 {{- $server := index $config "mcp" $name -}}
 {{- $_ := set $server "headers" (dict "Authorization" "Bearer {env:BIFROST_OPENCODE_KEY}") -}}
 {{- end -}}
-{{- $bifrost := dict "name" "Bifrost" "npm" "@ai-sdk/openai-compatible" "options" (dict "baseURL" "https://bifrost.excloo.com/v1" "apiKey" "{env:BIFROST_OPENCODE_KEY}") -}}
+{{- $model := dict "name" "Bento Text" "reasoning" true "tool_call" true "attachment" true "limit" (dict "context" 262144 "output" 65536) -}}
+{{- $bifrost := dict "name" "Bifrost" "npm" "@ai-sdk/openai-compatible" "options" (dict "baseURL" "https://bifrost.excloo.com/v1" "apiKey" "{env:BIFROST_OPENCODE_KEY}") "models" (dict "ai/text" $model) -}}
 {{- $config = setValueAtPath (list "provider" "bifrost") $bifrost $config -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
