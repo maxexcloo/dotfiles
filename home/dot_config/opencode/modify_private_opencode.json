@@ -10,6 +10,8 @@
 {{- $server := index $config "mcp" $name -}}
 {{- $_ := set $server "headers" (dict "Authorization" "Bearer {env:BIFROST_OPENCODE_KEY}") -}}
 {{- end -}}
+{{- $bifrost := dict "name" "Bifrost" "npm" "@ai-sdk/openai-compatible" "options" (dict "baseURL" "https://bifrost.excloo.com/v1" "apiKey" "{env:BIFROST_OPENCODE_KEY}") -}}
+{{- $config = setValueAtPath (list "provider" "bifrost") $bifrost $config -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
 {{- else -}}
