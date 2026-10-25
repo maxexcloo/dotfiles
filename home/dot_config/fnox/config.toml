@@ -1,6 +1,6 @@
 [daemon]
-# Resolved values stay in memory, so MCP credential lookups in shell startup and
-# agent configs skip the 1Password round trip instead of paying it per process.
+# Resolved values stay in memory, so MCP credential lookups in agent launches and
+# configs skip the 1Password round trip instead of paying it per process.
 enabled = true
 
 [providers.automation]
