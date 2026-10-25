@@ -1,4 +1,3 @@
-# Shared by the workstation and, through the shared action, by CI.
 [settings]
 minimum_release_age = "0"
 

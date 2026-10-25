@@ -5,7 +5,6 @@ local bundleID = 'com.knollsoft.Rectangle'
 local logger = hs.logger.new('rectangleGap', 'info')
 local targetDisplayName = 'P40WD-40'
 
--- Write the gap and reopen Rectangle.
 local function applyGap(gap)
     automation.task = hs.task.new(
         '/usr/bin/defaults',
@@ -33,7 +32,6 @@ local function applyGap(gap)
     end
 end
 
--- Quit Rectangle before applying a new gap.
 local function restartWithGap(gap)
     local application = hs.application.applicationsForBundleID(bundleID)[1]
     local deadline = hs.timer.secondsSinceEpoch() + 5
@@ -59,13 +57,11 @@ local function restartWithGap(gap)
     end)
 end
 
--- Check once displays settle, then retry.
 local function scheduleUpdate()
     automation.retryTimer:start()
     automation.settleTimer:start()
 end
 
--- Apply the gap for the current display layout.
 local function updateGap()
     if automation.quitTimer or automation.sleeping or automation.task then
         return
@@ -94,7 +90,6 @@ end
 automation.retryTimer = hs.timer.delayed.new(12, updateGap)
 automation.settleTimer = hs.timer.delayed.new(3, updateGap)
 automation.screenWatcher = hs.screen.watcher.new(scheduleUpdate):start()
--- Pause during sleep and recheck after waking.
 automation.wakeWatcher = hs.caffeinate.watcher.new(function(event)
     local events = hs.caffeinate.watcher
 

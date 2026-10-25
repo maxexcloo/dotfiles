@@ -1,4 +1,3 @@
-# Repositories without their own check task run every applicable shared check.
 [check]
 description = "Run Applicable Shared Checks"
 depends = [
@@ -39,7 +38,6 @@ echo "No Mise configuration found; skipping."
 ["check:oxfmt"]
 description = "Check File Formatting"
 dir = "{{cwd}}"
-# Mise owns the formatting of its configuration files.
 run = "oxfmt --check --no-error-on-unmatched-pattern . '!**/{.mise.toml,mise.toml,.mise/config.toml,mise/config.toml,.config/mise.toml,.config/mise/config.toml}'"
 
 ["check:python"]
@@ -74,7 +72,6 @@ run = "tsc --noEmit"
 description = "Validate Renovate Configuration"
 dir = "{{cwd}}"
 env.RENOVATE_X_IGNORE_RE2 = "true"
-# Shared presets live under renovate/.
 run = '''
 if [ ! -f renovate.json5 ]; then
   echo "No Renovate configuration found; skipping."

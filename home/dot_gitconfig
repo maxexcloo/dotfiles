@@ -12,7 +12,6 @@ signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIaF+DCJq1CyGrafKzDMtNjW02M5XJo
 [gpg "ssh"]
 program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
 
-# Scan every repository's staged changes for credentials, alongside its own hooks.
 [hook "gitleaks"]
 command = gitleaks git --pre-commit --staged --redact --no-banner --log-level warn
 event = pre-commit
