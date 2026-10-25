@@ -6,8 +6,7 @@ const run = (mode, input) =>
   execFileSync(guard, [mode], { input, encoding: "utf8", stdio: "pipe" });
 
 // Why: only shell output can echo a secret that the pre-hook's path check was
-// unable to see. V2 registers the shell tool as "shell".
-const shellTools = new Set(["shell", "bash"]);
+// unable to see.
 
 // Why: a result carries the same text in model-visible content parts and in the
 // tool's typed output, so every string in either field is a leak candidate.
@@ -33,7 +32,7 @@ export default Plugin.define({
     });
 
     await ctx.tool.hook("execute.after", (event) => {
-      if (!shellTools.has(event.tool)) return;
+      if (event.tool !== "shell") return;
       if (event.status === "error") {
         event.error.message = run("redact", event.error.message);
         return;
