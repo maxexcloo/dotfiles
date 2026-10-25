@@ -1,8 +1,6 @@
 ["test:python"]
 description = "Run Python Unit Tests"
 dir = "{{cwd}}"
-# Projects with a uv lockfile test inside their locked environment. Modules run
-# in parallel and print their buffered output as each finishes.
 run = '''
 set -eu
 if [ ! -d tests ]; then

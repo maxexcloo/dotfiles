@@ -2,7 +2,6 @@
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
 {{- $preferences := dict "outputStyle" "Concise" "spinnerTipsEnabled" false "env" (dict "DISABLE_AUTOUPDATER" "1") -}}
-{{- /* The sibling Agents repository is a local plugin marketplace serving its skills. */ -}}
 {{- $marketplace := dict "source" (dict "source" "directory" "path" (joinPath .chezmoi.workingTree ".." "agents")) -}}
 {{- $_ := set $preferences "enabledPlugins" (dict "agents@maxexcloo" true) -}}
 {{- $_ := set $preferences "extraKnownMarketplaces" (dict "maxexcloo" $marketplace) -}}
