@@ -22,13 +22,14 @@ Client update checks are disabled so Mise owns upgrades. Claude Code uses
 and OpenCode uses `update`. Pi requires `PI_SKIP_VERSION_CHECK` in the shared Mise
 environment; its settings also collapse the changelog after Mise upgrades.
 
-MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
-the 1Password Automation vault and referenced through `home/dot_config/fnox/config.toml`,
-which reads them with a service account whose token is in the macOS keychain.
-Claude retrieves its own key when connecting. Codex, OpenCode and Pi read
-their keys from environment variables exported by the interactive Fish shell.
-Chezmoi replaces stored Bifrost headers with these references while preserving
-unrelated client settings. Keep key values out of Git and command output.
+MCP endpoints and the Bifrost text model are defined in `home/.chezmoidata.toml`.
+Bifrost keys are stored in the 1Password Automation vault and referenced through
+`home/dot_config/fnox/config.toml`, which reads them with a service account whose
+token is in the macOS keychain. Claude retrieves its own key when connecting.
+Codex, OpenCode and Pi read their keys from environment variables that their Fish
+wrapper functions set at launch. Chezmoi replaces stored Bifrost headers with
+these references while preserving unrelated client settings. Keep key values out
+of Git and command output.
 
 Pi and OpenCode use Bifrost's stable `ai/text` alias, which forwards to whichever
 local model Bento has loaded, so a workload switch needs no client change.

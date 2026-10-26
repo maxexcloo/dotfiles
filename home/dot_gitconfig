@@ -1,8 +1,20 @@
 [commit]
 gpgsign = true
 
+[fetch]
+prune = true
+
 [gpg]
 format = ssh
+
+[push]
+autoSetupRemote = true
+
+[rebase]
+autoStash = true
+
+[rerere]
+enabled = true
 
 [user]
 email = max@excloo.com
