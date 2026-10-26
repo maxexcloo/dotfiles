@@ -1,8 +1,8 @@
 [env]
 PI_SKIP_VERSION_CHECK = "1"
 PYTEST_ADDOPTS = "-p no:cacheprovider"
-PYTHONPYCACHEPREFIX = "{{env.HOME}}/.cache/pycache"
-RUFF_CACHE_DIR = "{{env.HOME}}/.cache/ruff"
+PYTHONPYCACHEPREFIX = "{{env.HOME}}/Library/Caches/pycache"
+RUFF_CACHE_DIR = "{{env.HOME}}/Library/Caches/ruff"
 
 [settings]
 cache_prune_age = "1d"
