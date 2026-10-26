@@ -1,4 +1,8 @@
 !.env.example
 .env
 .env.*
+.git
+.terraform
+.venv
+node_modules
 secrets.yaml
