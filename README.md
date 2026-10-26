@@ -130,10 +130,10 @@ other pin gets a comment on the line above it:
 version: <version>
 ```
 
-`dependencies:check` runs Renovate's local platform, which looks up updates
-without writing files. `dependencies:update` runs Renovate locally against the
-repository on GitHub and opens a pull request for each update. Both get the
-GitHub token inside their own process through GitHub CLI. Presets are read from
+The Mend Renovate app runs the preset on GitHub. It groups minor and patch
+updates into one pull request per repository and automerges them, digests and
+lockfile maintenance once checks pass. Major updates wait on each repository's
+Dependency Dashboard issue until they're approved there. Presets are read from
 GitHub, so changes to the shared preset take effect once they're merged.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The action
