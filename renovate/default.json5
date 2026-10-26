@@ -3,14 +3,21 @@
   description: "Shared update policy for repositories owned by maxexcloo",
   extends: [
     "config:recommended",
-    ":disableDependencyDashboard",
+    ":automergeDigest",
+    ":automergeMinor",
     ":prConcurrentLimitNone",
     ":prHourlyLimitNone",
+    "group:allNonMajor",
   ],
   // Native lockfile refreshes cover transitive and unpinned locked packages; local
   // runs need no schedule.
-  lockFileMaintenance: { enabled: true, schedule: ["at any time"] },
+  lockFileMaintenance: { automerge: true, enabled: true, schedule: ["at any time"] },
   packageRules: [
+    {
+      description: "Hold major updates on the Dependency Dashboard until approved",
+      dependencyDashboardApproval: true,
+      matchUpdateTypes: ["major"],
+    },
     {
       description: "Let npm releases settle before proposing them",
       matchDatasources: ["npm"],
