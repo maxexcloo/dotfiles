@@ -11,9 +11,10 @@
 {{- $_ := set $server "headers" (dict "Authorization" "Bearer {env:BIFROST_OPENCODE_KEY}") -}}
 {{- end -}}
 {{- $capabilities := dict "input" (list "text" "image") "output" (list "text") "reasoning" (dict "supported" true) "tools" true -}}
-{{- $model := dict "name" "Bento Text" "capabilities" $capabilities "limit" (dict "context" 262144 "output" 65536) -}}
-{{- $settings := dict "apiKey" "{env:BIFROST_OPENCODE_KEY}" "baseURL" "https://bifrost.excloo.com/v1" -}}
-{{- $bifrost := dict "name" "Bifrost" "package" "aisdk:@ai-sdk/openai-compatible" "settings" $settings "models" (dict "ai/text" $model) -}}
+{{- $text := .bifrost.textModel -}}
+{{- $model := dict "name" $text.name "capabilities" $capabilities "limit" (dict "context" $text.contextWindow "output" $text.maxTokens) -}}
+{{- $settings := dict "apiKey" "{env:BIFROST_OPENCODE_KEY}" "baseURL" .bifrost.baseUrl -}}
+{{- $bifrost := dict "name" "Bifrost" "package" "aisdk:@ai-sdk/openai-compatible" "settings" $settings "models" (dict $text.id $model) -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $bifrost $config -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
