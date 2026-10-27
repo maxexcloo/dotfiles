@@ -132,8 +132,9 @@ version: <version>
 
 The Mend Renovate app runs the preset on GitHub. It groups minor and patch
 updates into one pull request per repository and automerges them, digests and
-lockfile maintenance once checks pass. Major updates wait on each repository's
-Dependency Dashboard issue until they're approved there. Presets are read from
+lockfile maintenance once checks pass. Major updates open their own pull
+requests that request the owner's review and are not automerged; each
+repository's Dependency Dashboard issue lists everything pending. Presets are read from
 GitHub, so changes to the shared preset take effect once they're merged.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The action
