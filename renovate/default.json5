@@ -9,8 +9,8 @@
     ":prHourlyLimitNone",
     "group:allNonMajor",
   ],
-  // Native lockfile refreshes cover transitive and unpinned locked packages; local
-  // runs need no schedule.
+  // Native lockfile refreshes cover transitive and unpinned locked packages; refresh
+  // them on every run rather than weekly.
   lockFileMaintenance: { automerge: true, enabled: true, schedule: ["at any time"] },
   packageRules: [
     {
