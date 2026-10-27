@@ -14,9 +14,9 @@
   lockFileMaintenance: { automerge: true, enabled: true, schedule: ["at any time"] },
   packageRules: [
     {
-      description: "Hold major updates on the Dependency Dashboard until approved",
-      dependencyDashboardApproval: true,
+      description: "Request the owner's review on major updates, which are not automerged",
       matchUpdateTypes: ["major"],
+      reviewers: ["maxexcloo"],
     },
     {
       description: "Let npm releases settle before proposing them",
