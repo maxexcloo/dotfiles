@@ -5,7 +5,7 @@ baseUrl = "https://bifrost.excloo.com/v1"
 
 [bifrost.textModel]
 contextWindow = 262144
-id = "ai/text"
+id = "local/text"
 maxTokens = 65536
 name = "Bento Text"
 

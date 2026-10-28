@@ -31,7 +31,7 @@ wrapper functions set at launch. Chezmoi replaces stored Bifrost headers with
 these references while preserving unrelated client settings. Keep key values out
 of Git and command output.
 
-Pi and OpenCode use Bifrost's stable `ai/text` alias, which forwards to whichever
+Pi and OpenCode use Bifrost's stable `local/text` model, which forwards to whichever
 local model Bento has loaded, so a workload switch needs no client change.
 
 Orca hooks and plugins, accounts, caches, history, SSH host inventories and
