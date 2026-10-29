@@ -3,9 +3,9 @@ agentSkillsPath = ".local/share/agent-skills"
 [bifrost]
 baseUrl = "https://bifrost.excloo.com/v1"
 
-# local/auto reaches whichever local model runs; the smallest context among them is 131072.
+# local/auto reaches whichever local model runs; the dual-GPU ones all take 262144.
 [bifrost.textModel]
-contextWindow = 131072
+contextWindow = 262144
 id = "local/auto"
 
 [mcp.actual_budget]
