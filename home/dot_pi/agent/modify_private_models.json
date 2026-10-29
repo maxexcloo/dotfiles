@@ -2,7 +2,7 @@
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
 {{- $text := .bifrost.textModel -}}
-{{- $model := dict "id" $text.id "name" $text.name "reasoning" true "input" (list "text" "image") "cost" (dict "input" 0 "output" 0 "cacheRead" 0 "cacheWrite" 0) "contextWindow" $text.contextWindow "maxTokens" $text.maxTokens -}}
+{{- $model := dict "id" $text.id "reasoning" true "input" (list "text" "image") "cost" (dict "input" 0 "output" 0 "cacheRead" 0 "cacheWrite" 0) "contextWindow" $text.contextWindow -}}
 {{- $provider := dict "baseUrl" .bifrost.baseUrl "api" "openai-completions" "apiKey" "${BIFROST_PI_KEY}" "models" (list $model) -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $provider $config -}}
 {{- if deepEqual $original $config -}}

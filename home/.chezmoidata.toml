@@ -3,11 +3,10 @@ agentSkillsPath = ".local/share/agent-skills"
 [bifrost]
 baseUrl = "https://bifrost.excloo.com/v1"
 
+# local/auto reaches whichever local model runs; the smallest context among them is 131072.
 [bifrost.textModel]
-contextWindow = 262144
+contextWindow = 131072
 id = "local/auto"
-maxTokens = 65536
-name = "Bento Text"
 
 [mcp.actual_budget]
 url = "https://bifrost.excloo.com/mcp/actual-budget"
