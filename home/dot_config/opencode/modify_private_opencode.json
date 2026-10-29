@@ -12,7 +12,7 @@
 {{- end -}}
 {{- $capabilities := dict "input" (list "text" "image") "output" (list "text") "reasoning" (dict "supported" true) "tools" true -}}
 {{- $text := .bifrost.textModel -}}
-{{- $model := dict "name" $text.name "capabilities" $capabilities "limit" (dict "context" $text.contextWindow "output" $text.maxTokens) -}}
+{{- $model := dict "capabilities" $capabilities "limit" (dict "context" $text.contextWindow) -}}
 {{- $settings := dict "apiKey" "{env:BIFROST_OPENCODE_KEY}" "baseURL" .bifrost.baseUrl -}}
 {{- $bifrost := dict "name" "Bifrost" "package" "aisdk:@ai-sdk/openai-compatible" "settings" $settings "models" (dict $text.id $model) -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $bifrost $config -}}
