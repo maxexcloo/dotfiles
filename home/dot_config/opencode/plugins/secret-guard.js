@@ -5,11 +5,13 @@ const guard = `${process.env.HOME}/.agents/hooks/secret-guard`;
 const run = (mode, input) =>
   execFileSync(guard, [mode], { input, encoding: "utf8", stdio: "pipe" });
 
-// Why: only shell output can echo a secret that the pre-hook's path check was
-// unable to see.
-
-// Why: a result carries the same text in model-visible content parts and in the
+// A result carries the same text in model-visible content parts and in the
 // tool's typed output, so every string in either field is a leak candidate.
+const strings = (value) => {
+  if (typeof value === "string") return [value];
+  if (value !== null && typeof value === "object") return Object.values(value).flatMap(strings);
+  return [];
+};
 const redactValue = (value) => {
   if (typeof value === "string") return run("redact", value);
   if (Array.isArray(value)) return value.map(redactValue);
@@ -32,11 +34,17 @@ export default Plugin.define({
     });
 
     await ctx.tool.hook("execute.after", (event) => {
+      // Only shell output can echo a secret that the pre-hook's path check was
+      // unable to see.
       if (event.tool !== "shell") return;
       if (event.status === "error") {
         event.error.message = run("redact", event.error.message);
         return;
       }
+      // Scan everything once, and redact string by string only when that finds
+      // something. The guard drops trailing newlines, as command substitution does.
+      const text = strings([event.result.content, event.result.output]).join("\n");
+      if (run("redact", text) === text.replace(/\n+$/, "")) return;
       const result = { ...event.result };
       if (result.content !== undefined) result.content = redactValue(result.content);
       if (result.output !== undefined) result.output = redactValue(result.output);
