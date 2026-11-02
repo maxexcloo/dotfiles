@@ -1,5 +1,3 @@
-agentSkillsPath = ".local/share/agent-skills"
-
 [bifrost]
 baseUrl = "https://bifrost.excloo.com/v1"
 
