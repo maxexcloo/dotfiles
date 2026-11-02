@@ -1,3 +1,7 @@
+[fmt]
+description = "Run Applicable Shared Formatters"
+depends = ["fmt:mise", "fmt:oxfmt", "fmt:python"]
+
 ["fmt:mise"]
 description = "Format Mise Configuration"
 dir = "{{cwd}}"
@@ -11,7 +15,11 @@ run = "oxfmt --write --no-error-on-unmatched-pattern . '!**/{.mise.toml,mise.tom
 ["fmt:python"]
 description = "Sort Python Imports & Format Code"
 dir = "{{cwd}}"
-run = """
+run = '''
+if [ -z "$(git ls-files -- '*.py')" ]; then
+  echo "No Python files found; skipping."
+  exit 0
+fi
 ruff check --fix --select I .
 ruff format .
-"""
+'''

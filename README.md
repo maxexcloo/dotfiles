@@ -99,11 +99,12 @@ Mise loads the shared tasks in `tasks/` globally; `mise tasks` lists them.
 Repositories pick them through `depends` and keep their own tests, builds and
 operational tasks. Run tasks from the repository root. Each check skips itself
 when its inputs are missing. The global `check` runs every shared check except
-TypeScript, plus `test:python`, where a project's own override wins. A
-repository `check` task replaces it. Checks find their own inputs: ShellCheck
-reads every tracked `*.sh` file, Ruff reads the project's own configuration, and
-Python tests run from `tests/`, inside the locked environment when `uv.lock`
-exists.
+TypeScript, plus `test:python`, and the global `fmt` runs the Mise, Oxfmt and
+Python formatters; a project's own override of a subtask wins. A repository
+`check` or `fmt` task replaces the global one. Checks find their own inputs:
+ShellCheck reads every tracked `*.sh` file, Ruff reads the project's own
+configuration, and Python tests run from `tests/`, inside the locked environment
+when `uv.lock` exists.
 
 ```toml
 [tasks.check]
