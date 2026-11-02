@@ -1,0 +1,36 @@
+[".agents/skills/humanizer"]
+type = "archive"
+exact = true
+stripComponents = 1
+# renovate: datasource=github-releases depName=blader/humanizer
+url = "https://github.com/blader/humanizer/archive/refs/tags/v3.1.0.tar.gz"
+include = ["*/LICENSE", "*/README.md", "*/SKILL.md"]
+
+# Single files, as the Orca source archive is about 90 MB.
+[".agents/skills/orca-cli/LICENSE"]
+type = "file"
+# renovate: datasource=github-releases depName=stablyai/orca
+url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.246/LICENSE"
+
+[".agents/skills/orca-cli/SKILL.md"]
+type = "file"
+# renovate: datasource=github-releases depName=stablyai/orca
+url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.246/skills/orca-cli/SKILL.md"
+
+[".agents/skills/orchestration/LICENSE"]
+type = "file"
+# renovate: datasource=github-releases depName=stablyai/orca
+url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.246/LICENSE"
+
+[".agents/skills/orchestration/SKILL.md"]
+type = "file"
+# renovate: datasource=github-releases depName=stablyai/orca
+url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.246/skills/orchestration/SKILL.md"
+
+[".agents/skills/terrashark"]
+type = "archive"
+exact = true
+stripComponents = 1
+# renovate: datasource=git-refs depName=https://github.com/LukasNiessen/terrashark
+url = "https://github.com/LukasNiessen/terrashark/archive/21f2c18b912818b6a8e2b7bdbf25a275ecb894b1.tar.gz"
+include = ["*/LICENSE", "*/README.md", "*/SKILL.md", "*/references/**"]
