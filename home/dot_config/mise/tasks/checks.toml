@@ -81,6 +81,7 @@ fi
 mise which node >/dev/null
 renovate-config-validator --no-global --strict renovate.json5 $(git ls-files -- 'renovate/*.json5')
 '''
+# Renovate supports only Node 24.
 tools = { node = "24" }
 
 ["check:whitespace"]
