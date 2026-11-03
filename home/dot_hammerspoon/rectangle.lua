@@ -8,7 +8,6 @@ local targetDisplayName = 'P40WD-40'
 local function applyGap(gap)
     automation.task = hs.task.new(
         '/usr/bin/defaults',
-        -- Reopen Rectangle and report the result.
         function(code, _, stderr)
             local launched = hs.application.launchOrFocusByBundleID(bundleID)
 
@@ -43,7 +42,6 @@ local function restartWithGap(gap)
 
     application:kill() -- Requests a graceful quit.
 
-    -- Wait for Rectangle to exit, with a five-second limit.
     automation.quitTimer = hs.timer.doEvery(0.1, function()
         if not application:isRunning() then
             automation.quitTimer:stop()

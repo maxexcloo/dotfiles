@@ -81,10 +81,8 @@ loads the Agents repository as a plugin instead, enabled through
 `home/dot_claude/modify_private_settings.json`, and `home/dot_claude/skills/`
 mirrors each upstream skill link.
 
-Upstream skills are managed here, and my own skills live in the Agents
-repository. `home/.chezmoiexternal.toml` pins the Humanizer, Orca and
-TerraShark skills for Renovate and installs them straight into
-`~/.agents/skills`.
+`home/.chezmoiexternal.toml` pins the upstream Humanizer, Orca and TerraShark
+skills for Renovate and installs them straight into `~/.agents/skills`.
 Personal activation and preview rules stay in the Agents repository's
 `AGENTS.md`, so upstream packages stay unmodified.
 
