@@ -12,6 +12,18 @@ url = "https://bifrost.excloo.com/mcp/actual-budget"
 [mcp.home_assistant]
 url = "https://bifrost.excloo.com/mcp/home-assistant"
 
+[mcp.immich]
+url = "https://bifrost.excloo.com/mcp/immich"
+
+[mcp.karakeep]
+url = "https://bifrost.excloo.com/mcp/karakeep"
+
+[mcp.larapaper]
+url = "https://bifrost.excloo.com/mcp/larapaper"
+
+[mcp.miniflux]
+url = "https://bifrost.excloo.com/mcp/miniflux"
+
 [mcp.reactive_resume]
 url = "https://bifrost.excloo.com/mcp/reactive-resume"
 
