@@ -1,11 +1,6 @@
 [bifrost]
 baseUrl = "https://bifrost.excloo.com/v1"
 
-# local/auto reaches whichever local model runs; the dual-GPU ones all take 262144.
-[bifrost.textModel]
-contextWindow = 262144
-id = "local/auto"
-
 [mcp.actual_budget]
 url = "https://bifrost.excloo.com/mcp/actual-budget"
 

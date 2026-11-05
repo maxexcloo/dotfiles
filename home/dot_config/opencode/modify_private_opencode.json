@@ -13,11 +13,8 @@ its meta-tools in a second interpreter. */ -}}
 {{- $server := index $config "mcp" "servers" $name -}}
 {{- $_ := set $server "headers" (dict "Authorization" "Bearer {env:BIFROST_OPENCODE_KEY}") -}}
 {{- end -}}
-{{- $capabilities := dict "input" (list "text" "image") "output" (list "text") "reasoning" (dict "supported" true) "tools" true -}}
-{{- $text := .bifrost.textModel -}}
-{{- $model := dict "capabilities" $capabilities "limit" (dict "context" $text.contextWindow) -}}
 {{- $settings := dict "apiKey" "{env:BIFROST_OPENCODE_KEY}" "baseURL" .bifrost.baseUrl -}}
-{{- $bifrost := dict "name" "Bifrost" "package" "aisdk:@ai-sdk/openai-compatible" "settings" $settings "models" (dict $text.id $model) -}}
+{{- $bifrost := dict "name" "Bifrost" "package" "aisdk:@ai-sdk/openai-compatible" "settings" $settings -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $bifrost $config -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
