@@ -10,22 +10,22 @@ include = ["*/LICENSE", "*/README.md", "*/SKILL.md"]
 [".agents/skills/orca-cli/LICENSE"]
 type = "file"
 # renovate: datasource=github-releases depName=stablyai/orca
-url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.248/LICENSE"
+url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.249/LICENSE"
 
 [".agents/skills/orca-cli/SKILL.md"]
 type = "file"
 # renovate: datasource=github-releases depName=stablyai/orca
-url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.248/skills/orca-cli/SKILL.md"
+url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.249/skills/orca-cli/SKILL.md"
 
 [".agents/skills/orchestration/LICENSE"]
 type = "file"
 # renovate: datasource=github-releases depName=stablyai/orca
-url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.248/LICENSE"
+url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.249/LICENSE"
 
 [".agents/skills/orchestration/SKILL.md"]
 type = "file"
 # renovate: datasource=github-releases depName=stablyai/orca
-url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.248/skills/orchestration/SKILL.md"
+url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.249/skills/orchestration/SKILL.md"
 
 [".agents/skills/terrashark"]
 type = "archive"
