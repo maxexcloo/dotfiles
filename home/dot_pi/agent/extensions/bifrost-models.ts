@@ -31,7 +31,6 @@ export default function (pi) {
     baseUrl,
     apiKey: "$BIFROST_PI_KEY",
     api: "openai-completions",
-    refreshModels: async (refresh?: { signal?: AbortSignal }) =>
-      load(refresh?.signal),
+    refreshModels: async (refresh?: { signal?: AbortSignal }) => load(refresh?.signal),
   });
 }
