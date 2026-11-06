@@ -1,9 +1,9 @@
 import { Model, Plugin, Provider } from "@opencode/plugin";
 
-// Bifrost owns the catalogue; this only decides which namespaces to show.
+// Bifrost owns the catalogue; this only hides providers that are direct or noisy.
 const baseURL = "https://bifrost.excloo.com/v1";
 const providerID = Provider.ID.make("bifrost");
-const visible = (id) => id.startsWith("cloud/") || id.startsWith("local/");
+const hidden = /^(openrouter|opencode-go|opencode-zen|cliproxyapi)\//;
 const context = (entry) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 
@@ -14,7 +14,7 @@ const load = async () => {
   if (!response.ok) throw new Error(`bifrost models: ${response.status}`);
   const { data } = await response.json();
   return data
-    .filter((entry) => visible(entry.id))
+    .filter((entry) => !hidden.test(entry.id))
     .map((entry) => {
       const model = Model.Info.default(providerID, Model.ID.make(entry.id));
       return {

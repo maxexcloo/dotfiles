@@ -3,7 +3,7 @@
 {{- $config := deepCopy $original -}}
 {{- $provider := dict "baseUrl" .bifrost.baseUrl "api" "openai-completions" "apiKey" "${BIFROST_PI_KEY}" -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $provider $config -}}
-{{- $config = setValueAtPath (list "providers" "openrouter" "models") (list) $config -}}
+{{- $_ := unset $config.providers "openrouter" -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
 {{- else -}}

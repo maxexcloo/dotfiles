@@ -1,6 +1,6 @@
-// Bifrost owns the catalogue; this only decides which namespaces to show.
+// Bifrost owns the catalogue; this only hides providers that are direct or noisy.
 const baseUrl = "https://bifrost.excloo.com/v1";
-const visible = (id: string) => id.startsWith("cloud/") || id.startsWith("local/");
+const hidden = /^(openrouter|opencode-go|opencode-zen|cliproxyapi)\//;
 const contextWindow = (entry: { id: string; context_length?: number }) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 
@@ -12,7 +12,7 @@ const load = async (signal?: AbortSignal) => {
   if (!response.ok) throw new Error(`bifrost models: ${response.status}`);
   const { data } = await response.json();
   return data
-    .filter((entry: { id: string }) => visible(entry.id))
+    .filter((entry: { id: string }) => !hidden.test(entry.id))
     .map((entry: { id: string; context_length?: number }) => ({
       type: "chat" as const,
       id: entry.id,
