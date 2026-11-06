@@ -7,6 +7,14 @@ const baseUrl = "https://bifrost.excloo.com/v1";
 const hidden = /^(deepseek|openrouter|cliproxy-openai)\//;
 const contextWindow = (entry: { id: string; context_length?: number }) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
+// Bifrost prices in USD per token; Pi prices in USD per million tokens.
+const perMillion = (value?: string) => Number(value ?? 0) * 1_000_000;
+const cost = (entry: { pricing?: Record<string, string> }) => ({
+  input: perMillion(entry.pricing?.prompt),
+  output: perMillion(entry.pricing?.completion),
+  cacheRead: perMillion(entry.pricing?.input_cache_read),
+  cacheWrite: perMillion(entry.pricing?.input_cache_write),
+});
 
 const load = async (signal?: AbortSignal) => {
   const response = await fetch(`${baseUrl}/models`, {
@@ -17,13 +25,13 @@ const load = async (signal?: AbortSignal) => {
   const { data } = await response.json();
   return data
     .filter((entry: { id: string }) => !hidden.test(entry.id))
-    .map((entry: { id: string; context_length?: number }) => ({
+    .map((entry: { id: string; context_length?: number; pricing?: Record<string, string> }) => ({
       type: "chat" as const,
       id: entry.id,
       name: entry.id,
       reasoning: true,
       input: ["text", "image"] as ("text" | "image")[],
-      cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+      cost: cost(entry),
       contextWindow: contextWindow(entry),
       maxTokens: 65536,
     }));

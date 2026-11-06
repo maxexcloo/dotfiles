@@ -10,6 +10,21 @@ const providerID = Provider.ID.make("bifrost");
 const hidden = /^(deepseek|openrouter|opencode-go|opencode-zen|cliproxy-openai)\//;
 const context = (entry) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
+// Bifrost prices in USD per token; OpenCode prices in USD per million tokens.
+const perMillion = (value) => Number(value) * 1_000_000;
+const cost = (entry) =>
+  entry.pricing
+    ? [
+        {
+          input: perMillion(entry.pricing.prompt ?? 0),
+          output: perMillion(entry.pricing.completion ?? 0),
+          cache: {
+            read: perMillion(entry.pricing.input_cache_read ?? 0),
+            write: perMillion(entry.pricing.input_cache_write ?? 0),
+          },
+        },
+      ]
+    : [];
 
 const load = async () => {
   const response = await fetch(`${baseURL}/models`, {
@@ -24,6 +39,7 @@ const load = async () => {
       return {
         ...model,
         name: entry.id,
+        cost: cost(entry),
         limit: { ...model.limit, context: context(entry) },
       };
     });
