@@ -2,8 +2,9 @@
 // reaches them natively, or because they duplicate another Bifrost provider.
 const baseUrl = "https://bifrost.excloo.com/v1";
 // Pi signs in to OpenCode once for both Go and Zen, so it keeps those aliases.
-// Its OpenAI sign-in covers the CLIProxyAPI OpenAI channel too.
-const hidden = /^(deepseek|openrouter|cliproxyapi|cliproxy-openai)\//;
+// Its OpenAI sign-in covers the cliproxy-openai channel; the anthropic, google
+// and grok channels are the only way in, so they stay.
+const hidden = /^(deepseek|openrouter|cliproxy-openai)\//;
 const contextWindow = (entry: { id: string; context_length?: number }) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 
