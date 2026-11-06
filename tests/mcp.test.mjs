@@ -69,6 +69,7 @@ for (const [client, path, section, credential] of [
       for (const [name, managed] of Object.entries(inventory)) {
         assert.equal(servers[name].url, managed.url);
         assert.ok(servers[name][credential]);
+        if (client === "OpenCode") assert.equal(servers[name].codemode, false);
       }
       if (existing) {
         assert.equal(result.unrelated, true);
