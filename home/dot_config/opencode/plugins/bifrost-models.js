@@ -4,7 +4,10 @@ import { Model, Plugin, Provider } from "@opencode/plugin";
 // reaches them natively, or because they duplicate another Bifrost provider.
 const baseURL = "https://bifrost.excloo.com/v1";
 const providerID = Provider.ID.make("bifrost");
-const hidden = /^(deepseek|openrouter|opencode-go|opencode-zen|cliproxyapi|cliproxy-openai)\//;
+// deepseek, openrouter and opencode-go/zen are reached natively.
+// cliproxy-openai duplicates the OpenAI login; the anthropic, google and grok
+// channels are the only way in, so they stay.
+const hidden = /^(deepseek|openrouter|opencode-go|opencode-zen|cliproxy-openai)\//;
 const context = (entry) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 
