@@ -1,6 +1,8 @@
-// Bifrost owns the catalogue; this only hides providers that are direct or noisy.
+// Bifrost owns the catalogue. These prefixes are hidden because the client
+// reaches them natively, or because they duplicate another Bifrost provider.
 const baseUrl = "https://bifrost.excloo.com/v1";
-const hidden = /^(openrouter|opencode-go|opencode-zen|cliproxyapi)\//;
+// Pi signs in to OpenCode once for both Go and Zen, so it keeps those aliases.
+const hidden = /^(deepseek|openrouter|cliproxyapi)\//;
 const contextWindow = (entry: { id: string; context_length?: number }) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 

@@ -1,9 +1,10 @@
 import { Model, Plugin, Provider } from "@opencode/plugin";
 
-// Bifrost owns the catalogue; this only hides providers that are direct or noisy.
+// Bifrost owns the catalogue. These prefixes are hidden because the client
+// reaches them natively, or because they duplicate another Bifrost provider.
 const baseURL = "https://bifrost.excloo.com/v1";
 const providerID = Provider.ID.make("bifrost");
-const hidden = /^(openrouter|opencode-go|opencode-zen|cliproxyapi)\//;
+const hidden = /^(deepseek|openrouter|opencode-go|opencode-zen|cliproxyapi)\//;
 const context = (entry) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 
