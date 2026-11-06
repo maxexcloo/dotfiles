@@ -33,9 +33,7 @@ export default Plugin.define({
     const refresh = async () => {
       source.models = await load();
       if (registered) return ctx.provider.reload();
-      await ctx.provider.transform((editor) =>
-        editor.models.set("bifrost", source.models),
-      );
+      await ctx.provider.transform((editor) => editor.models.set("bifrost", source.models));
       registered = true;
     };
     await refresh().catch(console.error);
