@@ -2,6 +2,7 @@
 depends = [
   "check:actions",
   "check:mise",
+  "check:templates",
   "check:updates",
   "hooks:check",
   "test",
@@ -14,6 +15,22 @@ status=0
 for config in .mise.toml home/dot_config/mise/*.toml home/dot_config/mise/*/*.toml; do
   formatted=$(mise fmt --stdin < "$config")
   printf '%s\n' "$formatted" | diff -u "$config" - || status=1
+done
+exit "$status"
+'''
+
+# Hk's oxfmt step skips templated code, so check its rendered output.
+[tasks."check:templates"]
+run = '''
+set -eu
+status=0
+for template in $(git ls-files '*.js.tmpl' '*.ts.tmpl'); do
+  rendered=$(chezmoi --source . --config /dev/null --config-format toml execute-template --file "$template")
+  formatted=$(printf '%s\n' "$rendered" | oxfmt --stdin-filepath "${template%.tmpl}")
+  if [ "$rendered" != "$formatted" ]; then
+    echo "$template renders unformatted code"
+    status=1
+  fi
 done
 exit "$status"
 '''
