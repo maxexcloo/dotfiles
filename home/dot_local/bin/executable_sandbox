@@ -1,0 +1,49 @@
+#!/bin/sh
+# Open fish in a workspace's smolvm machine, creating it on first use.
+# Usage: sandbox WORKSPACE, where WORKSPACE is a group below or a single project in ~/Projects.
+# Credentials are files in ~/.config/sandbox: the Bifrost keys and GITHUB_TOKEN reach the machine
+# only as placeholders, and WORKSPACE/OP_SERVICE_ACCOUNT_TOKEN, when present, as its real value.
+set -eu
+
+workspace=$1
+network=--block-private
+case $workspace in
+agents) projects="agents dotfiles" ;;
+home-assistant) projects="esphome homeassistant-beszel-integration homeassistant-energy-locals-integration" ;;
+# Infrastructure work reaches the LAN and tailnet.
+infra) projects="flylab homelab kubelab local-services minilab" network= ;;
+*) projects=$workspace ;;
+esac
+secrets=$HOME/.config/sandbox
+
+if ! smolvm machine status --name "$workspace" >/dev/null 2>&1; then
+  set --
+  for project in $projects; do
+    set -- "$@" -v "$HOME/Projects/$project:/root/Projects/$project"
+  done
+  # The dotfiles set the machine up, so every workspace reads them.
+  for project in agents dotfiles; do
+    case " $projects " in
+    *" $project "*) ;;
+    *) set -- "$@" -v "$HOME/Projects/$project:/root/Projects/$project:ro" ;;
+    esac
+  done
+  for agent in CLAUDE CODEX OPENCODE PI; do
+    set -- "$@" --secret-file "BIFROST_${agent}_KEY=$secrets/BIFROST_${agent}_KEY" \
+      --credential "bifrost-$agent=BIFROST_${agent}_KEY@bifrost.excloo.com"
+  done
+  set -- "$@" --secret-file "GITHUB_TOKEN=$secrets/GITHUB_TOKEN" \
+    --credential "github-api=GITHUB_TOKEN@api.github.com" \
+    --credential "github-git=GITHUB_GIT_AUTH@github.com:set-header=authorization"
+  if [ -f "$secrets/$workspace/OP_SERVICE_ACCOUNT_TOKEN" ]; then
+    set -- "$@" --secret-file "OP_SERVICE_ACCOUNT_TOKEN=$secrets/$workspace/OP_SERVICE_ACCOUNT_TOKEN"
+  fi
+  smolvm machine create --name "$workspace" --smolfile "$HOME/.config/smolvm/agent.smolfile" $network "$@"
+fi
+
+if ! smolvm machine status --name "$workspace" | grep -q running; then
+  # Git sends the token as basic auth, which smolvm sets as the whole header for github.com.
+  GITHUB_GIT_AUTH="Basic $(printf 'x-access-token:%s' "$(cat "$secrets/GITHUB_TOKEN")" | base64 | tr -d '\n')" \
+    smolvm machine start --name "$workspace"
+fi
+exec smolvm machine exec --name "$workspace" -it -- fish

@@ -1,0 +1,19 @@
+# A machine for coding agents, set up from these dotfiles like the workstation. Based on smolvm's
+# coding-agent Smolfile; `sandbox` adds each workspace's projects and credentials.
+image = "debian:trixie-slim"
+net = true
+
+# Claude Code skips permissions as root only when it knows it is sandboxed.
+env = ["IS_SANDBOX=1"]
+
+[dev]
+workdir = "/root/Projects"
+init = [
+  "apt-get update -qq && apt-get install -yqq ca-certificates curl fish git >/dev/null",
+  # The projects belong to the host user; git refuses them as root without this.
+  "git config --system --add safe.directory '*'",
+  "curl -fsSL https://mise.run | sh",
+  "/root/.local/bin/mise exec chezmoi@latest -- chezmoi init --apply --source /root/Projects/dotfiles",
+  "/root/.local/bin/mise install",
+  "chsh -s /usr/bin/fish",
+]

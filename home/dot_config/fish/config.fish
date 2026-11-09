@@ -1,7 +1,10 @@
-fish_add_path /opt/homebrew/bin
 fish_add_path $HOME/.local/bin
-set -gx XDG_CACHE_HOME $HOME/Library/Caches
-test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
+if test (uname) = Darwin
+    fish_add_path /opt/homebrew/bin
+    set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    set -gx XDG_CACHE_HOME $HOME/Library/Caches
+    test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
+end
 
 set -gx EDITOR nano
 set -gx FZF_CTRL_R_COMMAND ""
@@ -10,7 +13,6 @@ set -gx FZF_CTRL_T_OPTS "--preview 'bat --color=always -- {}'"
 set -gx FZF_DEFAULT_COMMAND $FZF_CTRL_T_COMMAND
 set -gx LESSHISTFILE /dev/null
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
-set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
 
 if status is-interactive
     set -g fish_greeting ""
