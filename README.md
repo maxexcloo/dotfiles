@@ -1,7 +1,7 @@
 # Dotfiles
 
 My macOS workstation preferences, managed by [chezmoi](https://www.chezmoi.io/)
-and installed through Mise. Shared agent instructions and my own skills live in
+and installed through Mise. The same source sets up Linux agent sandboxes. Shared agent instructions and my own skills live in
 the separate [Agents repository](https://github.com/maxexcloo/agents), but the
 links and skill discovery that wire them into the workstation are managed here.
 
@@ -14,9 +14,8 @@ modify templates to preserve unrelated application settings and local state.
 MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
 the 1Password Automation vault and referenced through
 `home/dot_config/fnox/config.toml`. Its service account token must be in the macOS
-keychain. Claude retrieves its key when connecting; launch Codex, OpenCode and Pi
-through their Fish wrappers to provide their keys. Keep key values out of Git and
-command output.
+keychain. Launch the agents through their Fish wrappers to provide their keys.
+Keep key values out of Git and command output.
 
 ## Usage
 
@@ -45,6 +44,22 @@ To sync another workstation, clone this repository, pull the revision you want
 and run the same commands. Changes to live files aren't imported automatically.
 `mise use --global` and `mise upgrade --global` edit the live Mise configuration,
 so copy those edits back into `home/`.
+
+## Agent Sandboxes
+
+On a Linux host, `sandbox WORKSPACE` opens Fish in a [smolvm](https://github.com/smol-machines/smolvm)
+machine for a group of projects (defined in `home/dot_local/bin/executable_sandbox`)
+or a single project in `~/Projects`. The machine applies these dotfiles on its
+first start, edits the mounted projects and keeps its own agent logins.
+
+The host needs smolvm, Mise, Tailscale and the
+[local services](https://github.com/maxexcloo/local-services) Connect server,
+served on its tailnet name with `tailscale serve --bg 8080`. Put Connect tokens in
+`~/.config/sandbox`: `default.token` for the Automation vault and
+`WORKSPACE.token` for a workspace that needs other vaults. Machines see only
+placeholders for the Bifrost keys, the GitHub token (`GitHub Agents` in the
+Automation vault) and the Connect token; smolvm adds the real values on requests
+to their hosts. Machines commit unsigned.
 
 ## Shared Agent Guidance
 

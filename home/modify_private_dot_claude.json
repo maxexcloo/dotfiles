@@ -1,15 +1,12 @@
 {{- /* chezmoi:modify-template */ -}}
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
-{{- $key := "fnox get BIFROST_CLAUDE_KEY | jq -Rc '{\"x-bf-vk\": .}'" -}}
-{{- /* Sandbox machines hold a placeholder that smolvm swaps for the key on the way to Bifrost. */ -}}
-{{- if eq .chezmoi.os "linux" }}{{ $key = "jq -nc '{\"x-bf-vk\": env.BIFROST_CLAUDE_KEY}'" }}{{ end -}}
 {{- range $name, $managed := .mcp -}}
 {{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}
 {{- $server := index $config "mcpServers" $name -}}
 {{- $_ := set $server "type" "http" -}}
 {{- $_ := unset $server "headers" -}}
-{{- $_ := set $server "headersHelper" $key -}}
+{{- $_ := set $server "headersHelper" "jq -nc '{\"x-bf-vk\": env.BIFROST_CLAUDE_KEY}'" -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

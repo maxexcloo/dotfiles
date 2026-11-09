@@ -1,8 +1,6 @@
 {{- if ne .chezmoi.os "darwin" }}
 # macOS applications, Syncthing folders and the 1Password-backed agent wrappers
-.config/fish/functions/codex.fish
-.config/fish/functions/opencode.fish
-.config/fish/functions/pi.fish
+.config/fish/functions
 .hammerspoon
 .ssh
 Backups

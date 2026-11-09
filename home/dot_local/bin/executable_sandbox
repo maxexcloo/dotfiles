@@ -1,20 +1,25 @@
 #!/bin/sh
 # Open fish in a workspace's smolvm machine, creating it on first use.
 # Usage: sandbox WORKSPACE, where WORKSPACE is a group below or a single project in ~/Projects.
-# Credentials are files in ~/.config/sandbox: the Bifrost keys and GITHUB_TOKEN reach the machine
-# only as placeholders, and WORKSPACE/OP_SERVICE_ACCOUNT_TOKEN, when present, as its real value.
+# Credentials come from this host's 1Password Connect, served on its tailnet name. The machine gets
+# placeholders that smolvm swaps for the Bifrost keys, the GitHub token and the Connect token on
+# requests to their hosts. ~/.config/sandbox/WORKSPACE.token selects a workspace's vaults;
+# default.token (Automation) serves the rest.
 set -eu
 
 workspace=$1
-network=--block-private
 case $workspace in
 agents) projects="agents dotfiles" ;;
 home-assistant) projects="esphome homeassistant-beszel-integration homeassistant-energy-locals-integration" ;;
-# Infrastructure work reaches the LAN and tailnet.
-infra) projects="flylab homelab kubelab local-services minilab" network= ;;
+infra) projects="flylab homelab kubelab local-services minilab" ;;
 *) projects=$workspace ;;
 esac
-secrets=$HOME/.config/sandbox
+
+tokens=$HOME/.config/sandbox
+connect=$(tailscale status --self --json | jq -r '.Self.DNSName | rtrimstr(".")')
+export OP_CONNECT_HOST="https://$connect"
+export OP_CONNECT_TOKEN
+OP_CONNECT_TOKEN=$(cat "$tokens/default.token")
 
 if ! smolvm machine status --name "$workspace" >/dev/null 2>&1; then
   set --
@@ -29,21 +34,30 @@ if ! smolvm machine status --name "$workspace" >/dev/null 2>&1; then
     esac
   done
   for agent in CLAUDE CODEX OPENCODE PI; do
-    set -- "$@" --secret-file "BIFROST_${agent}_KEY=$secrets/BIFROST_${agent}_KEY" \
+    set -- "$@" --secret-env "BIFROST_${agent}_KEY=BIFROST_${agent}_KEY" \
       --credential "bifrost-$agent=BIFROST_${agent}_KEY@bifrost.excloo.com"
   done
-  set -- "$@" --secret-file "GITHUB_TOKEN=$secrets/GITHUB_TOKEN" \
+  set -- "$@" --secret-env GITHUB_TOKEN=GITHUB_TOKEN \
     --credential "github-api=GITHUB_TOKEN@api.github.com" \
-    --credential "github-git=GITHUB_GIT_AUTH@github.com:set-header=authorization"
-  if [ -f "$secrets/$workspace/OP_SERVICE_ACCOUNT_TOKEN" ]; then
-    set -- "$@" --secret-file "OP_SERVICE_ACCOUNT_TOKEN=$secrets/$workspace/OP_SERVICE_ACCOUNT_TOKEN"
+    --credential "github-git=GITHUB_GIT_AUTH@github.com:set-header=authorization" \
+    -e "OP_CONNECT_HOST=$OP_CONNECT_HOST" --secret-env OP_CONNECT_TOKEN=WORKSPACE_CONNECT_TOKEN \
+    --credential "connect=OP_CONNECT_TOKEN@$connect"
+  if [ "$workspace" != infra ]; then
+    # Keep the machine off the LAN and tailnet, except for Connect on this host.
+    set -- "$@" --allow-private "$(tailscale ip -4)/32"
   fi
-  smolvm machine create --name "$workspace" --smolfile "$HOME/.config/smolvm/agent.smolfile" $network "$@"
+  smolvm machine create --name "$workspace" --smolfile "$HOME/.config/smolvm/agent.smolfile" "$@"
 fi
 
 if ! smolvm machine status --name "$workspace" | grep -q running; then
+  for agent in CLAUDE CODEX OPENCODE PI; do
+    export "BIFROST_${agent}_KEY=$(op read "op://Automation/Bifrost Agents/virtual-key-$(echo "$agent" | tr '[:upper:]' '[:lower:]')")"
+  done
+  GITHUB_TOKEN=$(op read "op://Automation/GitHub Agents/token")
   # Git sends the token as basic auth, which smolvm sets as the whole header for github.com.
-  GITHUB_GIT_AUTH="Basic $(printf 'x-access-token:%s' "$(cat "$secrets/GITHUB_TOKEN")" | base64 | tr -d '\n')" \
-    smolvm machine start --name "$workspace"
+  GITHUB_GIT_AUTH="Basic $(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 | tr -d '\n')"
+  WORKSPACE_CONNECT_TOKEN=$(cat "$tokens/$workspace.token" 2>/dev/null || echo "$OP_CONNECT_TOKEN")
+  export GITHUB_TOKEN GITHUB_GIT_AUTH WORKSPACE_CONNECT_TOKEN
+  smolvm machine start --name "$workspace"
 fi
 exec smolvm machine exec --name "$workspace" -it -- fish
