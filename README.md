@@ -7,34 +7,16 @@ links and skill discovery that wire them into the workstation are managed here.
 
 ## Configuration
 
-`.chezmoiroot` sets `home/` as the source root. Its directory tree mirrors the
-home directory using chezmoi attributes: `dot_config/` maps to `~/.config/`, and
-`private_` restricts access to private files and directories.
+Edit preferences in `home/`, then run `chezmoi apply`. The tree mirrors the home
+directory using chezmoi attributes. Credential-bearing preferences use native
+modify templates to preserve unrelated application settings and local state.
 
-Edit preferences in `home/`, then apply them. Ordinary preferences become regular
-files at their application paths, so edits in the checkout take effect after an
-apply. Claude Code, Codex, OpenCode and Pi use native modify templates to merge in
-managed preferences, keeping local application state and other provider settings.
-Generated hook hashes, onboarding state and project trust entries stay local.
-
-Client update checks are disabled so Mise owns upgrades. Claude Code uses
-`DISABLE_AUTOUPDATER` in its settings, Codex uses `check_for_update_on_startup`,
-and OpenCode uses `update`. Pi requires `PI_SKIP_VERSION_CHECK` in the shared Mise
-environment; its settings also collapse the changelog after Mise upgrades.
-
-MCP endpoints and the Bifrost text model are defined in `home/.chezmoidata.toml`.
-Bifrost keys are stored in the 1Password Automation vault and referenced through
-`home/dot_config/fnox/config.toml`, which reads them with a service account whose
-token is in the macOS keychain. Claude retrieves its own key when connecting.
-Codex, OpenCode and Pi read their keys from environment variables that their Fish
-wrapper functions set at launch. Chezmoi replaces stored Bifrost headers with
-these references while preserving unrelated client settings. Keep key values out
-of Git and command output.
-
-Orca hooks and plugins, accounts, caches, history, SSH host inventories and
-application databases are left to their applications. The OpenCode TUI
-integration isn't managed here. Existing Git signing and SSH agent preferences
-are kept.
+MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
+the 1Password Automation vault and referenced through
+`home/dot_config/fnox/config.toml`. Its service account token must be in the macOS
+keychain. Claude retrieves its key when connecting; launch Codex, OpenCode and Pi
+through their Fish wrappers to provide their keys. Keep key values out of Git and
+command output.
 
 ## Usage
 
@@ -55,11 +37,9 @@ chezmoi apply
 ```
 
 `setup` points chezmoi at this checkout, so plain `chezmoi` commands work from
-anywhere afterwards. `fmt` formats repository files and all shared Mise config
-and task files. `check` runs Actionlint, Mise formatting, Renovate validation,
-MCP merge and secret-guard redaction fixtures and Hk's formatting, hygiene and
-ShellCheck checks. It needs the shared Mise configuration. None of these resolve
-credentials or need vault access.
+anywhere afterwards. Use `mise tasks` to discover tasks, `mise run fmt` to format
+files and `mise run check` to validate them. Formatting and checks need the shared
+Mise configuration; they do not resolve credentials or need vault access.
 
 To sync another workstation, clone this repository, pull the revision you want
 and run the same commands. Changes to live files aren't imported automatically.
@@ -69,40 +49,22 @@ so copy those edits back into `home/`.
 ## Shared Agent Guidance
 
 Clone the Agents repository beside this checkout. Chezmoi links its shared
-instructions and skills into `~/.agents`, then links `AGENTS.md` into Claude
-Code, Codex and Pi. OpenCode falls back to Claude Code's `~/.claude/CLAUDE.md`.
+instructions and skills into the workstation. Claude Code loads that repository
+as a plugin because it does not discover the shared skill collection recursively.
 
-The `~/.agents/skills/personal` directory link exposes the sibling Agents skill
-collection through recursive discovery. Adding or removing a skill needs no
-per-skill dotfiles entry or linking script.
-
-Claude Code doesn't read `~/.agents/skills` or recurse into collections. It
-loads the Agents repository as a plugin instead, enabled through
-`home/dot_claude/modify_private_settings.json`, and `home/dot_claude/skills/`
-mirrors each upstream skill link.
-
-`home/.chezmoiexternal.toml` pins the upstream Humanizer, Orca and TerraShark
-skills for Renovate and installs them straight into `~/.agents/skills`.
-Personal activation and preview rules stay in the Agents repository's
-`AGENTS.md`, so upstream packages stay unmodified.
+Upstream skills are installed through `home/.chezmoiexternal.toml`. Keep personal
+rules in the Agents repository so upstream packages stay unmodified.
 
 ## Shared Tools & Tasks
 
-`home/dot_config/mise/conf.d/tools.toml` declares the tools shared by the
-workstation and CI, and `config.toml` adds workstation-only settings and tools,
-all on `latest`. Repositories inherit these and only declare exact versions for
-project-specific tools or real compatibility requirements.
+`home/dot_config/mise/conf.d/tools.toml` declares shared tools;
+`home/dot_config/mise/config.toml` adds workstation-only configuration.
 
-Mise loads the shared tasks in `tasks/` globally; `mise tasks` lists them.
-Repositories pick them through `depends` and keep their own tests, builds and
-operational tasks. Run tasks from the repository root. Each check skips itself
-when its inputs are missing. The global `check` runs every shared check except
-TypeScript, plus `test:python`, and the global `fmt` runs the Mise, Oxfmt and
-Python formatters; a project's own override of a subtask wins. A repository
-`check` or `fmt` task replaces the global one. Checks find their own inputs:
-ShellCheck reads every tracked `*.sh` file, Ruff reads the project's own
-configuration, and Python tests run from `tests/`, inside the locked environment
-when `uv.lock` exists.
+Mise loads the shared tasks globally; `mise tasks` lists them. Repositories select
+them through `depends` and keep their own tests, builds and operational tasks.
+Run tasks from the repository root. Checks skip when their inputs are missing.
+A project's task overrides the shared task of the same name, including `check`
+and `fmt`.
 
 ```toml
 [tasks.check]
@@ -111,27 +73,23 @@ depends = ["check:python", "check:updates", "test:python"]
 
 ## Dependency Updates
 
-Every repository with dependencies has a `renovate.json5` that extends the shared
-preset in `renovate/default.json5`, adding only its own exceptions. Home Assistant
-integrations also extend `renovate/home-assistant.json5`, which keeps the minimum
-Home Assistant version and its test fixtures in step. Renovate's native
-managers find Actions, containers, Kubernetes, Flux, Helm, Mise, npm, Python, Go
-and OpenTofu dependencies, and lockfile maintenance refreshes transitive locked
-packages. The preset adds generic managers for Pkl packages, raw
-GitHub files pinned to a commit and image references outside `image` fields. Any
-other pin gets a comment on the line above it:
+Repositories with dependencies extend
+`github>maxexcloo/dotfiles//renovate/default.json5` in `renovate.json5`, adding only
+their own exceptions. Home Assistant integrations also extend
+`github>maxexcloo/dotfiles//renovate/home-assistant.json5` to keep their minimum
+Home Assistant version and test fixtures in step.
+
+For pins the shared preset does not detect automatically, add a comment on the
+line above:
 
 ```yaml
 # renovate: datasource=github-releases depName=<owner>/<repository>
 version: <version>
 ```
 
-The Mend Renovate app runs the preset on GitHub. It groups minor and patch
-updates into one pull request per repository and automerges them, digests and
-lockfile maintenance once checks pass. Major updates open their own pull
-requests that request the owner's review and are not automerged; each
-repository's Dependency Dashboard issue lists everything pending. Presets are read from
-GitHub, so changes to the shared preset take effect once they're merged.
+The Mend Renovate app runs on GitHub; each repository's Dependency Dashboard lists
+pending updates. Shared presets are read from GitHub, so changes take effect once
+merged.
 
 GitHub Actions uses `maxexcloo/dotfiles/.github/actions/mise@main`. The action
 loads only the shared tools and tasks from its own revision, then installs the
