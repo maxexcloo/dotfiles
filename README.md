@@ -59,9 +59,8 @@ The profiles add the Bifrost keys and a GitHub token (`GitHub Agents` in the
 Automation vault) from the host's
 [local services](https://github.com/maxexcloo/local-services) Connect server, and
 pass its token through so agents can use the vaults that server reads. Save the
-token as `token` beside the Connect credentials file and pull the upstream
-profiles once with
-`nono pull nolabs-ai/claude nolabs-ai/codex nolabs-ai/opencode nolabs-ai/pi`.
+token as `token` beside the Connect credentials file and pull each upstream
+profile once with `nono pull nolabs-ai/AGENT`.
 Agents commit unsigned and push with the GitHub token.
 
 ## Shared Agent Guidance
