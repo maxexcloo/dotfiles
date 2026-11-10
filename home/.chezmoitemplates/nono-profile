@@ -10,11 +10,17 @@
     "set_vars": {
       "GH_CONFIG_DIR": "$TMPDIR/nono-gh",
       "GIT_CONFIG_GLOBAL": "$HOME/.config/git/config",
-      "OP_CONFIG_DIR": "$TMPDIR/nono-op"
+      "OP_CONFIG_DIR": "$TMPDIR/nono-op",
+      "npm_config_cache": "$HOME/.cache/npm"
     }
   },
   "filesystem": {
-    "allow": ["$HOME/.local/state/mise/tracked-configs", "$HOME/Library/Application Support/orca/agent-hooks"],
+    "allow": [
+      "/var/tmp",
+      "$HOME/.cache",
+      "$HOME/.local/state/mise/tracked-configs",
+      "$HOME/Library/Application Support/orca/agent-hooks"
+    ],
     "read": ["$HOME/.agents", "$HOME/.config/fnox", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents"]
   },
   "groups": { "include": ["mise_manager"] },
