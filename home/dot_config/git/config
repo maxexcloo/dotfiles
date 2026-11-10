@@ -1,0 +1,22 @@
+[credential "https://github.com"]
+helper = !gh auth git-credential
+
+[fetch]
+prune = true
+
+[push]
+autoSetupRemote = true
+
+[rebase]
+autoStash = true
+
+[rerere]
+enabled = true
+
+[user]
+email = max@excloo.com
+name = Max Schaefer
+
+[hook "gitleaks"]
+command = gitleaks git --pre-commit --staged --redact --no-banner --log-level warn
+event = pre-commit

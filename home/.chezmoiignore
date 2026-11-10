@@ -1,0 +1,9 @@
+{{- if ne .chezmoi.os "darwin" }}
+.gitconfig
+.hammerspoon
+.ssh
+Backups
+Documents
+Library
+Projects
+{{- end }}

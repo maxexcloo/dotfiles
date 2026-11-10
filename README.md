@@ -1,9 +1,10 @@
 # Dotfiles
 
 My macOS workstation preferences, managed by [chezmoi](https://www.chezmoi.io/)
-and installed through Mise. Shared agent instructions and my own skills live in
-the separate [Agents repository](https://github.com/maxexcloo/agents), but the
-links and skill discovery that wire them into the workstation are managed here.
+and installed through Mise; the same source sets up a Linux host for sandboxed
+agents. Shared agent instructions and my own skills live in the separate
+[Agents repository](https://github.com/maxexcloo/agents), but the links and skill
+discovery that wire them into the workstation are managed here.
 
 ## Configuration
 
@@ -13,16 +14,19 @@ modify templates to preserve unrelated application settings and local state.
 
 MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
 the 1Password Automation vault and referenced through
-`home/dot_config/fnox/config.toml`. Its service account token must be in the macOS
-keychain. Claude retrieves its key when connecting; launch Codex, OpenCode and Pi
-through their Fish wrappers to provide their keys. Keep key values out of Git and
-command output.
+`home/dot_config/fnox/config.toml`. Fnox and the 1Password CLI read vaults
+through the machine's 1Password Connect server: on macOS from
+[local services](https://github.com/maxexcloo/local-services), on Linux from
+[Homelab](https://github.com/maxexcloo/homelab). Save its token as `token` beside
+the Connect credentials file. Launch the agents through their Fish wrappers to
+provide their keys. Keep key values out of Git and command output.
 
 ## Usage
 
-Install Mise and the required applications. Enable the 1Password desktop
-integration for Git signing and SSH authentication. Homebrew is not required for
-chezmoi.
+Install Homebrew, then the packages and applications in `home/dot_Brewfile` with
+`brew bundle --file home/dot_Brewfile`; after setup, `brew bundle --global` keeps
+them in sync. Enable the 1Password desktop integration for Git signing and SSH
+authentication on macOS.
 
 From this checkout, bootstrap the shared Mise directory with a temporary chezmoi,
 then install the global tools it declares:
@@ -45,6 +49,20 @@ To sync another workstation, clone this repository, pull the revision you want
 and run the same commands. Changes to live files aren't imported automatically.
 `mise use --global` and `mise upgrade --global` edit the live Mise configuration,
 so copy those edits back into `home/`.
+
+## Agent Sandboxes
+
+The Fish wrappers run Claude Code, Codex, OpenCode and Pi through
+[nono](https://github.com/nolabs-ai/nono) with the profiles in
+`home/dot_config/nono/profiles`, built from one shared template. Each extends the
+upstream profile for its agent, adds Mise tools and read access to the shared
+agent guidance, and allows writes only in the directory the agent starts in.
+Start an agent in `~/Projects` to work across projects. Pull each upstream
+profile once with `nono pull nolabs-ai/AGENT`.
+
+Agents read only the shared Git configuration, so they commit unsigned and push
+over HTTPS with the `GitHub Agents` token from the Automation vault. Agents also
+get the Connect token, so they can use the vaults its server reads.
 
 ## Shared Agent Guidance
 
