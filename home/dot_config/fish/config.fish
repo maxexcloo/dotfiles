@@ -10,6 +10,7 @@ else
 end
 fish_add_path $HOME/.local/bin
 
+set -gx CLAUDE_CONFIG_DIR $HOME/.claude
 set -gx EDITOR nano
 set -gx FZF_CTRL_R_COMMAND ""
 set -gx FZF_CTRL_T_COMMAND "fd --exclude .git --hidden --type f"
