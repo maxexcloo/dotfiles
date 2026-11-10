@@ -62,7 +62,9 @@ profile once with `nono pull nolabs-ai/AGENT`.
 
 Agents read only the shared Git configuration, so they commit unsigned and push
 over HTTPS with the `GitHub Agents` token from the Automation vault. Agents also
-get the Connect token, so they can use the vaults its server reads.
+get the Connect host and token, so they can use the vaults its server reads. nono
+blocks 1Password variables, so the wrappers pass them under other names and
+restore them inside the sandbox.
 
 ## Shared Agent Guidance
 
