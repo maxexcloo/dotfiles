@@ -52,7 +52,8 @@ so copy those edits back into `home/`.
 
 ## Agent Sandboxes
 
-The Fish wrappers run Claude Code, Codex, OpenCode and Pi through
+The Fish wrappers for Claude Code, Codex, OpenCode and Pi call `run-agent`, which
+adds their keys and runs them through
 [nono](https://github.com/nolabs-ai/nono) with the profiles in
 `home/dot_config/nono/profiles`, built from one shared template. Each extends the
 upstream profile for its agent, adds Mise tools and read access to the shared
@@ -63,12 +64,16 @@ profile once with `nono pull nolabs-ai/AGENT`.
 Agents read only the shared Git configuration, so they commit unsigned and push
 over HTTPS with the `GitHub Agents` token from the Automation vault. Agents also
 get the Connect host and token, so they can use the vaults its server reads. nono
-blocks 1Password variables, so the wrappers pass them under other names and
+blocks 1Password variables, so `run-agent` passes them under other names and
 restore them inside the sandbox.
 
 Agents can report status to Orca but not use its CLI, which would let them run
-commands outside the sandbox. Use `command AGENT` for work the sandbox blocks,
-such as SSH, Kubernetes and Talos, chezmoi, Orca orchestration and Xcode builds.
+commands outside the sandbox. Run `SANDBOX=0 AGENT` for work the sandbox blocks,
+such as SSH, Kubernetes and Talos, chezmoi, Orca orchestration and Xcode builds;
+it keeps the keys.
+
+Agent logins, sessions and history stay on each machine: sign in to each agent
+once per machine.
 
 ## Shared Agent Guidance
 

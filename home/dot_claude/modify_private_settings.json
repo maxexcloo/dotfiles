@@ -3,7 +3,7 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := dict "outputStyle" "Concise" "spinnerTipsEnabled" false "env" (dict "DISABLE_AUTOUPDATER" "1") -}}
 {{- $marketplace := dict "source" (dict "source" "directory" "path" (joinPath .chezmoi.workingTree ".." "agents")) -}}
-{{- $_ := set $preferences "enabledPlugins" (dict "agents@maxexcloo" true) -}}
+{{- $_ := set $preferences "enabledPlugins" (dict "agents@maxexcloo" true "frontend-design@claude-plugins-official" true) -}}
 {{- $_ := set $preferences "extraKnownMarketplaces" (dict "maxexcloo" $marketplace) -}}
 {{- $config = mergeOverwrite $config $preferences -}}
 {{- $_ := set $config "hooks" (includeTemplate "secret-guard-hooks" (dict "hooks" (get $config "hooks") "pre" "Bash|Read|Grep" "agent" "claude") | fromJson) -}}
