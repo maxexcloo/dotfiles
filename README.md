@@ -66,6 +66,10 @@ get the Connect host and token, so they can use the vaults its server reads. non
 blocks 1Password variables, so the wrappers pass them under other names and
 restore them inside the sandbox.
 
+Agents can report status to Orca but not use its CLI, which would let them run
+commands outside the sandbox. Use `command AGENT` for work the sandbox blocks,
+such as SSH, Kubernetes and Talos, chezmoi, Orca orchestration and Xcode builds.
+
 ## Shared Agent Guidance
 
 Clone the Agents repository beside this checkout. Chezmoi links its shared

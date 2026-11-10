@@ -6,8 +6,17 @@
     "env://OP_CONNECT_HOST": "CONNECT_HOST",
     "env://OP_CONNECT_TOKEN": "CONNECT_TOKEN"
   },
-  "environment": { "set_vars": { "GIT_CONFIG_GLOBAL": "$HOME/.config/git/config" } },
-  "filesystem": { "read": ["$HOME/.agents", "$HOME/.config/fnox", "$HOME/Projects/agents"] },
+  "environment": {
+    "set_vars": {
+      "GH_CONFIG_DIR": "$TMPDIR/nono-gh",
+      "GIT_CONFIG_GLOBAL": "$HOME/.config/git/config",
+      "OP_CONFIG_DIR": "$TMPDIR/nono-op"
+    }
+  },
+  "filesystem": {
+    "allow": ["$HOME/.local/state/mise/tracked-configs", "$HOME/Library/Application Support/orca/agent-hooks"],
+    "read": ["$HOME/.agents", "$HOME/.config/fnox", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents"]
+  },
   "groups": { "include": ["mise_manager"] },
   "meta": { "name": "{{ .agent }}" }
 }
