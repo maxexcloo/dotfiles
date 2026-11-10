@@ -5,12 +5,9 @@ if test (uname) = Darwin
     set -gx XDG_CACHE_HOME $HOME/Library/Caches
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
 else
-    # Agents run in nono sandboxes; their profiles add keys from this host's 1Password Connect.
+    # Without the 1Password app, fnox and agents read the vaults through this host's Connect.
     set -gx OP_CONNECT_HOST http://127.0.0.1:8080
     set -gx OP_CONNECT_TOKEN (cat $HOME/.config/op/connect/token)
-    for agent in claude codex opencode pi
-        abbr -a $agent "nono run --profile $agent --allow-cwd -- $agent"
-    end
 end
 
 set -gx EDITOR nano

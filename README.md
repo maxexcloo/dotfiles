@@ -14,8 +14,8 @@ modify templates to preserve unrelated application settings and local state.
 
 MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
 the 1Password Automation vault and referenced through
-`home/dot_config/fnox/config.toml`. Its service account token must be in the macOS
-keychain. Launch the agents through their Fish wrappers to provide their keys.
+`home/dot_config/fnox/config.toml`. On macOS its service account token must be in
+the keychain. Launch the agents through their Fish wrappers to provide their keys.
 Keep key values out of Git and command output.
 
 ## Usage
@@ -48,20 +48,19 @@ so copy those edits back into `home/`.
 
 ## Agent Sandboxes
 
-On Linux, Fish abbreviations run Claude Code, Codex, OpenCode and Pi through
+The Fish wrappers run Claude Code, Codex, OpenCode and Pi through
 [nono](https://github.com/nolabs-ai/nono) with the profiles in
-`home/dot_config/nono/profiles`. Each extends the upstream profile for its agent,
-adds Mise tools and read access to the shared agent guidance, and allows writes
-only in the directory the agent starts in. Start an agent in `~/Projects` to work
-across projects.
-
-The profiles add the Bifrost keys and a GitHub token (`GitHub Agents` in the
-Automation vault) from the host's
-[local services](https://github.com/maxexcloo/local-services) Connect server, and
-pass its token through so agents can use the vaults that server reads. Save the
-token as `token` beside the Connect credentials file and pull each upstream
+`home/dot_config/nono/profiles`, built from one shared template. Each extends the
+upstream profile for its agent, adds Mise tools and read access to the shared
+agent guidance, and allows writes only in the directory the agent starts in.
+Start an agent in `~/Projects` to work across projects. Pull each upstream
 profile once with `nono pull nolabs-ai/AGENT`.
-Agents commit unsigned and push with the GitHub token.
+
+Agents read only the shared Git configuration, so they commit unsigned and push
+over HTTPS with the `GitHub Agents` token from the Automation vault. On Linux, fnox
+reads the vault through the host's 1Password Connect, whose token is saved as
+`token` beside its credentials file; agents get that token too, so they can use
+the vaults the Connect server reads.
 
 ## Shared Agent Guidance
 
