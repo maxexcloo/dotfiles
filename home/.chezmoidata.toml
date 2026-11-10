@@ -13,6 +13,9 @@ url = "https://bifrost.excloo.com/mcp/immich"
 [mcp.karakeep]
 url = "https://bifrost.excloo.com/mcp/karakeep"
 
+[mcp.kubernetes]
+url = "https://bifrost.excloo.com/mcp/kubernetes"
+
 [mcp.larapaper]
 url = "https://bifrost.excloo.com/mcp/larapaper"
 
