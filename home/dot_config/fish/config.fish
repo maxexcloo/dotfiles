@@ -1,14 +1,13 @@
-fish_add_path $HOME/.local/bin
 if test (uname) = Darwin
     fish_add_path /opt/homebrew/bin
     set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
     set -gx XDG_CACHE_HOME $HOME/Library/Caches
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
 else
-    # Without the 1Password app, fnox and agents read the vaults through this host's Connect.
     set -gx OP_CONNECT_HOST http://127.0.0.1:8080
     set -gx OP_CONNECT_TOKEN (cat $HOME/.config/op/connect/token)
 end
+fish_add_path $HOME/.local/bin
 
 set -gx EDITOR nano
 set -gx FZF_CTRL_R_COMMAND ""

@@ -1,4 +1,3 @@
-# Shared by people and sandboxed agents, which read only this file; ~/.gitconfig adds macOS signing.
 [credential "https://github.com"]
 helper = !gh auth git-credential
 

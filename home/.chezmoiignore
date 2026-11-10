@@ -1,5 +1,4 @@
 {{- if ne .chezmoi.os "darwin" }}
-# macOS applications, Syncthing folders and 1Password commit signing
 .gitconfig
 .hammerspoon
 .ssh
