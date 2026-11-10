@@ -4,6 +4,13 @@ if test (uname) = Darwin
     set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
     set -gx XDG_CACHE_HOME $HOME/Library/Caches
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
+else
+    # Agents run in nono sandboxes; their profiles add keys from this host's 1Password Connect.
+    set -gx OP_CONNECT_HOST http://127.0.0.1:8080
+    set -gx OP_CONNECT_TOKEN (cat $HOME/.config/op/connect/token)
+    for agent in claude codex opencode pi
+        abbr -a $agent "nono run --profile $agent --allow-cwd -- $agent"
+    end
 end
 
 set -gx EDITOR nano

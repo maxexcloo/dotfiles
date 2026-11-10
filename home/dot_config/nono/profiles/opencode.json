@@ -1,0 +1,11 @@
+{
+  "extends": "nolabs-ai/opencode",
+  "meta": { "name": "opencode" },
+  "groups": { "include": ["mise_manager"] },
+  "filesystem": { "read": ["$HOME/.agents", "$HOME/Projects/agents"] },
+  "env_credentials": {
+    "env://OP_CONNECT_TOKEN": "OP_CONNECT_TOKEN",
+    "op://Automation/Bifrost Agents/virtual-key-opencode": "BIFROST_OPENCODE_KEY",
+    "op://Automation/GitHub Agents/token": "GH_TOKEN"
+  }
+}

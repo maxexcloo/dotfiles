@@ -1,0 +1,11 @@
+{
+  "extends": "nolabs-ai/claude",
+  "meta": { "name": "claude" },
+  "groups": { "include": ["mise_manager"] },
+  "filesystem": { "read": ["$HOME/.agents", "$HOME/Projects/agents"] },
+  "env_credentials": {
+    "env://OP_CONNECT_TOKEN": "OP_CONNECT_TOKEN",
+    "op://Automation/Bifrost Agents/virtual-key-claude": "BIFROST_CLAUDE_KEY",
+    "op://Automation/GitHub Agents/token": "GH_TOKEN"
+  }
+}

@@ -20,7 +20,6 @@ command = gitleaks git --pre-commit --staged --redact --no-banner --log-level wa
 event = pre-commit
 {{- if eq .chezmoi.os "darwin" }}
 
-# Sandbox machines have no 1Password; they commit unsigned and push over HTTPS with an injected token.
 [commit]
 gpgsign = true
 
@@ -32,4 +31,9 @@ program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
 
 [url "git@github.com:"]
 insteadOf = https://github.com/
+{{- else }}
+
+# Sandboxed agents have no 1Password app; they commit unsigned and push with the GH_TOKEN their profile adds.
+[credential "https://github.com"]
+helper = !gh auth git-credential
 {{- end }}

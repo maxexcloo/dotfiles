@@ -1,0 +1,11 @@
+{
+  "extends": "nolabs-ai/pi",
+  "meta": { "name": "pi" },
+  "groups": { "include": ["mise_manager"] },
+  "filesystem": { "read": ["$HOME/.agents", "$HOME/Projects/agents"] },
+  "env_credentials": {
+    "env://OP_CONNECT_TOKEN": "OP_CONNECT_TOKEN",
+    "op://Automation/Bifrost Agents/virtual-key-pi": "BIFROST_PI_KEY",
+    "op://Automation/GitHub Agents/token": "GH_TOKEN"
+  }
+}
