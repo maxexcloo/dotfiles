@@ -73,7 +73,8 @@ such as SSH, Kubernetes and Talos, chezmoi, Orca orchestration and Xcode builds;
 it keeps the keys.
 
 Agent logins, sessions and history stay on each machine: sign in to each agent
-once per machine.
+once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,
+because the sandbox cannot replace files directly in the home directory.
 
 ## Shared Agent Guidance
 
