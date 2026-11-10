@@ -1,11 +1,12 @@
 if test (uname) = Darwin
     fish_add_path /opt/homebrew/bin
+    set -gx OP_CONNECT_HOST https://connect-api.onepassword-connect.orb.local
     set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
     set -gx XDG_CACHE_HOME $HOME/Library/Caches
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
 else
+    fish_add_path /home/linuxbrew/.linuxbrew/bin
     set -gx OP_CONNECT_HOST http://127.0.0.1:8080
-    set -gx OP_CONNECT_TOKEN (cat $HOME/.config/op/connect/token)
 end
 fish_add_path $HOME/.local/bin
 
@@ -16,6 +17,7 @@ set -gx FZF_CTRL_T_OPTS "--preview 'bat --color=always -- {}'"
 set -gx FZF_DEFAULT_COMMAND $FZF_CTRL_T_COMMAND
 set -gx LESSHISTFILE /dev/null
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+set -gx OP_CONNECT_TOKEN (cat $HOME/.config/op/connect/token)
 
 if status is-interactive
     set -g fish_greeting ""

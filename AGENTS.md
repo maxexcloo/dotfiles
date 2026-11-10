@@ -1,7 +1,7 @@
 # Dotfiles
 
 - Keep workstation preferences in the mirrored chezmoi source tree under `home/`.
-- Keep only credential references (1Password titles or fnox keychain entries) in source.
+- Keep only credential references (1Password titles) in source.
 - Keep credential-bearing targets private and merge their preferences with native chezmoi modify templates.
 - Keep shared agent instructions and self-written skills in `../agents`. Manage their workstation links and skill discovery configuration here. Install upstream skills through native chezmoi externals; keep personal rules in the Agents repository rather than patching upstream packages.
 - Other repositories consume the shared Mise tasks and `.github/actions/mise` at `@main` (an accepted risk, as the owner controls every consumer). Check their `.mise.toml` and workflows before changing or removing shared behaviour; keep changes backwards compatible.

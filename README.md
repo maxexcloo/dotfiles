@@ -14,15 +14,19 @@ modify templates to preserve unrelated application settings and local state.
 
 MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
 the 1Password Automation vault and referenced through
-`home/dot_config/fnox/config.toml`. On macOS its service account token must be in
-the keychain. Launch the agents through their Fish wrappers to provide their keys.
-Keep key values out of Git and command output.
+`home/dot_config/fnox/config.toml`. Fnox and the 1Password CLI read vaults
+through the machine's 1Password Connect server: on macOS from
+[local services](https://github.com/maxexcloo/local-services), on Linux from
+[Homelab](https://github.com/maxexcloo/homelab). Save its token as `token` beside
+the Connect credentials file. Launch the agents through their Fish wrappers to
+provide their keys. Keep key values out of Git and command output.
 
 ## Usage
 
-Install Mise and the required applications. Enable the 1Password desktop
-integration for Git signing and SSH authentication. Homebrew is not required for
-chezmoi.
+Install Homebrew, then the packages and applications in `home/dot_Brewfile` with
+`brew bundle --file home/dot_Brewfile`; after setup, `brew bundle --global` keeps
+them in sync. Enable the 1Password desktop integration for Git signing and SSH
+authentication on macOS.
 
 From this checkout, bootstrap the shared Mise directory with a temporary chezmoi,
 then install the global tools it declares:
@@ -57,10 +61,8 @@ Start an agent in `~/Projects` to work across projects. Pull each upstream
 profile once with `nono pull nolabs-ai/AGENT`.
 
 Agents read only the shared Git configuration, so they commit unsigned and push
-over HTTPS with the `GitHub Agents` token from the Automation vault. On Linux, fnox
-reads the vault through the host's 1Password Connect, whose token is saved as
-`token` beside its credentials file; agents get that token too, so they can use
-the vaults the Connect server reads.
+over HTTPS with the `GitHub Agents` token from the Automation vault. Agents also
+get the Connect token, so they can use the vaults its server reads.
 
 ## Shared Agent Guidance
 
