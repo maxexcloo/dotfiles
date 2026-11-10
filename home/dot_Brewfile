@@ -34,13 +34,14 @@ if OS.mac?
   cask "slack"
   cask "syncthing-app"
   cask "tailscale-app"
-  cask "thaw@beta"
+  cask "thaw"
   cask "ungoogled-chromium"
-  cask "utm@beta"
+  cask "utm"
   cask "visual-studio-code"
 
   mas "Apple Configurator", id: 1037126344
   mas "HomeClaw", id: 6759682551
   mas "KeyPad", id: 1491684442
+  mas "Twilight: Warm Display", id: 6796829257
   mas "Xcode", id: 497799835
 end
