@@ -27,7 +27,6 @@ if OS.mac?
   cask "itsycal"
   cask "keepingyouawake"
   cask "keka"
-  cask "moonlight"
   cask "openusage"
   cask "orbstack"
   cask "orca"
