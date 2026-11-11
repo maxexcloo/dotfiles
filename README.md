@@ -63,14 +63,19 @@ profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so che
 with `nono outdated` and run `nono update`, then `chezmoi apply`: the Codex
 template moves nono's Codex settings out of the block nono inserts.
 
-Agents read only the shared Git configuration, so they commit unsigned and push
-over HTTPS with the `GitHub Agents` token from the Automation vault. Sandboxed
-agents cannot reach 1Password; use `SANDBOX=0` for work that needs vault secrets.
+Sandboxed agents read only the shared Git configuration, so they commit unsigned
+and push over HTTPS with the `GitHub Agents` token from the Automation vault. They
+cannot reach 1Password, SSH, cluster credentials or Orca's CLI, which would let
+them run commands outside the sandbox; Orca still shows their status. Run
+`unsafe AGENT` for work that needs those, such as OpenTofu plans and applies, host
+work, Kubernetes and Talos administration, chezmoi and Xcode builds; it keeps the
+keys.
 
-Agents can report status to Orca but not use its CLI, which would let them run
-commands outside the sandbox. Run `SANDBOX=0 AGENT` for work the sandbox blocks,
-such as SSH, Kubernetes and Talos, chezmoi, Orca orchestration and Xcode builds;
-it keeps the keys.
+Orca launches agents through these wrappers when its agent command for each one
+is set to `fish -c "AGENT $argv" --`. Orca workers report back through its CLI, so
+start them unsandboxed: create a terminal running `fish -c "unsafe AGENT"` with
+`orca terminal create --command` and give it the task with
+`orca orchestration worker-start --terminal`.
 
 Agent logins, sessions and history stay on each machine: sign in to each agent
 once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,
