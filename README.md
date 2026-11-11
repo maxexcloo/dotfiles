@@ -18,8 +18,9 @@ the 1Password Automation vault and referenced through
 through the machine's 1Password Connect server: on macOS from
 [local services](https://github.com/maxexcloo/local-services), on Linux from
 [Homelab](https://github.com/maxexcloo/homelab). Save its token as `token` beside
-the Connect credentials file. Launch the agents through their Fish wrappers to
-provide their keys. Keep key values out of Git and command output.
+the Connect credentials file. `chezmoi apply` writes each agent's Bifrost key into
+its private configuration and the `GitHub Agents` token into
+`~/.config/gh-agents`. Keep key values out of Git and command output.
 
 ## Usage
 
@@ -52,8 +53,7 @@ so copy those edits back into `home/`.
 
 ## Agent Sandboxes
 
-The Fish wrappers for Claude Code, Codex, OpenCode and Pi call `run-agent`, which
-adds their keys and runs them through
+The Fish wrappers for Claude Code, Codex, OpenCode and Pi run them through
 [nono](https://github.com/nolabs-ai/nono) with the profiles in
 `home/dot_config/nono/profiles`, built from one shared template. Each extends the
 upstream profile for its agent, adds Mise tools and read access to the shared
@@ -63,17 +63,16 @@ profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so che
 with `nono outdated` and run `nono update`, then `chezmoi apply`: the Codex
 template moves nono's Codex settings out of the block nono inserts.
 
-Sandboxed agents read only the shared Git configuration, so they commit unsigned
-and push over HTTPS with the `GitHub Agents` token from the Automation vault. They
-cannot reach 1Password, SSH, cluster credentials or Orca's CLI, which would let
-them run commands outside the sandbox; Orca still shows their status. Run
-`unsafe AGENT` for work that needs those, such as OpenTofu plans and applies, host
-work, Kubernetes and Talos administration, chezmoi and Xcode builds; it keeps the
-keys.
+Sandboxed agents read only the shared Git configuration and the `GitHub Agents`
+gh configuration, so they commit unsigned and push over HTTPS. They cannot reach
+1Password, SSH, cluster credentials or Orca's CLI, which would let them run
+commands outside the sandbox; Orca still shows their status. Run `command AGENT`
+for work that needs those, such as OpenTofu plans and applies, host work,
+Kubernetes and Talos administration, chezmoi and Xcode builds.
 
 Orca launches agents through these wrappers when its agent command for each one
 is set to `fish -c "AGENT $argv" --`. Orca workers report back through its CLI, so
-start them unsandboxed: create a terminal running `fish -c "unsafe AGENT"` with
+start them unsandboxed: create a terminal running `command AGENT` with
 `orca terminal create --command` and give it the task with
 `orca orchestration worker-start --terminal`.
 

@@ -1,12 +1,11 @@
 {{- /* chezmoi:modify-template */ -}}
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
+{{- $key := includeTemplate "bifrost-key" "pi" -}}
 {{- range $name, $managed := .mcp -}}
 {{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}
 {{- $server := index $config "mcpServers" $name -}}
-{{- /* Env, not a `!command`: Pi runs header commands through execSync in-process (10s cap),
-so a slow 1Password lookup freezes the TUI and an expired one sends an empty header. */ -}}
-{{- $_ := set $server "headers" (dict "Authorization" "Bearer ${BIFROST_PI_KEY}") -}}
+{{- $_ := set $server "headers" (dict "Authorization" (printf "Bearer %s" $key)) -}}
 {{- /* Per-request cap covers the connect, so a downed endpoint fails in seconds instead of 60.
 It also bounds tool calls, hence 15s rather than the 60s default. */ -}}
 {{- $_ := set $server "timeout" 15 -}}

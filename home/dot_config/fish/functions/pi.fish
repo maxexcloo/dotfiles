@@ -1,3 +1,3 @@
 function pi --wraps pi
-    run-agent pi $argv
+    nono run --allow-cwd --profile pi -- pi $argv
 end

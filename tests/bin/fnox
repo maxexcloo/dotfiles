@@ -1,0 +1,3 @@
+#!/bin/sh
+# Stands in for fnox when tests and checks render templates without 1Password.
+echo "test-$1"

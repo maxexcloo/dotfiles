@@ -1,5 +1,6 @@
 // Bifrost owns the catalogue. These prefixes are hidden because the client
 // reaches them natively, or because they duplicate another Bifrost provider.
+const apiKey = {{ includeTemplate "bifrost-key" "pi" | toJson }};
 const baseUrl = {{ .bifrost.baseUrl | toJson }};
 // Pi signs in to OpenCode once for both Go and Zen, so it keeps those aliases.
 // Its OpenAI sign-in covers the cliproxy-openai channel; the anthropic, google
@@ -18,7 +19,7 @@ const cost = (entry: { pricing?: Record<string, string> }) => ({
 
 const load = async (signal?: AbortSignal) => {
   const response = await fetch(`${baseUrl}/models`, {
-    headers: { Authorization: `Bearer ${process.env.BIFROST_PI_KEY ?? ""}` },
+    headers: { Authorization: `Bearer ${apiKey}` },
     signal,
   });
   if (!response.ok) throw new Error(`bifrost models: ${response.status}`);
@@ -41,7 +42,7 @@ export default function (pi) {
   pi.registerProvider("bifrost", {
     name: "Bifrost",
     baseUrl,
-    apiKey: "$BIFROST_PI_KEY",
+    apiKey,
     api: "openai-completions",
     refreshModels: async (refresh?: { signal?: AbortSignal }) => load(refresh?.signal),
   });

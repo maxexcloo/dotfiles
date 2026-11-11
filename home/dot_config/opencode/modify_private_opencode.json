@@ -3,6 +3,7 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := dict "$schema" "https://opencode.ai/config.json" "formatter" true "update" "disable" -}}
 {{- $config = mergeOverwrite $config $preferences -}}
+{{- $key := includeTemplate "bifrost-key" "opencode" -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp" "servers" $name "oauth") false $config -}}
 {{- $config = setValueAtPath (list "mcp" "servers" $name "type") "remote" $config -}}
@@ -11,9 +12,9 @@
 its meta-tools in a second interpreter. */ -}}
 {{- $config = setValueAtPath (list "mcp" "servers" $name "codemode") false $config -}}
 {{- $server := index $config "mcp" "servers" $name -}}
-{{- $_ := set $server "headers" (dict "Authorization" "Bearer {env:BIFROST_OPENCODE_KEY}") -}}
+{{- $_ := set $server "headers" (dict "Authorization" (printf "Bearer %s" $key)) -}}
 {{- end -}}
-{{- $settings := dict "apiKey" "{env:BIFROST_OPENCODE_KEY}" "baseURL" .bifrost.baseUrl -}}
+{{- $settings := dict "apiKey" $key "baseURL" .bifrost.baseUrl -}}
 {{- $bifrost := dict "name" "Bifrost" "package" "aisdk:@ai-sdk/openai-compatible" "settings" $settings -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $bifrost $config -}}
 {{- if deepEqual $original $config -}}

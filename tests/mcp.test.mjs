@@ -5,8 +5,10 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const base = ["--source", root, "--config", "/dev/null", "--config-format", "toml"];
+// The templates read keys with fnox; a stand-in returns fixed values without 1Password.
+const env = { ...process.env, PATH: `${root}tests/bin:${process.env.PATH}` };
 const execute = (args, input = "") =>
-  execFileSync("chezmoi", [...base, ...args], { input, encoding: "utf8" });
+  execFileSync("chezmoi", [...base, ...args], { env, input, encoding: "utf8" });
 const inventory = JSON.parse(execute(["execute-template", "{{ .mcp | toJson }}"]));
 for (const [name, server] of Object.entries(inventory))
   server.url = `https://managed.example/mcp/${name}`;
@@ -18,13 +20,8 @@ const convert = (input, expression) =>
   execute(["execute-template", "--with-stdin", expression], input);
 
 for (const [client, path, section, credential] of [
-  ["Claude", "home/dot_claude/modify_private_dot_claude.json", "mcpServers", "headersHelper"],
-  [
-    "Codex",
-    "home/private_dot_codex/modify_private_config.toml",
-    "mcp_servers",
-    "bearer_token_env_var",
-  ],
+  ["Claude", "home/dot_claude/modify_private_dot_claude.json", "mcpServers", "headers"],
+  ["Codex", "home/private_dot_codex/modify_private_config.toml", "mcp_servers", "http_headers"],
   ["OpenCode", "home/dot_config/opencode/modify_private_opencode.json", "mcp.servers", "headers"],
   ["Pi", "home/dot_pi/agent/modify_private_mcp.json", "mcpServers", "headers"],
 ]) {

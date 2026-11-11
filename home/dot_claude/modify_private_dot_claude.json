@@ -1,12 +1,13 @@
 {{- /* chezmoi:modify-template */ -}}
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
+{{- $key := includeTemplate "bifrost-key" "claude" -}}
 {{- range $name, $managed := .mcp -}}
 {{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}
 {{- $server := index $config "mcpServers" $name -}}
 {{- $_ := set $server "type" "http" -}}
-{{- $_ := unset $server "headers" -}}
-{{- $_ := set $server "headersHelper" "jq -nc --arg key \"${BIFROST_CLAUDE_KEY:-$(fnox get BIFROST_CLAUDE_KEY)}\" '{\"x-bf-vk\": $key}'" -}}
+{{- $_ := unset $server "headersHelper" -}}
+{{- $_ := set $server "headers" (dict "x-bf-vk" $key) -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

@@ -1,3 +1,3 @@
 function claude --wraps claude
-    run-agent claude $argv
+    nono run --allow-cwd --profile claude -- claude $argv
 end
