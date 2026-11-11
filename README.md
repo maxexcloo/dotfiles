@@ -63,10 +63,8 @@ profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so che
 with `nono outdated` and run `nono update`.
 
 Agents read only the shared Git configuration, so they commit unsigned and push
-over HTTPS with the `GitHub Agents` token from the Automation vault. Agents also
-get the Connect host and token, so they can use the vaults its server reads. nono
-blocks 1Password variables, so `run-agent` passes them under other names and
-restores them inside the sandbox.
+over HTTPS with the `GitHub Agents` token from the Automation vault. Sandboxed
+agents cannot reach 1Password; use `SANDBOX=0` for work that needs vault secrets.
 
 Agents can report status to Orca but not use its CLI, which would let them run
 commands outside the sandbox. Run `SANDBOX=0 AGENT` for work the sandbox blocks,
