@@ -4,6 +4,10 @@ helper = !gh auth git-credential
 [fetch]
 prune = true
 
+[hook "gitleaks"]
+command = gitleaks git --pre-commit --staged --redact --no-banner --log-level warn
+event = pre-commit
+
 [push]
 autoSetupRemote = true
 
@@ -16,7 +20,3 @@ enabled = true
 [user]
 email = max@excloo.com
 name = Max Schaefer
-
-[hook "gitleaks"]
-command = gitleaks git --pre-commit --staged --redact --no-banner --log-level warn
-event = pre-commit

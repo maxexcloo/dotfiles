@@ -2,14 +2,14 @@
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
 {{- $preferences := dict "enableArtifact" false "outputStyle" "Concise" "spinnerTipsEnabled" false "theme" "auto" "tui" "fullscreen" -}}
-{{- $_ := set $preferences "attribution" (dict "commit" "" "pr" "") -}}
-{{- $_ := set $preferences "env" (dict "DISABLE_AUTOUPDATER" "1") -}}
-{{- $_ := set $preferences "pluginConfigs" (dict "cc-plugin-agents-md@builtin" (dict "options" (dict "instructionFiles" "claude-md-and-agents-md"))) -}}
-{{- $config = setValueAtPath (list "permissions" "defaultMode") "auto" $config -}}
 {{- $marketplace := dict "source" (dict "source" "directory" "path" (joinPath .chezmoi.workingTree ".." "agents")) -}}
+{{- $_ := set $preferences "attribution" (dict "commit" "" "pr" "") -}}
 {{- $_ := set $preferences "enabledPlugins" (dict "agents@maxexcloo" true "frontend-design@claude-plugins-official" true) -}}
+{{- $_ := set $preferences "env" (dict "DISABLE_AUTOUPDATER" "1") -}}
 {{- $_ := set $preferences "extraKnownMarketplaces" (dict "maxexcloo" $marketplace) -}}
+{{- $_ := set $preferences "pluginConfigs" (dict "cc-plugin-agents-md@builtin" (dict "options" (dict "instructionFiles" "claude-md-and-agents-md"))) -}}
 {{- $config = mergeOverwrite $config $preferences -}}
+{{- $config = setValueAtPath (list "permissions" "defaultMode") "auto" $config -}}
 {{- $_ := set $config "hooks" (includeTemplate "secret-guard-hooks" (dict "hooks" (get $config "hooks") "pre" "Bash|Read|Grep" "agent" "claude") | fromJson) -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
