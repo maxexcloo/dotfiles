@@ -15,9 +15,8 @@ modify templates to preserve unrelated application settings and local state.
 MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
 the 1Password Automation vault and referenced through
 `home/dot_config/fnox/config.toml`. Fnox and the 1Password CLI read vaults
-through the machine's 1Password Connect server: on macOS from
-[local services](https://github.com/maxexcloo/local-services), on Linux from
-[Homelab](https://github.com/maxexcloo/homelab). Save its token as `token` beside
+through the machine's 1Password Connect server, managed here with the
+`services:connect` Mise task. Save its token as `token` beside
 the Connect credentials file. `chezmoi apply` writes each agent's Bifrost key into
 its private configuration and the `GitHub Agents` token into
 `~/.config/gh-agents`. Keep key values out of Git and command output.
@@ -36,6 +35,7 @@ then install the global tools it declares:
 mise exec chezmoi@latest -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise install
 mise run setup
+mise run services:connect
 mise run check
 chezmoi status
 chezmoi apply
@@ -80,6 +80,10 @@ start them unsandboxed: create a terminal running `command AGENT` with
 Agent logins, sessions and history stay on each machine: sign in to each agent
 once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,
 because the sandbox cannot replace files directly in the home directory.
+
+[agent-browser](https://agent-browser.dev) uses the Browserless container started
+by `mise run services:browserless`. Mise installs the CLI; chezmoi configures its
+skill, sandbox access and endpoint.
 
 ## Shared Agent Guidance
 

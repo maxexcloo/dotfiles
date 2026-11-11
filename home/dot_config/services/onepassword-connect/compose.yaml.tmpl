@@ -1,0 +1,19 @@
+name: onepassword-connect
+services:
+  connect-api:
+    image: 1password/connect-api:{{ .services.connect.version }}
+    restart: unless-stopped
+    volumes: &connect-volumes
+      - data:/home/opuser/.op/data
+      - type: bind
+        read_only: true
+        source: ${XDG_CONFIG_HOME:-${HOME}/.config}/op/connect/1password-credentials.json
+        target: /home/opuser/.op/1password-credentials.json
+        bind:
+          create_host_path: false
+  connect-sync:
+    image: 1password/connect-sync:{{ .services.connect.version }}
+    restart: unless-stopped
+    volumes: *connect-volumes
+volumes:
+  data: {}
