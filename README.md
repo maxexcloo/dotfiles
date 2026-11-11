@@ -59,7 +59,8 @@ adds their keys and runs them through
 upstream profile for its agent, adds Mise tools and read access to the shared
 agent guidance, and allows writes only in the directory the agent starts in.
 Start an agent in `~/Projects` to work across projects. Pull each upstream
-profile once with `nono pull nolabs-ai/AGENT`.
+profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so check
+with `nono outdated` and run `nono update`.
 
 Agents read only the shared Git configuration, so they commit unsigned and push
 over HTTPS with the `GitHub Agents` token from the Automation vault. Agents also
