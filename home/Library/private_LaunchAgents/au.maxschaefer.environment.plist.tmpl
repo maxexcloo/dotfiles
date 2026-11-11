@@ -3,12 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>au.maxschaefer.cache-environment</string>
-	<!-- Apps that start before this runs, such as login items, miss the cache directory. -->
+	<string>au.maxschaefer.environment</string>
+	<!-- Gives apps, and agents they launch such as Orca's, the shell's settings; apps that start before this runs miss them. -->
 	<key>ProgramArguments</key>
 	<array>
 		<string>/bin/launchctl</string>
 		<string>setenv</string>
+		<string>CLAUDE_CONFIG_DIR</string>
+		<string>{{ .chezmoi.homeDir }}/.claude</string>
 		<string>XDG_CACHE_HOME</string>
 		<string>{{ .chezmoi.homeDir }}/Library/Caches</string>
 	</array>
