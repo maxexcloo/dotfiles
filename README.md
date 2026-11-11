@@ -57,7 +57,8 @@ The Fish wrappers for Claude Code, Codex, OpenCode and Pi run them through
 [nono](https://github.com/nolabs-ai/nono) with the profiles in
 `home/dot_config/nono/profiles`, built from one shared template. Each extends the
 upstream profile for its agent, adds Mise tools and read access to the shared
-agent guidance, and allows writes only in the directory the agent starts in.
+agent guidance, and allows writes only in the directory the agent starts in and
+its repository's Git directory, so agents can commit in worktrees.
 Start an agent in `~/Projects` to work across projects. Pull each upstream
 profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so check
 with `nono outdated` and run `nono update`, then `chezmoi apply`: the Codex
