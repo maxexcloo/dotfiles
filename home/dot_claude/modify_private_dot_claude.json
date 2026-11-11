@@ -6,7 +6,7 @@
 {{- $server := index $config "mcpServers" $name -}}
 {{- $_ := set $server "type" "http" -}}
 {{- $_ := unset $server "headers" -}}
-{{- $_ := set $server "headersHelper" "jq -nc '{\"x-bf-vk\": env.BIFROST_CLAUDE_KEY}'" -}}
+{{- $_ := set $server "headersHelper" "jq -nc --arg key \"${BIFROST_CLAUDE_KEY:-$(fnox get BIFROST_CLAUDE_KEY)}\" '{\"x-bf-vk\": $key}'" -}}
 {{- end -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
