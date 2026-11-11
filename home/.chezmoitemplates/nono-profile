@@ -17,10 +17,10 @@
   },
   "filesystem": {
     "allow": [
-      "/var/tmp",
-      "$XDG_CACHE_HOME",
       "$HOME/.local/state/mise/tracked-configs",
-      "$HOME/Library/Application Support/orca/agent-hooks"
+      "$HOME/Library/Application Support/orca/agent-hooks",
+      "$XDG_CACHE_HOME",
+      "/var/tmp"
     ],
     "read": ["$HOME/.agents", "$HOME/.config/fnox", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents"]
   },
