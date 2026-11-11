@@ -1,5 +1,5 @@
 {{- /* chezmoi:modify-template */ -}}
-{{- $text := .chezmoi.stdin | regexReplaceAll "(?s)# BEGIN nono-pack:[^\n]*\n.*?# END nono-pack:[^\n]*\n" "" -}}
+{{- $text := regexReplaceAll "(?s)# BEGIN nono-pack:[^\n]*\n.*?# END nono-pack:[^\n]*\n" .chezmoi.stdin "" -}}
 {{- $original := $text | fromToml -}}
 {{- $config := deepCopy $original -}}
 {{- $preferences := includeTemplate "codex.toml" . | fromToml -}}
