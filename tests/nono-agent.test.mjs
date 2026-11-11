@@ -55,11 +55,10 @@ console.log(JSON.stringify({ args, profile, profilePath }));`,
       return JSON.parse(process.stdout);
     };
     const codex = run("codex", ["--model", "fixture"]);
-    assert.deepEqual(codex.args.slice(-6), [
+    assert.deepEqual(codex.args.slice(-5), [
       "--",
       "codex",
-      "--sandbox",
-      "danger-full-access",
+      "--dangerously-bypass-approvals-and-sandbox",
       "--model",
       "fixture",
     ]);
@@ -80,7 +79,12 @@ console.log(JSON.stringify({ args, profile, profilePath }));`,
     assert.equal(brokerEnvironment.allow_vars.includes("ORCA_*"), false);
     const claude = run("claude", []);
     assert.deepEqual(JSON.parse(claude.args.at(-1)), { sandbox: { enabled: false } });
+    assert.ok(claude.args.includes("--dangerously-skip-permissions"));
     assert.equal(existsSync(claude.profilePath), false);
+    const opencode = run("opencode", []);
+    assert.deepEqual(opencode.args.slice(-3), ["--", "opencode", "--auto"]);
+    const pi = run("pi", []);
+    assert.deepEqual(pi.args.slice(-2), ["--", "pi"]);
     const ordinaryEnvironment = { ...environment };
     delete ordinaryEnvironment.ORCA_WORKTREE_ID;
     assert.equal(run("codex", [], ordinaryEnvironment).profile, null);

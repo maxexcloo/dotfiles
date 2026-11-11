@@ -63,7 +63,12 @@ Start an agent in `~/Projects` to work across projects. Pull each upstream
 profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so check
 with `nono outdated` and run `nono update`, then `chezmoi apply`: the Codex
 template moves nono's Codex settings out of the block nono inserts. Nono is the
-sandbox boundary; the launcher disables Codex's and Claude Code's nested sandboxes.
+sandbox boundary. Inside it, Codex and Claude Code bypass their own approval
+prompts and nested sandboxes; OpenCode uses its supported `--auto` mode, which
+retains explicit denies. Pi has no tool approval mode. Outside nono, Codex defaults
+to workspace-write with automatic approval review and Claude Code to `auto`.
+Use `command opencode --auto` for OpenCode without nono; it has no persistent
+auto-approval setting.
 
 Sandboxed agents read only the shared Git configuration and the `GitHub Agents`
 gh configuration, so they commit unsigned and push over HTTPS. They cannot reach

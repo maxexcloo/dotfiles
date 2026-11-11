@@ -210,9 +210,16 @@ def launch(agent, args):
     if common.returncode == 0:
         grants.extend(["--allow", common.stdout.strip()])
     if agent == "codex":
-        args = ["--sandbox", "danger-full-access", *args]
+        args = ["--dangerously-bypass-approvals-and-sandbox", *args]
     elif agent == "claude":
-        args = ["--settings", json.dumps({"sandbox": {"enabled": False}}), *args]
+        args = [
+            "--dangerously-skip-permissions",
+            "--settings",
+            json.dumps({"sandbox": {"enabled": False}}),
+            *args,
+        ]
+    elif agent == "opencode":
+        args = ["--auto", *args]
     command = ["nono", "run", *grants]
     if sys.platform != "linux" or "ORCA_WORKTREE_ID" not in os.environ:
         return subprocess.call([*command, "--profile", agent, "--", agent, *args])
