@@ -36,7 +36,7 @@ if OS.mac?
   cask "tailscale-app"
   cask "thaw@beta"
   cask "ungoogled-chromium"
-  cask "utm@beta"
+  cask "utm"
   cask "visual-studio-code"
 
   mas "Apple Configurator", id: 1037126344
