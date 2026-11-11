@@ -53,8 +53,8 @@ so copy those edits back into `home/`.
 
 ## Agent Sandboxes
 
-The Fish wrappers for Claude Code, Codex, OpenCode and Pi run them through
-[nono](https://github.com/nolabs-ai/nono) with the profiles in
+The Fish wrappers for Claude Code, Codex, OpenCode and Pi use `nono-agent` to run
+them through [nono](https://github.com/nolabs-ai/nono) with the profiles in
 `home/dot_config/nono/profiles`, built from one shared template. Each extends the
 upstream profile for its agent, adds Mise tools and read access to the shared
 agent guidance, and allows writes only in the directory the agent starts in and
@@ -62,20 +62,22 @@ its repository's Git directory, so agents can commit in worktrees.
 Start an agent in `~/Projects` to work across projects. Pull each upstream
 profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so check
 with `nono outdated` and run `nono update`, then `chezmoi apply`: the Codex
-template moves nono's Codex settings out of the block nono inserts.
+template moves nono's Codex settings out of the block nono inserts. Nono is the
+sandbox boundary; the launcher disables Codex's and Claude Code's nested sandboxes.
 
 Sandboxed agents read only the shared Git configuration and the `GitHub Agents`
 gh configuration, so they commit unsigned and push over HTTPS. They cannot reach
-1Password, SSH, cluster credentials or Orca's CLI, which would let them run
-commands outside the sandbox; Orca still shows their status. Run `command AGENT`
+1Password, SSH, cluster credentials or unrestricted Orca control. Run `command AGENT`
 for work that needs those, such as OpenTofu plans and applies, host work,
 Kubernetes and Talos administration, chezmoi and Xcode builds.
 
 Orca launches agents through these wrappers when its agent command for each one
-is set to `fish -c "AGENT $argv" --`. Orca workers report back through its CLI, so
-start them unsandboxed: create a terminal running `command AGENT` with
-`orca terminal create --command` and give it the task with
-`orca orchestration worker-start --terminal`.
+is set to `fish -c "AGENT $argv" --`. On Linux, the launcher gives Orca workers a
+separate nono command policy for mailbox operations and the two Orca skill guides.
+Only the brokered CLI receives its runtime metadata and socket access; terminal
+control and foreign-mailbox routing stay denied. The policy is generated from the
+installed Orca launcher for each session and removed on exit. Workers can also
+read their main checkout's `todo.md` without receiving access to the whole checkout.
 
 Agent logins, sessions and history stay on each machine: sign in to each agent
 once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,

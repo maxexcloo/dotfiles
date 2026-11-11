@@ -1,11 +1,18 @@
 [tasks.check]
 depends = [
   "check:actions",
+  "check:agent-launcher",
   "check:mise",
   "check:templates",
   "check:updates",
   "hooks:check",
   "test",
+]
+
+[tasks."check:agent-launcher"]
+run = [
+  "ruff check home/dot_local/bin/executable_nono-agent",
+  "ruff format --check home/dot_local/bin/executable_nono-agent",
 ]
 
 [tasks."check:mise"]

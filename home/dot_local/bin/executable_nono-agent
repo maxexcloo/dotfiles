@@ -1,0 +1,236 @@
+#!/usr/bin/env python3
+"""Launch agents under nono, with a separate command policy for Orca worker mail."""
+
+import json
+import os
+import shlex
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+MAIL_OPTIONS = {
+    ("orchestration", "ask"): {
+        "--options": True,
+        "--question": True,
+        "--resume": True,
+        "--timeout-ms": True,
+        "--wait": False,
+    },
+    ("orchestration", "check"): {
+        "--all": False,
+        "--format": False,
+        "--peek": False,
+        "--timeout-ms": True,
+        "--types": True,
+        "--unread": False,
+        "--wait": False,
+    },
+    ("orchestration", "send"): {
+        "--body": True,
+        "--dispatch-id": True,
+        "--files-modified": True,
+        "--outcome": True,
+        "--phase": True,
+        "--priority": True,
+        "--report-path": True,
+        "--subject": True,
+        "--task-id": True,
+        "--type": True,
+    },
+    ("skills", "get", "orca-cli"): {
+        "--full": False,
+        "--reference": True,
+        "--references": False,
+    },
+    ("skills", "get", "orchestration"): {
+        "--full": False,
+        "--reference": True,
+        "--references": False,
+    },
+}
+
+
+def orca_policy(launcher):
+    lines = launcher.read_text().splitlines()
+    runtime = shlex.split(next(line for line in lines if line.startswith("exec ")))
+    if len(runtime) != 4 or runtime[-1] != "$@":
+        raise ValueError(
+            "Unsupported Orca CLI launcher; expected Node and a CLI entry point."
+        )
+    node, cli = (Path(value) for value in runtime[1:3])
+    assignment = next(
+        line for line in lines if line.startswith("export ORCA_USER_DATA_PATH=")
+    )
+    data = Path(shlex.split(assignment)[1].split("=", 1)[1])
+    environment = {
+        "allow_vars": ["HOME", "LANG", "TERM", "XDG_*"],
+        "set_vars": {
+            **{
+                key: value
+                for key, value in os.environ.items()
+                if key.startswith("ORCA_")
+            },
+            "ORCA_USER_DATA_PATH": str(data),
+        },
+    }
+    return {
+        "commands": {
+            "orca": {
+                "executable": str(Path(sys.executable).resolve()),
+                "can_use": ["orca-node"],
+                "from": {
+                    "session": {
+                        "sandbox": {
+                            "argv_prepend": [
+                                str(Path(__file__).resolve()),
+                                "--orca-mail",
+                            ],
+                            "environment": {
+                                **environment,
+                                "set_vars": {
+                                    **environment["set_vars"],
+                                    "PYTHONHOME": sys.prefix,
+                                },
+                            },
+                            "fs_read": [
+                                str(Path(sys.executable).resolve().parent.parent)
+                            ],
+                            "fs_read_file": [str(Path(__file__).resolve())],
+                        },
+                        "invocation_policy": {
+                            "default": "deny",
+                            "allow": [
+                                {"argv": {"prefix": list(prefix)}}
+                                for prefix in MAIL_OPTIONS
+                            ],
+                        },
+                    }
+                },
+            },
+            "orca-node": {
+                "executable": str(node),
+                "from": {
+                    "session": "deny",
+                    "orca": {
+                        "argv_prepend": [str(cli)],
+                        "environment": environment,
+                        "fs_read": [str(node.parent.parent), str(cli.parents[2])],
+                        "fs_read_file": [
+                            str(data / "orca-runtime.json"),
+                            "/etc/ssl/openssl.cnf",
+                        ],
+                        "unix_socket_bind": [str(data / "*.sock")],
+                    },
+                },
+            },
+            # Keep the launcher's interpreter under the original session policy.
+            # The execute gate otherwise skips group-writable packaged Python builds.
+            "python-runtime": {
+                "executable": str(Path(sys.executable).resolve()),
+                "allow_direct_exec_bypass": [str(Path(sys.executable).resolve())],
+                "from": {"session": "deny"},
+            },
+        }
+    }
+
+
+def validate_mail(args):
+    prefix = tuple(args[:3] if args[:2] == ["skills", "get"] else args[:2])
+    options = {
+        "--help": False,
+        "--json": False,
+        "--retry-request": True,
+    } | MAIL_OPTIONS[prefix]
+    index = len(prefix)
+    while index < len(args):
+        name, equals, value = args[index].partition("=")
+        takes_value = options[name]
+        if takes_value and not equals:
+            index += 1
+            value = args[index]
+        if takes_value:
+            if not value or value.startswith("-"):
+                raise ValueError(
+                    "Mailbox option values must not start with another option."
+                )
+            if name == "--type" and value not in (
+                "escalation",
+                "heartbeat",
+                "status",
+                "worker_done",
+            ):
+                raise ValueError(
+                    "Only worker status and completion messages are permitted."
+                )
+        elif equals:
+            raise ValueError("Mailbox switches do not take values.")
+        index += 1
+    return args
+
+
+def mail(args):
+    try:
+        validate_mail(args)
+    except (IndexError, KeyError, ValueError) as error:
+        print(f"Orca worker mail denied: {error}", file=sys.stderr)
+        return 126
+    return subprocess.call(["orca-node", *args])
+
+
+def launch(agent, args):
+    grants = ["--allow-cwd"]
+    common = subprocess.run(
+        ["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if common.returncode == 0:
+        grants.extend(["--allow", common.stdout.strip()])
+    if agent == "codex":
+        args = ["--sandbox", "danger-full-access", *args]
+    elif agent == "claude":
+        args = ["--settings", json.dumps({"sandbox": {"enabled": False}}), *args]
+    command = ["nono", "run", *grants]
+    if sys.platform != "linux" or "ORCA_WORKTREE_ID" not in os.environ:
+        return subprocess.call([*command, "--profile", agent, "--", agent, *args])
+
+    profile = {
+        "extends": agent,
+        "command_policies": orca_policy(Path(os.environ["ORCA_CLI_COMMAND"])),
+        "environment": {"set_vars": {"ORCA_CLI_COMMAND": "orca"}},
+    }
+    if common.returncode == 0:
+        listing = subprocess.check_output(
+            ["git", "worktree", "list", "--porcelain"], text=True
+        )
+        main = Path(
+            next(
+                line.removeprefix("worktree ")
+                for line in listing.splitlines()
+                if line.startswith("worktree ")
+            )
+        )
+        if (main / "todo.md").is_file():
+            profile["filesystem"] = {"read_file": [str(main / "todo.md")]}
+
+    # Keep generated authority outside every agent-writable directory.
+    state = (
+        Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+        / "nono"
+        / "runtime-profiles"
+    )
+    state.mkdir(parents=True, exist_ok=True, mode=0o700)
+    with tempfile.TemporaryDirectory(prefix="orca-", dir=state) as directory:
+        path = Path(directory) / "profile.json"
+        path.write_text(json.dumps(profile))
+        return subprocess.call([*command, "--profile", str(path), "--", agent, *args])
+
+
+if __name__ == "__main__":
+    sys.exit(
+        mail(sys.argv[2:])
+        if sys.argv[1] == "--orca-mail"
+        else launch(sys.argv[1], sys.argv[2:])
+    )

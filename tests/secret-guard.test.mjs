@@ -20,6 +20,18 @@ const run = (args, input, environment = env) =>
 const post = (stdout, environment) =>
   run(["post", "claude"], JSON.stringify({ tool_response: { stdout } }), environment);
 
+test("permission diagnostics remain available without allowing secret retrieval", () => {
+  const pre = (command) => run(["pre"], JSON.stringify({ tool_input: { command } }));
+  assert.equal(pre("nono why --self --path /workspace --op read"), "");
+  for (const command of [
+    "op read op://vault/item/password",
+    "/usr/bin/op read op://vault/item/password",
+    "op inject -i template",
+  ]) {
+    assert.throws(() => pre(command), { status: 2 });
+  }
+});
+
 test("post redacts secrets and passes clean output through", () => {
   const redacted = JSON.parse(post(`token=${token}`));
   assert.equal(redacted.hookSpecificOutput.updatedToolOutput.stdout, "token=[REDACTED]\n");
