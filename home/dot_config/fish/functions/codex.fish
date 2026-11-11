@@ -1,3 +1,3 @@
 function codex --wraps codex
-    run-agent codex $argv
+    nono run --allow-cwd --profile codex -- codex $argv
 end

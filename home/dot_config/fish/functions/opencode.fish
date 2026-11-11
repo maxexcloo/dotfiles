@@ -1,3 +1,3 @@
 function opencode --wraps opencode
-    run-agent opencode $argv
+    nono run --allow-cwd --profile opencode -- opencode $argv
 end

@@ -21,6 +21,8 @@ exit "$status"
 
 # Hk's oxfmt step skips templated code, so check its rendered output.
 [tasks."check:templates"]
+# Templates read keys with fnox; tests/bin holds a stand-in.
+env = { PATH = "{{config_root}}/tests/bin:{{env.PATH}}" }
 run = '''
 set -eu
 status=0

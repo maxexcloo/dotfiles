@@ -1,0 +1,1 @@
+{{- output "fnox" "get" (printf "BIFROST_%s_KEY" (upper .)) | trim -}}

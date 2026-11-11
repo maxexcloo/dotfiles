@@ -2,6 +2,7 @@ import { Model, Plugin, Provider } from "@opencode/plugin";
 
 // Bifrost owns the catalogue. These prefixes are hidden because the client
 // reaches them natively, or because they duplicate another Bifrost provider.
+const apiKey = {{ includeTemplate "bifrost-key" "opencode" | toJson }};
 const baseURL = {{ .bifrost.baseUrl | toJson }};
 const providerID = Provider.ID.make("bifrost");
 // deepseek, openrouter and opencode-go/zen are reached natively.
@@ -28,7 +29,7 @@ const cost = (entry) =>
 
 const load = async () => {
   const response = await fetch(`${baseURL}/models`, {
-    headers: { Authorization: `Bearer ${process.env.BIFROST_OPENCODE_KEY ?? ""}` },
+    headers: { Authorization: `Bearer ${apiKey}` },
   });
   if (!response.ok) throw new Error(`bifrost models: ${response.status}`);
   const { data } = await response.json();
