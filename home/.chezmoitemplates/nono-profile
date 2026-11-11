@@ -16,7 +16,7 @@
       "$XDG_CACHE_HOME",
       "/var/tmp"
     ],
-    "read": ["$HOME/.agents", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents"]
+    "read": ["$HOME/.agents", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents", "/usr/libexec/git-core"]
   },
   "groups": { "include": ["mise_manager"] },
   "meta": { "name": "{{ .agent }}" }
