@@ -8,18 +8,19 @@
   },
   "environment": {
     "set_vars": {
-      "GH_CONFIG_DIR": "$TMPDIR/nono-gh",
+      "GH_CONFIG_DIR": "$XDG_CACHE_HOME/nono-gh",
       "GIT_CONFIG_GLOBAL": "$HOME/.config/git/config",
-      "OP_CONFIG_DIR": "$TMPDIR/nono-op",
-      "npm_config_cache": "$HOME/.cache/npm"
+      "OP_CONFIG_DIR": "$XDG_CACHE_HOME/nono-op",
+      "TMPDIR": "$XDG_CACHE_HOME",
+      "npm_config_cache": "$XDG_CACHE_HOME/npm"
     }
   },
   "filesystem": {
     "allow": [
-      "/var/tmp",
-      "$HOME/.cache",
       "$HOME/.local/state/mise/tracked-configs",
-      "$HOME/Library/Application Support/orca/agent-hooks"
+      "$HOME/Library/Application Support/orca/agent-hooks",
+      "$XDG_CACHE_HOME",
+      "/var/tmp"
     ],
     "read": ["$HOME/.agents", "$HOME/.config/fnox", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents"]
   },
