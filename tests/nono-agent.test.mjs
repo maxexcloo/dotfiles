@@ -21,7 +21,11 @@ test("agent launch retains nono and removes its temporary Orca authority after e
     for (const [name, source] of Object.entries({
       git: `const args = process.argv.slice(2);
 if (args[0] === "rev-parse") console.log(${JSON.stringify(join(main, ".git"))});
+else if (args[0] === "--exec-path") console.log(${JSON.stringify(join(directory, "git-core"))});
 else console.log(${JSON.stringify(`worktree ${main}\n`)});`,
+      mise: `const args = process.argv.slice(2);
+if (args[0] === "ls") console.log(JSON.stringify({ node: [{ version: "24", install_path: ${JSON.stringify(join(directory, "node"))} }] }));
+else console.log(${JSON.stringify(join(directory, "node/bin"))});`,
       nono: `const fs = require("node:fs");
 const args = process.argv.slice(2);
 const profilePath = args[args.indexOf("--profile") + 1];
@@ -60,6 +64,10 @@ console.log(JSON.stringify({ args, profile, profilePath }));`,
       "fixture",
     ]);
     assert.equal(codex.profile.extends, "codex");
+    assert.deepEqual(codex.profile.command_policies.executable_dirs, [
+      join(directory, "git-core"),
+      join(directory, "node/bin"),
+    ]);
     assert.deepEqual(codex.profile.filesystem, { read_file: [join(main, "todo.md")] });
     assert.equal(
       codex.profile.command_policies.commands.orca.from.session.invocation_policy.default,

@@ -74,7 +74,28 @@ def orca_policy(launcher):
             "ORCA_USER_DATA_PATH": str(data),
         },
     }
+    installed = json.loads(
+        subprocess.check_output(["mise", "ls", "--installed", "--json"])
+    )
+    versions = [
+        f"{tool}@{version['version']}"
+        for tool, releases in installed.items()
+        for version in releases
+    ]
+    # Nono's execute gate otherwise only discovers launch-time PATH entries.
+    directories = subprocess.check_output(
+        ["mise", "bin-paths", *versions], text=True
+    ).splitlines()
+    directories.append(
+        subprocess.check_output(["git", "--exec-path"], text=True).strip()
+    )
+    directories.extend(
+        str(Path(release["install_path"]) / "codex-path")
+        for release in installed.get("codex", [])
+        if (Path(release["install_path"]) / "codex-path").is_dir()
+    )
     return {
+        "executable_dirs": sorted(set(directories)),
         "commands": {
             "orca": {
                 "executable": str(Path(sys.executable).resolve()),
@@ -131,7 +152,7 @@ def orca_policy(launcher):
                 "allow_direct_exec_bypass": [str(Path(sys.executable).resolve())],
                 "from": {"session": "deny"},
             },
-        }
+        },
     }
 
 
