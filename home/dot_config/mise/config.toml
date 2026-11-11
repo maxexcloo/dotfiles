@@ -6,7 +6,7 @@ RUFF_CACHE_DIR = "{{xdg_cache_home}}/ruff"
 
 [settings]
 cache_prune_age = "1d"
-trusted_config_paths = ["~/Projects"]
+trusted_config_paths = ["~/.local/share/orca/workspaces", "~/Projects"]
 
 [settings.upgrade]
 prune_after = "0s"
