@@ -2,15 +2,12 @@
   "extends": "nolabs-ai/{{ .agent }}",
   "env_credentials": {
     "env://BIFROST_{{ upper .agent }}_KEY": "BIFROST_{{ upper .agent }}_KEY",
-    "env://GH_TOKEN": "GH_TOKEN",
-    "env://OP_CONNECT_HOST": "CONNECT_HOST",
-    "env://OP_CONNECT_TOKEN": "CONNECT_TOKEN"
+    "env://GH_TOKEN": "GH_TOKEN"
   },
   "environment": {
     "set_vars": {
       "GH_CONFIG_DIR": "$XDG_CACHE_HOME/nono-gh",
       "GIT_CONFIG_GLOBAL": "$HOME/.config/git/config",
-      "OP_CONFIG_DIR": "$XDG_CACHE_HOME/nono-op",
       "TMPDIR": "$XDG_CACHE_HOME",
       "npm_config_cache": "$XDG_CACHE_HOME/npm"
     }
@@ -22,7 +19,7 @@
       "$XDG_CACHE_HOME",
       "/var/tmp"
     ],
-    "read": ["$HOME/.agents", "$HOME/.config/fnox", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents"]
+    "read": ["$HOME/.agents", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents"]
   },
   "groups": { "include": ["mise_manager"] },
   "meta": { "name": "{{ .agent }}" }
