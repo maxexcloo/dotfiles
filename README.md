@@ -59,13 +59,14 @@ adds their keys and runs them through
 upstream profile for its agent, adds Mise tools and read access to the shared
 agent guidance, and allows writes only in the directory the agent starts in.
 Start an agent in `~/Projects` to work across projects. Pull each upstream
-profile once with `nono pull nolabs-ai/AGENT`.
+profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so check
+with `nono outdated` and run `nono update`.
 
 Agents read only the shared Git configuration, so they commit unsigned and push
 over HTTPS with the `GitHub Agents` token from the Automation vault. Agents also
 get the Connect host and token, so they can use the vaults its server reads. nono
 blocks 1Password variables, so `run-agent` passes them under other names and
-restore them inside the sandbox.
+restores them inside the sandbox.
 
 Agents can report status to Orca but not use its CLI, which would let them run
 commands outside the sandbox. Run `SANDBOX=0 AGENT` for work the sandbox blocks,

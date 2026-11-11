@@ -1,6 +1,6 @@
 function run-agent --argument-names agent
-    set -lx BIFROST_(string upper $agent)_KEY (fnox get BIFROST_(string upper $agent)_KEY)
-    set -lx GH_TOKEN (fnox get GH_TOKEN)
+    set -lx BIFROST_(string upper $agent)_KEY (fnox get BIFROST_(string upper $agent)_KEY); or return
+    set -lx GH_TOKEN (fnox get GH_TOKEN); or return
     if test "$SANDBOX" = 0
         command $agent $argv[2..]
     else
