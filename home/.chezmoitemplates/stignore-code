@@ -1,0 +1,5 @@
+{{ template "stignore" . -}}
+(?i).git
+(?i).terraform
+(?i).venv
+(?i)node_modules
