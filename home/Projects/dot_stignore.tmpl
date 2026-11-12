@@ -1,1 +1,8 @@
+{{- if eq .chezmoi.os "darwin" -}}
 {{ template "stignore-code" . -}}
+{{- else -}}
+// Keep Linux Git checkouts independent; synchronise only main-checkout notes.
+!/*/todo.md
+!/*/todo-*.md
+*
+{{- end }}

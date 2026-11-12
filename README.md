@@ -106,6 +106,20 @@ and `fmt`.
 depends = ["check:python", "check:updates", "test:python"]
 ```
 
+## Project Notes
+
+Syncthing shares project notes between macOS and Linux. The macOS application
+already manages its own service; on Linux, the Brewfile installs Syncthing and
+`brew services start syncthing` starts its native user service. Pair Mercury with
+the Mac in Syncthing and share the existing Projects folder at `~/Projects`.
+Linux's local ignore rules include only each project's root `todo.md` and
+`todo-*.md`; source files and Git directories stay local. Pairing and device
+identities remain in Syncthing's own configuration.
+
+Before the first synchronisation, keep a copy of both machines' notes and
+reconcile any differing versions. Syncthing retains conflicting edits as
+`sync-conflict` files; review those before removing either copy.
+
 ## Dependency Updates
 
 Repositories with dependencies extend
