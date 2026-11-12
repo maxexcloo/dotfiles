@@ -2,8 +2,6 @@
   "extends": "nolabs-ai/{{ .agent }}",
   "environment": {
     "set_vars": {
-      "AGENT_BROWSER_CONFIG": "$HOME/.agent-browser/namespaces/sandbox/config.json",
-      "AGENT_BROWSER_SOCKET_DIR": "$HOME/.agent-browser",
       "GH_CONFIG_DIR": "$HOME/.config/gh-agents",
       "GIT_CONFIG_GLOBAL": "$HOME/.config/git/config",
       "TMPDIR": "$XDG_CACHE_HOME",
@@ -12,15 +10,13 @@
   },
   "filesystem": {
     "allow": [
-      "$HOME/.agent-browser/namespaces/sandbox",
       "$HOME/.config/gh-agents",
       "$HOME/.local/state/mise/tracked-configs",
       "$HOME/Library/Application Support/orca/agent-hooks",
       "$XDG_CACHE_HOME",
       "/var/tmp"
     ],
-    "read": ["$HOME/.agents", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents", "/usr/libexec/git-core"],
-    "unix_socket_subtree_bind": ["$HOME/.agent-browser/namespaces/sandbox"]
+    "read": ["$HOME/.agents", "$HOME/.orca/agent-hooks", "$HOME/Projects/agents", "/usr/libexec/git-core"]
   },
   "groups": { "include": ["mise_manager"] },
   "meta": { "name": "{{ .agent }}" }
