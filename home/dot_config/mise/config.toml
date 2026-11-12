@@ -16,6 +16,7 @@ claude-code = "latest"
 codex = "latest"
 "github:stablyai/orca" = { version = "latest", os = ["linux"] }
 k9s = "latest"
+kubectl = { version = "latest", os = ["linux"] }
 "npm:@deepseek-ai/dsh" = "latest"
 "npm:agent-browser" = "latest"
 opencode = "latest"
