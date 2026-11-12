@@ -1,20 +1,9 @@
 {{- /* chezmoi:modify-template */ -}}
-{{- $text := regexReplaceAll "(?s)# BEGIN nono-pack:[^\n]*\n.*?# END nono-pack:[^\n]*\n" .chezmoi.stdin "" -}}
-{{- $original := $text | fromToml -}}
+{{- $original := .chezmoi.stdin | fromToml -}}
 {{- $config := deepCopy $original -}}
 {{- $preferences := includeTemplate "codex.toml" . | fromToml -}}
 {{- $config = mergeOverwrite $config $preferences -}}
 {{- $config = setValueAtPath (list "projects" .chezmoi.homeDir "trust_level") "trusted" $config -}}
-{{- /* nono's pack inserts its marked block above existing top-level keys, which breaks the file's structure; place its settings here instead. */ -}}
-{{- $nonoBlock := joinPath .chezmoi.homeDir ".config/nono/packages/nolabs-ai/codex/wiring/codex-block.toml" -}}
-{{- if stat $nonoBlock -}}
-{{- $nono := include $nonoBlock | replace "$HOME" .chezmoi.homeDir | fromToml -}}
-{{- range $path, $project := get $config "projects" -}}
-{{- $_ := unset $project "developer_instructions" -}}
-{{- end -}}
-{{- $_ := unset (get $config "plugins" | default dict) "nono@nolabs-ai" -}}
-{{- $config = mergeOverwrite $config $nono -}}
-{{- end -}}
 {{- $key := includeTemplate "bifrost-key" "codex" -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp_servers" $name "url") $server.url $config -}}
@@ -22,7 +11,7 @@
 {{- $_ := unset $server "bearer_token_env_var" -}}
 {{- $_ := set $server "http_headers" (dict "Authorization" (printf "Bearer %s" $key)) -}}
 {{- end -}}
-{{- if and (deepEqual $original $config) (eq $text .chezmoi.stdin) -}}
+{{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
 {{- else -}}
 {{ $config | toToml -}}

@@ -1,8 +1,7 @@
 # Dotfiles
 
 My macOS workstation preferences, managed by [chezmoi](https://www.chezmoi.io/)
-and installed through Mise; the same source sets up a Linux host for sandboxed
-agents. Shared agent instructions and my own skills live in the separate
+and installed through Mise; the same source sets up agents on Linux. Shared agent instructions and my own skills live in the separate
 [Agents repository](https://github.com/maxexcloo/agents), but the links and skill
 discovery that wire them into the workstation are managed here.
 
@@ -51,35 +50,21 @@ and run the same commands. Changes to live files aren't imported automatically.
 `mise use --global` and `mise upgrade --global` edit the live Mise configuration,
 so copy those edits back into `home/`.
 
-## Agent Sandboxes
+## Agent Launch
 
-The Fish wrappers for Claude Code, Codex, OpenCode and Pi run them through
-[nono](https://github.com/nolabs-ai/nono) with the profiles in
-`home/dot_config/nono/profiles`, built from one shared template. Each extends the
-upstream profile for its agent, adds Mise tools and read access to the shared
-agent guidance, and allows writes only in the directory the agent starts in and
-its repository's Git directory, so agents can commit in worktrees.
-Start an agent in `~/Projects` to work across projects. Pull each upstream
-profile once with `nono pull nolabs-ai/AGENT`; Mise does not update them, so check
-with `nono outdated` and run `nono update`, then `chezmoi apply`: the Codex
-template moves nono's Codex settings out of the block nono inserts.
+Launch Claude Code, Codex, OpenCode and Pi directly. In Orca, reset each agent's
+Command to its executable name and use its native permission controls. Select
+Auto for supporting agents; Codex uses its workspace sandbox with automatic
+approval review. Put environment variables in Orca's Environment setting.
 
-Sandboxed agents read only the shared Git configuration and the `GitHub Agents`
-gh configuration, so they commit unsigned and push over HTTPS. They cannot reach
-1Password, SSH, cluster credentials or Orca's CLI, which would let them run
-commands outside the sandbox; Orca still shows their status. Run `command AGENT`
-for work that needs those, such as OpenTofu plans and applies, host work,
-Kubernetes and Talos administration, chezmoi and Xcode builds.
+Agent logins, sessions and history stay on each machine. Sign in once per agent
+per machine; keep existing agent homes when changing launch settings.
 
-Orca launches agents through these wrappers when its agent command for each one
-is set to `fish -c "AGENT $argv" --`. Orca workers report back through its CLI, so
-start them unsandboxed: create a terminal running `command AGENT` with
-`orca terminal create --command` and give it the task with
-`orca orchestration worker-start --terminal`.
-
-Agent logins, sessions and history stay on each machine: sign in to each agent
-once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,
-because the sandbox cannot replace files directly in the home directory.
+Before applying this removal, use `nono list --installed` and `nono remove` for
+each installed pack so its native unwiring removes hooks and plugin registration.
+Apply the preferences, then remove the installed nono tool with `mise uninstall nono`.
+Restart Fish sessions to unload functions already in memory. These are explicit
+activation steps after review.
 
 ## Shared Agent Guidance
 
