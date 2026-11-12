@@ -77,9 +77,42 @@ start them unsandboxed: create a terminal running `command AGENT` with
 `orca terminal create --command` and give it the task with
 `orca orchestration worker-start --terminal`.
 
-Agent logins, sessions and history stay on each machine: sign in to each agent
-once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,
-because the sandbox cannot replace files directly in the home directory.
+Sign in to each agent once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state
+file inside `~/.claude`, because the sandbox cannot replace files directly in the
+home directory.
+
+## Agent Threads
+
+[Atuin Threads](https://docs.atuin.sh/18.24/ai/threads/) requires Atuin 18.24+
+on both Mac and Mercury; check `atuin --version` on each. Atuin is already in
+the Brewfile. Capture stays opt-in, and chezmoi preserves locally chosen Threads,
+daemon and sync-server settings alongside the shared shell-history preferences.
+
+After review, run `atuin threads enable` on each machine to opt in. It enables
+capture and Atuin's native daemon autostart and offers to import old sessions;
+decline import unless wanted. Continuing an old session captures its whole
+conversation too. Tool inputs, outputs and edit diffs are captured by default;
+set `[threads] capture_tools = false` locally before enabling to omit them.
+Review Atuin's native redaction settings before capturing sensitive work.
+
+Threads use the existing end-to-end encrypted record sync. With the shared
+`auto_sync = true`, enabling capture also syncs captured sessions when logged in.
+Cross-machine use needs the same Atuin account and encryption key on both
+machines. Account setup needs separate review if not already configured.
+Local transcripts and the search index remain sensitive.
+
+Use `atuin resume` to search and resume, or `atuin resume THREAD_ID --in codex`
+to continue in another agent. This carries conversation context, not repository
+files or Orca workspace/terminal state. Keep the matching checkout available and
+leave active Orca sessions alone; use `atuin resume THREAD_ID --fork` to fork.
+Native resume launches agent executables from `PATH`, bypassing Fish functions,
+including the nono wrappers described above.
+
+For Claude Code, Codex, Pi and OpenCode, `atuin mcp install` detects existing
+user configs and asks before registering the native stdio server. Restart the
+selected agents afterwards. Registration grants read access to shell history
+and captured threads; it does not enable capture. Existing chezmoi agent modify
+templates preserve these local entries. See [native MCP setup](https://docs.atuin.sh/18.24/ai/mcp/).
 
 ## Shared Agent Guidance
 
