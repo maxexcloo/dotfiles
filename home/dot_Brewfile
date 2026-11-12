@@ -43,6 +43,4 @@ if OS.mac?
   mas "HomeClaw", id: 6759682551
   mas "KeyPad", id: 1491684442
   mas "Xcode", id: 497799835
-else
-  brew "syncthing"
 end
