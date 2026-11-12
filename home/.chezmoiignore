@@ -1,9 +1,4 @@
-{{- if ne .chezmoi.os "linux" }}
-.config/services/onepassword-connect/*.container
-.config/services/onepassword-connect/*.pod
-{{- end }}
 {{- if ne .chezmoi.os "darwin" }}
-.config/services/*/compose.yaml
 .gitconfig
 .hammerspoon
 .ssh

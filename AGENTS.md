@@ -8,8 +8,8 @@
 - Every tool a CI job runs must be in its `with.tools` or declared by the repository with `project-tools: true`.
 - `mise use --global` and `mise upgrade --global` edit live files; reconcile those changes back into `home/`.
 - Linux hosts apply this source too: limit macOS-only targets with `.chezmoiignore` or `.chezmoi.os` blocks.
-- Workstation services live in the mirrored source: macOS Compose stacks and Linux system Quadlet sources under `.config/services`. Activation is explicit through the service Mise tasks.
-- Preserve Connect's runtime identity: system-level Podman units, secret and volume on Linux; the `onepassword-connect` Compose project, named volume and OrbStack hostname on macOS. Service relocation must not recreate credentials or data.
+- Workstation Compose definitions live under `.config/services`; Homelab owns Mercury’s boot configuration. Mise service tasks start already-applied definitions.
+- Preserve Connect’s existing rootful Podman secret and volume on Linux; keep the `onepassword-connect` Compose project, named volume and OrbStack hostname on macOS. A runtime migration must not recreate credentials or data.
 - Keep application-managed hooks, caches, history, account state and generated host inventories outside this repository.
 - Preserve application destination paths and unrelated local state when changing source attributes or templates.
 - Use chezmoi's normal conflict handling for apply; do not force routine updates.
