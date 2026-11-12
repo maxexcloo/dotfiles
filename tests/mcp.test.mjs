@@ -5,7 +5,6 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const base = ["--source", root, "--config", "/dev/null", "--config-format", "toml"];
-// The templates read keys with fnox; a stand-in returns fixed values without 1Password.
 const env = { ...process.env, PATH: `${root}tests/bin:${process.env.PATH}` };
 const execute = (args, input = "") =>
   execFileSync("chezmoi", [...base, ...args], { env, input, encoding: "utf8" });
