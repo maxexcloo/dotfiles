@@ -107,9 +107,7 @@ test("Browserless uses the same configured port across both runtimes and the cli
   assert.deepEqual(compose.services.browserless.ports, ["127.0.0.1:19333:3000"]);
   const quadlet = render("dot_config/containers/systemd/browserless.container.tmpl", services);
   assert.match(quadlet, /^PublishPort=127\.0\.0\.1:19333:3000$/m);
-  const client = JSON.parse(
-    render("dot_agent-browser/namespaces/sandbox/private_config.json.tmpl", services),
-  );
+  const client = JSON.parse(render("dot_agent-browser/private_config.json.tmpl", services));
   assert.equal(client.cdp, "ws://127.0.0.1:19333/chromium");
 });
 

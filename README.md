@@ -81,13 +81,15 @@ Agent logins, sessions and history stay on each machine: sign in to each agent
 once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,
 because the sandbox cannot replace files directly in the home directory.
 
+## Browser Tools
+
 [agent-browser](https://agent-browser.dev) uses the Browserless container started
-by `mise run services:browserless` outside the agent sandbox when needed. Mise
-installs the CLI; chezmoi configures its skill, sandbox access and endpoint.
+by `mise run services:browserless` when needed. Mise installs the CLI; chezmoi
+configures its skill and native endpoint setting.
 On Linux, start it explicitly after login; applying Dotfiles does not enable it.
 
 For project Playwright tests, run `mise run services:playwright` from the project
-root outside the agent sandbox. Set the two environment variables it prints in
+root. Set the two environment variables it prints in
 the test terminal, then run the project's normal browser tests. The temporary
 container supplies Chromium, Firefox and WebKit at the installed project's
 Playwright version, without mounting project or home files; Ctrl-C removes it.
