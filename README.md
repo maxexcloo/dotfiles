@@ -81,6 +81,15 @@ Agent logins, sessions and history stay on each machine: sign in to each agent
 once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,
 because the sandbox cannot replace files directly in the home directory.
 
+## Shared Agent Guidance
+
+Clone the Agents repository beside this checkout. Chezmoi links its shared
+instructions and skills into the workstation. Claude Code loads that repository
+as a plugin because it does not discover the shared skill collection recursively.
+
+Upstream skills are installed through `home/.chezmoiexternal.toml`. Keep personal
+rules in the Agents repository so upstream packages stay unmodified.
+
 ## Browser Tools
 
 [agent-browser](https://agent-browser.dev) uses the Browserless container started
@@ -93,15 +102,6 @@ root. Set the two environment variables it prints in
 the test terminal, then run the project's normal browser tests. The temporary
 container supplies Chromium, Firefox and WebKit at the installed project's
 Playwright version, without mounting project or home files; Ctrl-C removes it.
-
-## Shared Agent Guidance
-
-Clone the Agents repository beside this checkout. Chezmoi links its shared
-instructions and skills into the workstation. Claude Code loads that repository
-as a plugin because it does not discover the shared skill collection recursively.
-
-Upstream skills are installed through `home/.chezmoiexternal.toml`. Keep personal
-rules in the Agents repository so upstream packages stay unmodified.
 
 ## Shared Tools & Tasks
 
