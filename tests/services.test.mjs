@@ -1,0 +1,96 @@
+import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { test } from "node:test";
+import { fileURLToPath } from "node:url";
+
+const root = fileURLToPath(new URL("..", import.meta.url));
+const base = ["--source", root, "--config", "/dev/null", "--config-format", "toml"];
+const execute = (args, input = "") =>
+  execFileSync("chezmoi", [...base, ...args], { input, encoding: "utf8" });
+const render = (path, platform = "darwin") =>
+  execute([
+    "--override-data",
+    JSON.stringify({ chezmoi: { os: platform } }),
+    "execute-template",
+    "--file",
+    `home/${path}`,
+  ]);
+const yaml = (input) =>
+  JSON.parse(
+    execute(
+      ["execute-template", "--with-stdin", "{{ .chezmoi.stdin | fromYaml | toJson }}"],
+      input,
+    ),
+  );
+const serviceRoot = "dot_config/services/onepassword-connect";
+
+test("Service configuration can bootstrap into a fresh home before credential templates", () => {
+  const temp = mkdtempSync(join(tmpdir(), "dotfiles-services-"));
+  try {
+    for (const platform of ["linux", "darwin"]) {
+      const destination = join(temp, platform);
+      mkdirSync(join(destination, ".config"), { recursive: true });
+      execFileSync(
+        "chezmoi",
+        [
+          ...base,
+          "--destination",
+          destination,
+          "--persistent-state",
+          join(destination, "state.boltdb"),
+          "--cache",
+          join(temp, "cache"),
+          "--override-data",
+          JSON.stringify({ chezmoi: { os: platform } }),
+          "apply",
+          join(destination, ".config/services"),
+        ],
+        { env: { ...process.env, PATH: `${root}tests/bin:${process.env.PATH}` } },
+      );
+      const file = "compose.yaml";
+      assert.ok(existsSync(join(destination, ".config/services/onepassword-connect", file)));
+    }
+  } finally {
+    rmSync(temp, { recursive: true, force: true });
+  }
+});
+
+test("Connect keeps its macOS project, named volume and read-only credential mount", () => {
+  const config = yaml(render(`${serviceRoot}/compose.yaml.tmpl`));
+  assert.equal(config.name, "onepassword-connect");
+  assert.deepEqual(config.volumes, { data: {} });
+  for (const name of ["connect-api", "connect-sync"]) {
+    const service = config.services[name];
+    assert.equal(service.restart, "unless-stopped");
+    assert.equal(service.volumes[0], "data:/home/opuser/.op/data");
+    assert.deepEqual(service.volumes[1], {
+      type: "bind",
+      read_only: true,
+      source: "${XDG_CONFIG_HOME:-${HOME}/.config}/op/connect/1password-credentials.json",
+      target: "/home/opuser/.op/1password-credentials.json",
+      bind: { create_host_path: false },
+    });
+  }
+});
+
+test("Linux Compose reuses Connect’s rootful external volume and secret", () => {
+  const config = yaml(render(`${serviceRoot}/compose.yaml.tmpl`, "linux"));
+  assert.equal(config.name, "onepassword-connect");
+  assert.deepEqual(config.volumes, { data: { external: true, name: "onepassword-connect" } });
+  assert.deepEqual(config.secrets, { "onepassword-connect-credentials": { external: true } });
+  assert.deepEqual(config.services["connect-api"].ports, ["127.0.0.1:8080:8080"]);
+  for (const name of ["connect-api", "connect-sync"]) {
+    assert.deepEqual(config.services[name].volumes, ["data:/home/opuser/.op/data"]);
+    assert.deepEqual(config.services[name].secrets, [
+      {
+        source: "onepassword-connect-credentials",
+        target: "/home/opuser/.op/1password-credentials.json",
+        uid: "999",
+        mode: "0400",
+      },
+    ]);
+  }
+});
