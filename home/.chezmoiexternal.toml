@@ -1,3 +1,13 @@
+[".agents/skills/agent-browser/LICENSE"]
+type = "file"
+# renovate: datasource=github-releases depName=vercel-labs/agent-browser
+url = "https://raw.githubusercontent.com/vercel-labs/agent-browser/v0.42.0/LICENSE"
+
+[".agents/skills/agent-browser/SKILL.md"]
+type = "file"
+# renovate: datasource=github-releases depName=vercel-labs/agent-browser
+url = "https://raw.githubusercontent.com/vercel-labs/agent-browser/v0.42.0/skills/agent-browser/SKILL.md"
+
 [".agents/skills/humanizer"]
 type = "archive"
 exact = true

@@ -1,4 +1,5 @@
 {{- if ne .chezmoi.os "linux" }}
+.config/containers
 .config/services/onepassword-connect/*.container
 .config/services/onepassword-connect/*.pod
 {{- end }}

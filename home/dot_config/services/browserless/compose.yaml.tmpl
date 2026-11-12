@@ -1,0 +1,12 @@
+name: browserless
+services:
+  browserless:
+    image: ghcr.io/browserless/chromium:{{ .services.browserless.version }}
+    restart: unless-stopped
+    shm_size: 1gb
+    environment:
+      CONCURRENT: {{ .services.browserless.concurrent }}
+      QUEUED: {{ .services.browserless.queued }}
+      TIMEOUT: {{ .services.browserless.timeout }}
+    ports:
+      - "127.0.0.1:{{ .services.browserless.port }}:3000"
