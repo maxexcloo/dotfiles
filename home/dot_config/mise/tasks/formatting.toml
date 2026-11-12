@@ -10,7 +10,14 @@ run = "mise fmt"
 ["fmt:oxfmt"]
 description = "Format Project Files"
 dir = "{{cwd}}"
-run = "oxfmt --write --no-error-on-unmatched-pattern . '!**/{.mise.toml,mise.toml,.mise/config.toml,mise/config.toml,.config/mise.toml,.config/mise/config.toml}'"
+# oxfmt reads only local ignore files, so pass Git's global one too.
+run = '''
+set -- --no-error-on-unmatched-pattern
+for ignore in .gitignore .prettierignore "${XDG_CONFIG_HOME:-$HOME/.config}/git/ignore"; do
+  [ ! -f "$ignore" ] || set -- "$@" --ignore-path "$ignore"
+done
+oxfmt --write "$@" . '!**/{.mise.toml,mise.toml,.mise/config.toml,mise/config.toml,.config/mise.toml,.config/mise/config.toml}'
+'''
 
 ["fmt:python"]
 description = "Sort Python Imports & Format Code"
