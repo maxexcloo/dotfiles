@@ -1,0 +1,44 @@
+name: onepassword-connect
+services:
+  connect-api:
+    image: 1password/connect-api:{{ .services.connect.version }}
+    restart: unless-stopped
+{{- if eq .chezmoi.os "linux" }}
+    ports:
+      - "127.0.0.1:8080:8080"
+    secrets: &connect-secrets
+      - source: onepassword-connect-credentials
+        target: /home/opuser/.op/1password-credentials.json
+        uid: "999"
+        mode: "0400"
+{{- end }}
+    volumes: &connect-volumes
+      - data:/home/opuser/.op/data
+{{- if ne .chezmoi.os "linux" }}
+      - type: bind
+        read_only: true
+        source: ${XDG_CONFIG_HOME:-${HOME}/.config}/op/connect/1password-credentials.json
+        target: /home/opuser/.op/1password-credentials.json
+        bind:
+          create_host_path: false
+{{- end }}
+  connect-sync:
+    image: 1password/connect-sync:{{ .services.connect.version }}
+    restart: unless-stopped
+{{- if eq .chezmoi.os "linux" }}
+    environment:
+      OP_HTTP_PORT: "8081"
+    secrets: *connect-secrets
+{{- end }}
+    volumes: *connect-volumes
+volumes:
+{{- if eq .chezmoi.os "linux" }}
+  data:
+    external: true
+    name: onepassword-connect
+secrets:
+  onepassword-connect-credentials:
+    external: true
+{{- else }}
+  data: {}
+{{- end }}

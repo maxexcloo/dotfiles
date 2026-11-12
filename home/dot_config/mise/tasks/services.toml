@@ -1,0 +1,9 @@
+["services:connect"]
+description = "Start 1Password Connect"
+run = '''
+{% if os() == "macos" %}
+docker compose --file "$HOME/.config/services/onepassword-connect/compose.yaml" up --detach
+{% else %}
+sudo podman-compose --file "$HOME/.config/services/onepassword-connect/compose.yaml" up --detach
+{% endif %}
+'''

@@ -15,9 +15,8 @@ modify templates to preserve unrelated application settings and local state.
 MCP endpoints are defined in `home/.chezmoidata.toml`. Bifrost keys are stored in
 the 1Password Automation vault and referenced through
 `home/dot_config/fnox/config.toml`. Fnox and the 1Password CLI read vaults
-through the machine's 1Password Connect server: on macOS from
-[local services](https://github.com/maxexcloo/local-services), on Linux from
-[Homelab](https://github.com/maxexcloo/homelab). Save its token as `token` beside
+through the machine's 1Password Connect server, managed here with the
+`services:connect` Mise task. Save its token as `token` beside
 the Connect credentials file. `chezmoi apply` writes each agent's Bifrost key into
 its private configuration. Keep key values out of Git and command output.
 
@@ -35,6 +34,8 @@ then install the global tools it declares:
 mise exec chezmoi@latest -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise install
 mise run setup
+chezmoi apply "$HOME/.config/services"
+mise run services:connect
 mise run check
 chezmoi status
 chezmoi apply
@@ -49,6 +50,20 @@ To sync another workstation, clone this repository, pull the revision you want
 and run the same commands. Changes to live files aren't imported automatically.
 `mise use --global` and `mise upgrade --global` edit the live Mise configuration,
 so copy those edits back into `home/`.
+
+## Workstation Services
+
+Compose definitions live in `~/.config/services`. Apply them with chezmoi before
+using the small `services:*` Mise tasks to start a service. macOS uses Docker
+Compose through OrbStack; Mercury uses rootful `podman-compose` so Connect keeps
+its existing Podman volume and secret. Homelab owns Mercury’s boot service.
+
+Mercury’s switch from Quadlets to Compose requires an approved handover: stop the
+old Connect pod, start the Compose stack, then verify credential-backed access and
+retained data before removing the old Quadlet files. The Compose definition uses
+the existing volume and secret as external resources; do not recreate them or run
+both owners at once. Keep the old definitions available until that verification.
+The macOS project, data volume, credential mount and OrbStack endpoint stay the same.
 
 ## Agent Launch
 
