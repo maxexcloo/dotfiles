@@ -16,6 +16,11 @@
   ],
   packageRules: [
     {
+      // Published pytest-homeassistant-custom-component 0.13.375 requires this release; remove when compatible fixtures publish.
+      allowedVersions: "2026.10.4",
+      matchDepNames: ["homeassistant"],
+    },
+    {
       // The test fixtures pin one Home Assistant release, so both must move together.
       groupName: "Home Assistant",
       matchDepNames: ["homeassistant", "pytest-homeassistant-custom-component"],
