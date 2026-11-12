@@ -10,10 +10,10 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const base = ["--source", root, "--config", "/dev/null", "--config-format", "toml"];
 const execute = (args, input = "") =>
   execFileSync("chezmoi", [...base, ...args], { input, encoding: "utf8" });
-const render = (path, platform = "darwin") =>
+const render = (path, platform = "darwin", services) =>
   execute([
     "--override-data",
-    JSON.stringify({ chezmoi: { os: platform } }),
+    JSON.stringify({ chezmoi: { os: platform }, ...(services ? { services } : {}) }),
     "execute-template",
     "--file",
     `home/${path}`,
@@ -93,4 +93,22 @@ test("Linux Compose reuses Connect’s rootful external volume and secret", () =
       },
     ]);
   }
+});
+
+test("Browserless uses the same configured port across both runtimes and the client", () => {
+  const services = JSON.parse(execute(["execute-template", "{{ .services | toJson }}"]));
+  services.browserless.port = 19333;
+  const compose = yaml(
+    render("dot_config/services/browserless/compose.yaml.tmpl", "darwin", services),
+  );
+  assert.equal(compose.name, "browserless");
+  assert.deepEqual(compose.services.browserless.ports, ["127.0.0.1:19333:3000"]);
+  const linux = yaml(
+    render("dot_config/services/browserless/compose.yaml.tmpl", "linux", services),
+  );
+  assert.deepEqual(linux, compose);
+  const client = JSON.parse(
+    render("dot_agent-browser/private_config.json.tmpl", "darwin", services),
+  );
+  assert.equal(client.cdp, "ws://127.0.0.1:19333/chromium");
 });

@@ -1,3 +1,13 @@
+["services:browserless"]
+description = "Start Browserless"
+run = '''
+{% if os() == "macos" %}
+docker compose --file "$HOME/.config/services/browserless/compose.yaml" up --detach
+{% else %}
+podman-compose --file "$HOME/.config/services/browserless/compose.yaml" up --detach
+{% endif %}
+'''
+
 ["services:connect"]
 description = "Start 1Password Connect"
 run = '''

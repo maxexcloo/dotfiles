@@ -113,6 +113,15 @@ as a plugin because it does not discover the shared skill collection recursively
 Upstream skills are installed through `home/.chezmoiexternal.toml`. Keep personal
 rules in the Agents repository so upstream packages stay unmodified.
 
+## Browser Tools
+
+[agent-browser](https://agent-browser.dev) uses the Browserless container started
+by `mise run services:browserless` when needed. Mise installs the CLI; chezmoi
+configures its skill and native endpoint setting.
+Both platforms use the same Compose definition. On Linux it runs under the user’s
+Podman runtime; start it explicitly when needed. Apply its configuration with
+chezmoi first; the start task does not apply preferences or enable boot startup.
+
 ## Shared Tools & Tasks
 
 `home/dot_config/mise/conf.d/tools.toml` declares shared tools;
