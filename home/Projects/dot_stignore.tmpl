@@ -1,1 +1,7 @@
+{{- if eq .chezmoi.os "darwin" -}}
 {{ template "stignore-code" . -}}
+{{- else -}}
+!/*/todo.md
+!/*/todo-*.md
+*
+{{- end }}
