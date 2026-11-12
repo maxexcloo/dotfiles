@@ -23,11 +23,14 @@ mise exec chezmoi@latest -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise install
 mise run setup
 chezmoi apply "$HOME/.config/services"
-mise run services:connect
+docker compose -f ~/.config/services/onepassword-connect/compose.yaml up -d
 mise run check
 chezmoi status
 chezmoi apply
 ```
+
+On Linux, start Connect with `sudo podman-compose up -d` from
+`~/.config/services/onepassword-connect` instead.
 
 Edit preferences in `home/`, then run `chezmoi apply`. To sync another
 workstation, pull the revision you want and run the same commands.
