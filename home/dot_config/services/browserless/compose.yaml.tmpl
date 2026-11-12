@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     shm_size: 1gb
     environment:
-      CONCURRENT: {{ .services.browserless.concurrent }}
-      QUEUED: {{ .services.browserless.queued }}
-      TIMEOUT: {{ .services.browserless.timeout }}
+      CONCURRENT: 4
+      QUEUED: 4
+      TIMEOUT: 3600000
     ports:
       - "127.0.0.1:{{ .services.browserless.port }}:3000"
