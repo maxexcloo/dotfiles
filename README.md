@@ -77,9 +77,28 @@ start them unsandboxed: create a terminal running `command AGENT` with
 `orca terminal create --command` and give it the task with
 `orca orchestration worker-start --terminal`.
 
-Agent logins, sessions and history stay on each machine: sign in to each agent
-once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state file inside `~/.claude`,
-because the sandbox cannot replace files directly in the home directory.
+Sign in to each agent once per machine. `CLAUDE_CONFIG_DIR` keeps Claude's state
+file inside `~/.claude`, because the sandbox cannot replace files directly in the
+home directory.
+
+## Agent Threads
+
+[Atuin Threads](https://docs.atuin.sh/18.24/ai/threads/) is enabled with native
+daemon autostart; use Atuin 18.24+ on both Mac and Mercury. Capture includes
+conversations, tool inputs/outputs and edit diffs, including the whole session
+when continuing an old one. Threads sync end-to-end encrypted through the
+existing auto-sync; both machines need the same Atuin account and encryption
+key. Local transcripts and the search index remain sensitive.
+
+Use `atuin resume` to search and resume, `atuin resume THREAD_ID --fork` to fork,
+or `atuin resume THREAD_ID --in codex` to continue in another agent. Keep the
+matching checkout available: Threads carries context, not repository files or
+Orca workspace state. Native resume uses executables from `PATH`, bypassing Fish
+functions, including the nono wrappers described above.
+
+Run `atuin mcp install` to register the native stdio server with installed agents,
+then restart them. This grants read access to shell history and captured threads;
+see [native MCP setup](https://docs.atuin.sh/18.24/ai/mcp/).
 
 ## Shared Agent Guidance
 
