@@ -62,6 +62,11 @@ console.log(JSON.stringify({ args, profile, profilePath }));`,
       "--model",
       "fixture",
     ]);
+    const bypassFlags = ["--dangerously-bypass-approvals-and-sandbox", "--yolo"];
+    for (const flag of bypassFlags) {
+      const fullAccess = run("codex", [flag, "--model", "fixture"]);
+      assert.equal(fullAccess.args.filter((arg) => bypassFlags.includes(arg)).length, 1);
+    }
     assert.equal(codex.profile.extends, "codex");
     assert.deepEqual(codex.profile.command_policies.executable_dirs, [
       join(directory, "git-core"),

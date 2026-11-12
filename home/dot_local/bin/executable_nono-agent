@@ -209,7 +209,11 @@ def launch(agent, args):
     )
     if common.returncode == 0:
         grants.extend(["--allow", common.stdout.strip()])
-    if agent == "codex":
+    if (
+        agent == "codex"
+        and "--dangerously-bypass-approvals-and-sandbox" not in args
+        and "--yolo" not in args
+    ):
         args = ["--dangerously-bypass-approvals-and-sandbox", *args]
     elif agent == "claude":
         args = [

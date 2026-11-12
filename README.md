@@ -78,9 +78,10 @@ Kubernetes and Talos administration, chezmoi and Xcode builds.
 
 Orca launches agents through these wrappers when its agent command for each one
 is set to `fish -c "AGENT $argv" --` and its permission mode is **Own**.
-Own lets the wrapper select the mode; Orca's Ask and Auto presets add approval
-flags that conflict with Codex's sandboxed bypass flag. Use **Auto** for native
-chats and terminal agents launched without these wrappers.
+Own lets the wrapper select the mode. An existing Codex Full Access flag is
+preserved without duplication; Orca's Ask and Auto presets add conflicting
+approval flags. Use **Auto** for native chats and terminal agents launched
+without these wrappers.
 On Linux, the launcher gives Orca workers a
 separate nono command policy for mailbox operations and the two Orca skill guides.
 Only the brokered CLI receives its runtime metadata and socket access; terminal
