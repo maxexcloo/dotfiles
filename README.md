@@ -3,8 +3,7 @@
 My macOS workstation preferences, managed by [chezmoi](https://www.chezmoi.io/)
 and installed through Mise; the same source sets up agents on Linux. Shared agent
 instructions and my own skills live in the separate
-[Agents repository](https://github.com/maxexcloo/agents); clone it beside this
-checkout.
+[Agents repository](https://github.com/maxexcloo/agents).
 
 ## Usage
 
@@ -38,7 +37,12 @@ so copy those edits back into `home/`.
 Run `atuin mcp install` once per machine to register Atuin's MCP server with
 installed agents.
 
-## Shared Tasks & CI
+## Shared Agent Guidance
+
+Clone the Agents repository beside this checkout; `chezmoi apply` links it into
+each agent.
+
+## Shared Tools & Tasks
 
 Mise loads the shared tasks globally. Repositories select them through `depends`;
 a project's task overrides the shared task of the same name.
