@@ -37,11 +37,6 @@ for (const [client, path, section, credential] of [
     execute([...override, "execute-template", "--with-stdin", "--file", path], input);
 
   test(`${client} provisions fresh inventory and preserves unrelated entries`, () => {
-    const atuin =
-      client === "OpenCode"
-        ? { type: "local", command: ["atuin", "mcp"], enabled: true }
-        : { command: "atuin", args: ["mcp"] };
-    const atuinPath = client === "OpenCode" ? "mcp.atuin" : `${section}.atuin`;
     for (const existing of [false, true]) {
       const foreign = {
         url: "https://foreign.example/bifrost.excloo.com/mcp",
@@ -65,10 +60,6 @@ for (const [client, path, section, credential] of [
             }),
           }
         : {};
-      if (existing) {
-        const parent = atuinPath.split(".").slice(0, -1).join(".");
-        dig(parent, config).atuin = atuin;
-      }
       const output = render(encode(config));
       const result = decode(output);
       const servers = dig(section, result);
@@ -78,7 +69,6 @@ for (const [client, path, section, credential] of [
         if (client === "OpenCode") assert.equal(servers[name].codemode, false);
       }
       if (existing) {
-        assert.deepEqual(dig(atuinPath, result), atuin);
         assert.equal(result.unrelated, true);
         assert.equal(servers.home_assistant.timeout, client === "Pi" ? 15 : 12);
         assert.deepEqual(servers.foreign, foreign);
