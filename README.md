@@ -1,7 +1,8 @@
 # Dotfiles
 
 My macOS workstation preferences, managed by [chezmoi](https://www.chezmoi.io/)
-and installed through Mise; the same source sets up agents on Linux. Shared agent instructions and my own skills live in the separate
+and installed through Mise; the same source sets up agents on Linux. Shared agent
+instructions and my own skills live in the separate
 [Agents repository](https://github.com/maxexcloo/agents), but the links and skill
 discovery that wire them into the workstation are managed here.
 
