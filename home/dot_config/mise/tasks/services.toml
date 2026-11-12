@@ -17,3 +17,8 @@ docker compose --file "$HOME/.config/services/onepassword-connect/compose.yaml" 
 sudo podman-compose --file "$HOME/.config/services/onepassword-connect/compose.yaml" up --detach
 {% endif %}
 '''
+
+["services:orca"]
+description = "Enable Orca Server"
+env.ORCA_USER_DATA_PATH = "{{env.HOME}}/.orca"
+run = 'orca-ide serve service install --command "$HOME/.local/share/mise/shims/orca-ide" --port 6768 --bind 0.0.0.0 --refuse-public'

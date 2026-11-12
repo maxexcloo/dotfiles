@@ -14,6 +14,7 @@ prune_after = "0s"
 [tools]
 claude-code = "latest"
 codex = "latest"
+"github:stablyai/orca" = { version = "latest", os = ["linux"] }
 k9s = "latest"
 "npm:@deepseek-ai/dsh" = "latest"
 "npm:agent-browser" = "latest"
