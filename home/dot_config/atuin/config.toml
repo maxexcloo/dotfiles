@@ -5,8 +5,15 @@ inline_height = 10
 search_mode = "fuzzy"
 show_tabs = false
 
+[daemon]
+autostart = true
+enabled = true
+
 [logs]
 enabled = false
 
 [sync]
 records = true
+
+[threads]
+capture = true
