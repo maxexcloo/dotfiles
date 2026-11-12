@@ -17,19 +17,3 @@ docker compose --file "$HOME/.config/services/onepassword-connect/compose.yaml" 
 sudo podman-compose --file "$HOME/.config/services/onepassword-connect/compose.yaml" up --detach
 {% endif %}
 '''
-
-["services:playwright"]
-description = "Start Project Playwright Browsers"
-run = '''
-set -eu
-version=$(node -p "require('playwright/package.json').version")
-{% if os() == "macos" %}
-runtime=docker
-{% else %}
-runtime=podman
-{% endif %}
-echo "export PW_TEST_CONNECT_WS_ENDPOINT=ws://127.0.0.1:$usage_port/"
-echo "export PW_TEST_CONNECT_EXPOSE_NETWORK='<loopback>'"
-exec "$runtime" run --rm --init --user pwuser --workdir /home/pwuser --shm-size 1g --publish "127.0.0.1:$usage_port:3000" "mcr.microsoft.com/playwright:v$version-noble" npx --yes "playwright@$version" run-server --port 3000 --host 0.0.0.0
-'''
-usage = 'flag "--port <port>" default="9223" help="Loopback port for the Playwright server"'

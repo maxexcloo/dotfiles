@@ -122,12 +122,6 @@ Both platforms use the same Compose definition. On Linux it runs under the userâ
 Podman runtime; start it explicitly when needed. Apply its configuration with
 chezmoi first; the start task does not apply preferences or enable boot startup.
 
-For project Playwright tests, run `mise run services:playwright` from the project
-root. Set the two environment variables it prints in
-the test terminal, then run the project's normal browser tests. The temporary
-container supplies Chromium, Firefox and WebKit at the installed project's
-Playwright version, without mounting project or home files; Ctrl-C removes it.
-
 ## Shared Tools & Tasks
 
 `home/dot_config/mise/conf.d/tools.toml` declares shared tools;
