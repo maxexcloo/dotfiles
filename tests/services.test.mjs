@@ -52,7 +52,7 @@ test("Service configuration can bootstrap into a fresh home before credential te
           "--cache",
           join(temp, "cache"),
           "--override-data",
-          JSON.stringify({ chezmoi: { os: platform }, ...(services ? { services } : {}) }),
+          JSON.stringify({ chezmoi: { os: platform } }),
           "apply",
           join(destination, ".config/services"),
         ],
