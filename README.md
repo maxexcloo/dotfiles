@@ -18,8 +18,7 @@ through the machine's 1Password Connect server: on macOS from
 [local services](https://github.com/maxexcloo/local-services), on Linux from
 [Homelab](https://github.com/maxexcloo/homelab). Save its token as `token` beside
 the Connect credentials file. `chezmoi apply` writes each agent's Bifrost key into
-its private configuration and the `GitHub Agents` token into
-`~/.config/gh-agents`. Keep key values out of Git and command output.
+its private configuration. Keep key values out of Git and command output.
 
 ## Usage
 

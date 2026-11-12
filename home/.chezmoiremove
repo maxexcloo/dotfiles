@@ -2,6 +2,7 @@
 .config/fish/functions/codex.fish
 .config/fish/functions/opencode.fish
 .config/fish/functions/pi.fish
+.config/gh-agents/hosts.yml
 .config/nono/profiles/claude.json
 .config/nono/profiles/codex.json
 .config/nono/profiles/opencode.json
