@@ -3,6 +3,8 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := dict "$schema" "https://opencode.ai/config.json" "formatter" true "update" "disable" -}}
 {{- $config = mergeOverwrite $config $preferences -}}
+{{- $permissions := list (dict "action" "external_directory" "effect" "ask" "resource" "*") (dict "action" "shell" "effect" "ask" "resource" "*") -}}
+{{- $_ := set $config "permissions" (concat $permissions (get $config "permissions" | default list) | uniq) -}}
 {{- $key := includeTemplate "bifrost-key" "opencode" -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp" "servers" $name "oauth") false $config -}}

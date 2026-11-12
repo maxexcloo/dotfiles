@@ -57,6 +57,11 @@ Command to its executable name and use its native permission controls. Select
 Auto for supporting agents; Codex uses its workspace sandbox with automatic
 approval review. Put environment variables in Orca's Environment setting.
 
+Claude also enables its native Bash sandbox and refuses unsandboxed retries.
+OpenCode asks before shell commands or access outside the project; existing
+permission rules are preserved. Keep its `--auto` flag off to retain those prompts.
+Pi has no native sandbox or equivalent permission gate.
+
 Agent logins, sessions and history stay on each machine. Sign in once per agent
 per machine; keep existing agent homes when changing launch settings.
 
