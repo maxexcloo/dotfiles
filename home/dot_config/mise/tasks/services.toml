@@ -2,26 +2,19 @@
 description = "Start Browserless"
 run = '''
 {% if os() == "macos" %}
-chezmoi apply "$HOME/.config/services"
 docker compose --file "$HOME/.config/services/browserless/compose.yaml" up --detach
 {% else %}
-chezmoi apply "$HOME/.config/containers"
-systemctl --user daemon-reload
-systemctl --user start browserless.service
+podman-compose --file "$HOME/.config/services/browserless/compose.yaml" up --detach
 {% endif %}
 '''
 
 ["services:connect"]
 description = "Start 1Password Connect"
 run = '''
-chezmoi apply "$HOME/.config/services"
 {% if os() == "macos" %}
 docker compose --file "$HOME/.config/services/onepassword-connect/compose.yaml" up --detach
 {% else %}
-service_directory="$HOME/.config/services/onepassword-connect"
-sudo install -D -m 0644 -t /etc/containers/systemd "$service_directory/onepassword-connect-api.container" "$service_directory/onepassword-connect-sync.container" "$service_directory/onepassword-connect.pod"
-sudo systemctl daemon-reload
-sudo systemctl start onepassword-connect-pod.service
+sudo podman-compose --file "$HOME/.config/services/onepassword-connect/compose.yaml" up --detach
 {% endif %}
 '''
 

@@ -18,9 +18,10 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const base = ["--source", root, "--config", "/dev/null", "--config-format", "toml"];
 const execute = (args, input = "") =>
   execFileSync("chezmoi", [...base, ...args], { input, encoding: "utf8" });
-const render = (path, services) =>
+const render = (path, services, platform = "darwin") =>
   execute([
-    ...(services ? ["--override-data", JSON.stringify({ services })] : []),
+    "--override-data",
+    JSON.stringify({ chezmoi: { os: platform }, ...(services ? { services } : {}) }),
     "execute-template",
     "--file",
     `home/${path}`,
@@ -51,13 +52,13 @@ test("Service configuration can bootstrap into a fresh home before credential te
           "--cache",
           join(temp, "cache"),
           "--override-data",
-          JSON.stringify({ chezmoi: { os: platform } }),
+          JSON.stringify({ chezmoi: { os: platform }, ...(services ? { services } : {}) }),
           "apply",
           join(destination, ".config/services"),
         ],
         { env: { ...process.env, PATH: `${root}tests/bin:${process.env.PATH}` } },
       );
-      const file = platform === "linux" ? "onepassword-connect-api.container" : "compose.yaml";
+      const file = "compose.yaml";
       assert.ok(existsSync(join(destination, ".config/services/onepassword-connect", file)));
     }
   } finally {
@@ -83,20 +84,23 @@ test("Connect keeps its macOS project, named volume and read-only credential mou
   }
 });
 
-test("Connect keeps its existing Linux pod, secret and data volume", () => {
-  for (const name of ["api", "sync"]) {
-    const lines = render(`${serviceRoot}/onepassword-connect-${name}.container.tmpl`).split("\n");
-    assert.ok(lines.includes("Pod=onepassword-connect.pod"));
-    assert.ok(lines.includes("Volume=onepassword-connect:/home/opuser/.op/data"));
-    assert.ok(
-      lines.includes(
-        "Secret=onepassword-connect-credentials,target=/home/opuser/.op/1password-credentials.json,uid=999,mode=0400",
-      ),
-    );
+test("Linux Compose reuses Connect’s rootful external volume and secret", () => {
+  const config = yaml(render(`${serviceRoot}/compose.yaml.tmpl`, undefined, "linux"));
+  assert.equal(config.name, "onepassword-connect");
+  assert.deepEqual(config.volumes, { data: { external: true, name: "onepassword-connect" } });
+  assert.deepEqual(config.secrets, { "onepassword-connect-credentials": { external: true } });
+  assert.deepEqual(config.services["connect-api"].ports, ["127.0.0.1:8080:8080"]);
+  for (const name of ["connect-api", "connect-sync"]) {
+    assert.deepEqual(config.services[name].volumes, ["data:/home/opuser/.op/data"]);
+    assert.deepEqual(config.services[name].secrets, [
+      {
+        source: "onepassword-connect-credentials",
+        target: "/home/opuser/.op/1password-credentials.json",
+        uid: "999",
+        mode: "0400",
+      },
+    ]);
   }
-  const pod = render(`${serviceRoot}/onepassword-connect.pod`);
-  assert.match(pod, /^PublishPort=127\.0\.0\.1:8080:8080$/m);
-  assert.match(pod, /^WantedBy=multi-user\.target$/m);
 });
 
 test("Browserless uses the same configured port across both runtimes and the client", () => {
@@ -105,8 +109,10 @@ test("Browserless uses the same configured port across both runtimes and the cli
   const compose = yaml(render("dot_config/services/browserless/compose.yaml.tmpl", services));
   assert.equal(compose.name, "browserless");
   assert.deepEqual(compose.services.browserless.ports, ["127.0.0.1:19333:3000"]);
-  const quadlet = render("dot_config/containers/systemd/browserless.container.tmpl", services);
-  assert.match(quadlet, /^PublishPort=127\.0\.0\.1:19333:3000$/m);
+  const linux = yaml(
+    render("dot_config/services/browserless/compose.yaml.tmpl", services, "linux"),
+  );
+  assert.deepEqual(linux, compose);
   const client = JSON.parse(render("dot_agent-browser/private_config.json.tmpl", services));
   assert.equal(client.cdp, "ws://127.0.0.1:19333/chromium");
 });
