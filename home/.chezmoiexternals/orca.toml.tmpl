@@ -1,0 +1,8 @@
+{{- if eq .chezmoi.os "linux" }}
+[".local/share/orca-server"]
+type = "archive"
+exact = true
+stripComponents = 1
+# renovate: datasource=github-releases depName=stablyai/orca
+url = "https://github.com/stablyai/orca/releases/download/v1.4.257/orca-server-linux-{{ .chezmoi.arch | replace "amd64" "x64" }}.tar.gz"
+{{- end }}

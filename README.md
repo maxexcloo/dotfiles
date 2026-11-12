@@ -104,6 +104,40 @@ Run `atuin mcp install` to register the native stdio server with installed agent
 then restart them. This grants read access to shell history and captured threads;
 see [native MCP setup](https://docs.atuin.sh/18.24/ai/mcp/).
 
+## Remote Orca
+
+On Linux, chezmoi installs Orca's [server-only distribution](https://github.com/stablyai/orca/blob/v1.4.257/docs/site/content/docs/remote-servers.mdx)
+in `~/.local/share/orca-server`, without starting it. Its native mobile app can
+connect directly to Mercury over Tailscale while the Mac is off.
+
+After review, install Orca's native user service against the existing profile:
+
+```sh
+export ORCA_USER_DATA_PATH="$HOME/.orca"
+orca="$HOME/.local/share/orca-server/bin/orca-ide"
+"$orca" serve service install --command "$orca" --port 6768 --bind 0.0.0.0 --refuse-public
+sudo loginctl enable-linger "$USER"
+"$orca" serve service status
+```
+
+The supervisor waits for the existing SSH-managed runtime to exit. Arrange an
+approved graceful handover, preserving its terminal daemon, profile, sessions
+and identities; do not start a second runtime. The new listener permits LAN and
+Tailscale clients, subject to the host firewall, and refuses public sources.
+
+Pair directly on Mercury; keep the generated links and QR codes private:
+
+```sh
+"$orca" pair --mobile --address mercury.mbk.excloo.net
+"$orca" pair --address mercury.mbk.excloo.net
+```
+
+Verify an existing session from the phone with the Mac off. After an approved
+Mercury reboot, verify access before any SSH login. A healthy service alone does
+not prove either workflow. The standalone package lacks browser panes, dictation
+and the paired web client; the native mobile app is supported. Chezmoi updates
+the package; updates take effect at the next approved runtime restart.
+
 ## Shared Agent Guidance
 
 Clone the Agents repository beside this checkout. Chezmoi links its shared
