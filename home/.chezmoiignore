@@ -5,6 +5,4 @@
 Backups
 Documents
 Library
-{{- else }}
-.config/systemd
 {{- end }}
