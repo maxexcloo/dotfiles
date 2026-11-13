@@ -9,8 +9,8 @@ instructions and my own skills live in the separate
 
 Install Homebrew, then the packages and applications in `home/dot_Brewfile` with
 `brew bundle --file home/dot_Brewfile`; after setup, `brew bundle --global` keeps
-them in sync. Enable the 1Password desktop integration for Git signing and SSH
-authentication on macOS.
+them in sync. Enable the 1Password desktop integration for SSH authentication
+on macOS.
 
 Fnox and the 1Password CLI read vaults through the machine's 1Password Connect
 server. Save its token as `token` beside the Connect credentials file.

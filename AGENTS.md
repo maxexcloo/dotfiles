@@ -6,7 +6,6 @@
 - Keep shared agent instructions and self-written skills in `../agents`. Manage their workstation links and skill discovery configuration here. Install upstream skills through native chezmoi externals; keep personal rules in the Agents repository rather than patching upstream packages.
 - Other repositories consume the shared Mise tasks and `.github/actions/mise` at `@main` (an accepted risk, as the owner controls every consumer). Check their `.mise.toml` and workflows before changing or removing shared behaviour; keep changes backwards compatible.
 - Every tool a CI job runs must be in its `with.tools` or declared by the repository with `project-tools: true`.
-- `mise use --global` and `mise upgrade --global` edit live files; reconcile those changes back into `home/`.
 - Linux hosts apply this source too: limit macOS-only targets with `.chezmoiignore` or `.chezmoi.os` blocks.
 - Workstation Compose definitions live under `.config/services`; Homelab owns Mercury’s boot configuration.
 - Preserve Connect’s existing rootful Podman secret and volume on Linux; keep the `onepassword-connect` Compose project, named volume and OrbStack hostname on macOS. A runtime migration must not recreate credentials or data.
