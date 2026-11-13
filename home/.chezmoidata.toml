@@ -36,5 +36,28 @@ version = "1.8.4"
 
 # Commands agents ask about before running unless started with AUTO=1; Linux adds daemons its sandbox cannot block.
 [agentGuard]
-ask = ["flux", "helm", "kubectl apply", "kubectl delete", "scp", "ssh", "tofu apply"]
+ask = [
+  "flux reconcile",
+  "flux resume",
+  "flux suspend",
+  "helm install",
+  "helm rollback",
+  "helm uninstall",
+  "helm upgrade",
+  "kubectl annotate",
+  "kubectl apply",
+  "kubectl create",
+  "kubectl delete",
+  "kubectl edit",
+  "kubectl label",
+  "kubectl patch",
+  "kubectl rollout restart",
+  "kubectl rollout undo",
+  "kubectl scale",
+  "mise run apply",
+  "mise run deploy",
+  "scp",
+  "ssh",
+  "tofu apply",
+]
 askLinux = ["docker", "podman", "tailscale"]

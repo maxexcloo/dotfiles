@@ -9,6 +9,7 @@
 {{- $roots := list -}}
 {{- range append $caches ".local/state" -}}{{- $roots = append $roots (joinPath $.chezmoi.homeDir .) -}}{{- end -}}
 {{- $config = setValueAtPath (list "sandbox_workspace_write" "writable_roots") $roots $config -}}
+{{- $config = setValueAtPath (list "sandbox_workspace_write" "network_access") true $config -}}
 {{- $key := includeTemplate "bifrost-key" "codex" -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp_servers" $name "url") $server.url $config -}}

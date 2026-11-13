@@ -20,6 +20,15 @@ const run = (args, input, environment = env) =>
 const post = (stdout, environment) =>
   run(["post", "claude"], JSON.stringify({ tool_response: { stdout } }), environment);
 
+test("pre blocks dotenv files but not code that reads the environment", () => {
+  const pre = (command) =>
+    run(["pre"], JSON.stringify({ tool_input: { command } }), { ...env, AUTO: "1" });
+  for (const command of ["cat .env", "cat ./.env.local", "less app/cloudflared.env"])
+    assert.throws(() => pre(command), { status: 2 }, command);
+  for (const command of ["node -e 'process.env.HOME'", "kubectl get -o jsonpath='{.env}'"])
+    assert.equal(pre(command), "", command);
+});
+
 test("post redacts secrets and passes clean output through", () => {
   const redacted = JSON.parse(post(`token=${token}`));
   assert.equal(redacted.hookSpecificOutput.updatedToolOutput.stdout, "token=[REDACTED]\n");
