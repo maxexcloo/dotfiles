@@ -34,27 +34,16 @@ version = "v2.63.0"
 # renovate: datasource=docker depName=1password/connect-api
 version = "1.8.4"
 
-# Commands agents ask about before running unless started with AUTO=1.
-[agentGuard]
+# Commands Claude and Codex ask about before running.
+[agents]
 ask = [
   "docker",
   "flux reconcile",
-  "flux resume",
-  "flux suspend",
   "helm install",
-  "helm rollback",
   "helm uninstall",
   "helm upgrade",
-  "kubectl annotate",
   "kubectl apply",
-  "kubectl create",
   "kubectl delete",
-  "kubectl edit",
-  "kubectl label",
-  "kubectl patch",
-  "kubectl rollout restart",
-  "kubectl rollout undo",
-  "kubectl scale",
   "mise run apply",
   "mise run deploy",
   "podman",

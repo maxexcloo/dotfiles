@@ -1,0 +1,3 @@
+{{- range .agents.ask }}
+prefix_rule(pattern = {{ splitList " " . | toJson }}, decision = "prompt", justification = "Listed in dotfiles as needing approval")
+{{- end }}
