@@ -34,7 +34,7 @@ version = "v2.63.0"
 # renovate: datasource=docker depName=1password/connect-api
 version = "1.8.4"
 
-# Commands Claude and Codex ask about before running.
+# Commands Claude, Codex and Pi ask about (Codex blocks) unless started with AUTO=1.
 [agents]
 ask = [
   "docker",
