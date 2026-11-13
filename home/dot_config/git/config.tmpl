@@ -1,8 +1,14 @@
+[commit]
+gpgsign = true
+
 [credential "https://github.com"]
 helper = !gh auth git-credential
 
 [fetch]
 prune = true
+
+[gpg]
+format = ssh
 
 [hook "gitleaks"]
 command = gitleaks git --pre-commit --staged --redact --no-banner --log-level warn
@@ -20,3 +26,6 @@ enabled = true
 [user]
 email = max@excloo.com
 name = Max Schaefer
+{{- if ne .chezmoi.os "darwin" }}
+signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAEbfQWFPKtNz/PU8KHll3IU3ahy5lZhGRcZQjr8mKdQ
+{{- end }}
