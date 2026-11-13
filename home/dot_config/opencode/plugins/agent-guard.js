@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { Plugin } from "@opencode/plugin";
 
-const guard = `${process.env.HOME}/.agents/hooks/secret-guard`;
+const guard = `${process.env.HOME}/.agents/hooks/agent-guard`;
 const run = (mode, input) =>
   execFileSync(guard, [mode], { input, encoding: "utf8", stdio: "pipe" });
 
@@ -23,7 +23,7 @@ const redactValue = (value) => {
 };
 
 export default Plugin.define({
-  id: "secret-guard",
+  id: "agent-guard",
   setup: async (ctx) => {
     await ctx.tool.hook("execute.before", (event) => {
       try {

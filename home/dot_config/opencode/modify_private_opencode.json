@@ -3,8 +3,16 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := dict "$schema" "https://opencode.ai/config.json" "formatter" true "update" "disable" -}}
 {{- $config = mergeOverwrite $config $preferences -}}
-{{- $permissions := list (dict "action" "external_directory" "effect" "ask" "resource" "*") (dict "action" "shell" "effect" "ask" "resource" "*") -}}
-{{- $_ := set $config "permissions" (concat $permissions (get $config "permissions" | default list) | uniq) -}}
+{{- /* OpenCode applies the last matching rule, so the shell asks follow the blanket allow. AUTO=1 does not apply here. */ -}}
+{{- $permissions := list (dict "action" "external_directory" "effect" "ask" "resource" "*") (dict "action" "shell" "effect" "allow" "resource" "*") -}}
+{{- range includeTemplate "agent-guard-ask" . | fromJson -}}
+{{- $permissions = append $permissions (dict "action" "shell" "effect" "ask" "resource" (printf "%s *" .)) -}}
+{{- end -}}
+{{- $kept := list -}}
+{{- range get $config "permissions" | default list -}}
+{{- if not (has .action (list "external_directory" "shell")) -}}{{- $kept = append $kept . -}}{{- end -}}
+{{- end -}}
+{{- $_ := set $config "permissions" (concat $kept $permissions) -}}
 {{- $key := includeTemplate "bifrost-key" "opencode" -}}
 {{- range $name, $server := .mcp -}}
 {{- $config = setValueAtPath (list "mcp" "servers" $name "oauth") false $config -}}
