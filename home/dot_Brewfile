@@ -5,6 +5,7 @@ brew "dust"
 brew "eza"
 brew "fd"
 brew "fzf"
+brew "gitup"
 brew "mise"
 brew "zoxide"
 
