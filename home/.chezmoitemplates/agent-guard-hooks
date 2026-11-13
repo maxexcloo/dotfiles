@@ -1,7 +1,7 @@
 {{- $hooks := .hooks | default dict -}}
 {{- $guard := "$HOME/.agents/hooks/agent-guard" -}}
 {{- $entries := dict
-  "PreToolUse" (dict "matcher" .pre "hooks" (list (dict "type" "command" "command" (printf "%s pre" $guard))))
+  "PreToolUse" (dict "matcher" .pre "hooks" (list (dict "type" "command" "command" (printf "%s pre %s" $guard .agent))))
   "PostToolUse" (dict "matcher" "Bash" "hooks" (list (dict "type" "command" "command" (printf "%s post %s" $guard .agent)))) -}}
 {{- range $event, $entry := $entries -}}
 {{-   $kept := list -}}

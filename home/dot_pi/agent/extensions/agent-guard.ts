@@ -1,15 +1,19 @@
 import { execFileSync } from "node:child_process";
 
 const guard = `${process.env.HOME}/.agents/hooks/agent-guard`;
-const run = (mode: string, input: string) =>
-  execFileSync(guard, [mode], { input, encoding: "utf8", stdio: "pipe" });
+const run = (mode: string, input: string, ...args: string[]) =>
+  execFileSync(guard, [mode, ...args], { input, encoding: "utf8", stdio: "pipe" });
 
 export default function (pi) {
-  pi.on("tool_call", async (event) => {
+  pi.on("tool_call", async (event, ctx) => {
+    let ask: string;
     try {
-      run("pre", JSON.stringify({ tool_input: event.input }));
+      ask = run("pre", JSON.stringify({ tool_input: event.input }), "pi");
     } catch (error) {
       return { block: true, reason: String(error.stderr || error.message).trim() };
+    }
+    if (ask && !(ctx.hasUI && (await ctx.ui.confirm(ask, event.input.command)))) {
+      return { block: true, reason: `${ask} The user did not approve it.` };
     }
   });
   pi.on("tool_result", async (event) => {
