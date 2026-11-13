@@ -7,7 +7,6 @@ if test (uname) = Darwin
 else
     fish_add_path /home/linuxbrew/.linuxbrew/bin
     set -gx OP_CONNECT_HOST http://127.0.0.1:8080
-    set -gx SSH_AUTH_SOCK $XDG_RUNTIME_DIR/ssh-agent.socket
 end
 fish_add_path $HOME/.local/bin
 

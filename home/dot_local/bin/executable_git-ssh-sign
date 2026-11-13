@@ -1,0 +1,14 @@
+#!/bin/sh
+# Git's gpg.ssh.program: signs through a private agent, started and loaded from fnox on first use.
+case " $* " in
+*" -Y sign "*) ;;
+*) exec ssh-keygen "$@" ;;
+esac
+export SSH_AUTH_SOCK="$HOME/.ssh/git-signing.sock"
+ssh-add -l >/dev/null 2>&1
+if [ $? -eq 2 ]; then
+	rm -f "$SSH_AUTH_SOCK"
+	ssh-agent -a "$SSH_AUTH_SOCK" >/dev/null
+fi
+ssh-add -l >/dev/null 2>&1 || fnox get GIT_SIGNING_KEY | ssh-add -q -
+exec ssh-keygen "$@"
