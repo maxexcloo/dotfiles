@@ -7,22 +7,10 @@
 {{- $_ := set $preferences "enabledPlugins" (dict "agents@maxexcloo" true "frontend-design@claude-plugins-official" true) -}}
 {{- $_ := set $preferences "env" (dict "DISABLE_AUTOUPDATER" "1") -}}
 {{- $_ := set $preferences "extraKnownMarketplaces" (dict "maxexcloo" $marketplace) -}}
-{{- /* Git signing needs the SSH agent, and branch commands write .git/config, which the sandbox protects. */ -}}
-{{- $_ := set $preferences "sandbox" (dict "allowUnsandboxedCommands" true "enabled" true "excludedCommands" (list "git branch *" "git cherry-pick *" "git commit *" "git merge *" "git push *" "git rebase *" "git revert *" "git switch *" "git tag *" "git worktree *") "failIfUnavailable" true) -}}
-{{- if eq .chezmoi.os "darwin" -}}
-{{- $_ := set $preferences.sandbox "enableWeakerNetworkIsolation" true -}}
-{{- /* Mise tasks see the login TMPDIR rather than the sandbox's own. */ -}}
-{{- $tmp := output "getconf" "DARWIN_USER_TEMP_DIR" | trim -}}
-{{- $_ := set $preferences.sandbox "filesystem" (dict "allowWrite" (list "~/.local/state" "~/Library/Caches" $tmp)) -}}
-{{- $sockets := list (joinPath $tmp (printf "fnox-%s" .chezmoi.uid)) (joinPath .chezmoi.homeDir ".ssh/git-signing.sock") (joinPath .chezmoi.homeDir "Library/Application Support/orca") -}}
-{{- $_ := set $preferences.sandbox "network" (dict "allowUnixSockets" $sockets) -}}
-{{- else -}}
-{{- $_ := set $preferences.sandbox "filesystem" (dict "allowWrite" (list "~/.cache" "~/.local/state")) -}}
-{{- $_ := set $preferences.sandbox "network" (dict "allowAllUnixSockets" true) -}}
-{{- end -}}
 {{- $_ := set $preferences "pluginConfigs" (dict "cc-plugin-agents-md@builtin" (dict "options" (dict "instructionFiles" "claude-md-and-agents-md"))) -}}
 {{- $config = mergeOverwrite $config $preferences -}}
 {{- $config = setValueAtPath (list "permissions" "defaultMode") "auto" $config -}}
+{{- $config = setValueAtPath (list "permissions" "blockWritesOutsideWorkingDirectories") true $config -}}
 {{- $_ := set $config "hooks" (includeTemplate "agent-guard-hooks" (dict "hooks" (get $config "hooks") "pre" "Bash|Read|Grep" "agent" "claude") | fromJson) -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

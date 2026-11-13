@@ -34,7 +34,7 @@ version = "v2.63.0"
 # renovate: datasource=docker depName=1password/connect-api
 version = "1.8.4"
 
-# Commands agents ask about before running unless started with AUTO=1; Linux adds daemons its sandbox cannot block.
+# Commands agents ask about before running unless started with AUTO=1; Linux adds its container and Tailscale daemons.
 [agentGuard]
 ask = [
   "flux reconcile",
