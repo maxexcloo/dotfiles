@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, symlinkSync } from "node:fs";
+import { copyFileSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { env } from "node:process";
@@ -8,7 +8,7 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const guard = fileURLToPath(
-  new URL("../home/dot_agents/hooks/executable_secret-guard", import.meta.url),
+  new URL("../home/dot_agents/hooks/executable_agent-guard", import.meta.url),
 );
 // A synthetic token in GitHub's personal access token format.
 const token = `ghp_${"a1B2c3D4e5F6g7H8i9J0".repeat(2).slice(0, 36)}`;
@@ -28,7 +28,7 @@ test("post redacts secrets and passes clean output through", () => {
 
 test("output is withheld when gitleaks cannot scan it", () => {
   // Expose only the tools the guard needs besides gitleaks.
-  const bin = mkdtempSync(join(tmpdir(), "secret-guard-"));
+  const bin = mkdtempSync(join(tmpdir(), "agent-guard-"));
   try {
     for (const tool of ["cat", "jq"]) symlinkSync(which(tool), join(bin, tool));
     const environment = { ...env, PATH: bin };
@@ -38,5 +38,29 @@ test("output is withheld when gitleaks cannot scan it", () => {
     assert.match(run(["redact"], `token=${token}`, environment), /withheld/);
   } finally {
     rmSync(bin, { force: true, recursive: true });
+  }
+});
+
+test("listed commands ask unless the agent was started with AUTO=1", () => {
+  // The guard reads its list from beside itself.
+  const dir = mkdtempSync(join(tmpdir(), "agent-guard-"));
+  try {
+    copyFileSync(guard, join(dir, "agent-guard"));
+    writeFileSync(join(dir, "agent-guard-ask"), "kubectl apply\nssh\n");
+    const pre = (agent, command, environment = env) =>
+      execFileSync(bash, [join(dir, "agent-guard"), "pre", agent], {
+        encoding: "utf8",
+        env: environment,
+        input: JSON.stringify({ tool_input: { command } }),
+        stdio: "pipe",
+      });
+    const ask = JSON.parse(pre("claude", "kubectl -n x apply -f app.yaml")).hookSpecificOutput;
+    assert.equal(ask.permissionDecision, "ask");
+    assert.match(pre("pi", "cd x && ssh host"), /ssh needs approval/);
+    assert.throws(() => pre("codex", "ssh host"), { status: 2 });
+    assert.equal(pre("claude", "kubectl get pods; ssh-keygen -l"), "");
+    assert.equal(pre("claude", "ssh host", { ...env, AUTO: "1" }), "");
+  } finally {
+    rmSync(dir, { force: true, recursive: true });
   }
 });

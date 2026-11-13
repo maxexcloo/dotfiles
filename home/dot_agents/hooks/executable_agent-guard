@@ -1,6 +1,9 @@
 #!/bin/bash
-# Agent hook that blocks secret-revealing tool calls and redacts secrets from output.
-#   pre           Claude Code or Codex PreToolUse JSON on stdin; exit 2 blocks the call
+# Agent hook that blocks secret-revealing tool calls, asks before commands listed in
+# agent-guard-ask unless the agent was started with AUTO=1, and redacts secrets from output.
+#   pre [agent]   PreToolUse JSON on stdin; exit 2 blocks the call. A listed command prints
+#                 Claude's ask decision, blocks in Codex (its hooks cannot ask) or, for Pi,
+#                 prints the reason to confirm
 #   post claude   Claude Code PostToolUse JSON on stdin; replaces output that held a secret
 #   post codex    Codex PostToolUse JSON on stdin; replaces output that held a secret
 #   redact        plain text on stdin; prints it with secrets replaced
@@ -9,7 +12,7 @@ set -euo pipefail
 
 blocked='\bop (read|inject)\b|\bop item get\b.*--(reveal|fields)|\bfnox get\b|(^|[;&|[:space:]])printenv\b|(^|[;&|][[:space:]]*)env[[:space:]]*($|[;&|>])|security find-(generic|internet)-password.*-w|\.env($|[^.[:alnum:]_-]|\.)|(^|[/[:space:]"'"'"'=])secrets\.yaml|auth\.json|\.config/op/|rclone\.conf|\.kube/config|\.talos/config'
 
-withheld="[secret-guard withheld this output because it could not be scanned for secrets]"
+withheld="[agent-guard withheld this output because it could not be scanned for secrets]"
 
 redact() {
   local text secrets
@@ -25,13 +28,35 @@ redact() {
   }
 }
 
+# Each line is a command and optional subcommand; flags may sit between them.
+asks() {
+  local command=$1 words pattern
+  while read -r -a words; do
+    pattern="(^|[;&|(\`!{/[:space:]])${words[0]}"
+    [ "${#words[@]}" -gt 1 ] && pattern+="([[:space:]][^;&|]*)?[[:space:]]${words[*]:1}"
+    if grep -qE "${pattern}([[:space:]]|\$)" <<<"$command"; then
+      printf 'agent-guard: %s needs approval.' "${words[*]}"
+      return 0
+    fi
+  done <"$(dirname "$0")/agent-guard-ask"
+  return 1
+}
+
 input=$(cat)
 case "${1:-}" in
   pre)
     target=$(jq -r '.tool_input | .command // .file_path // .filePath // .path // empty' <<<"$input" | sed 's/\.env\.example//g')
     if grep -qE "$blocked" <<<"$target"; then
-      echo "Blocked by secret-guard: this would expose a secret. Use fnox exec or op run, or ask the user to run it." >&2
+      echo "Blocked by agent-guard: this would expose a secret. Use fnox exec or op run, or ask the user to run it." >&2
       exit 2
+    fi
+    command=$(jq -r '.tool_input.command // empty' <<<"$input")
+    if [ "${AUTO:-}" != 1 ] && [ -n "$command" ] && reason=$(asks "$command"); then
+      case "${2:-}" in
+        claude) jq -cn --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "ask", permissionDecisionReason: $reason}}' ;;
+        codex) echo "$reason Ask the user to run it, or to restart Codex with AUTO=1." >&2; exit 2 ;;
+        pi) printf '%s' "$reason" ;;
+      esac
     fi
     ;;
   post)
@@ -39,18 +64,18 @@ case "${1:-}" in
     status=0
     clean=$(redact <<<"$output") || status=$?
     case "$status" in
-      0) note="secret-guard redacted a secret from this output; tell the user to rotate it." ;;
+      0) note="agent-guard redacted a secret from this output; tell the user to rotate it." ;;
       1) exit 0 ;;
-      *) note="secret-guard could not scan this output for secrets, so it withheld it; tell the user to check gitleaks." ;;
+      *) note="agent-guard could not scan this output for secrets, so it withheld it; tell the user to check gitleaks." ;;
     esac
     # shellcheck disable=SC2016 # jq variables, not shell
     case "${2:-}" in
       claude) filter='{hookSpecificOutput: {hookEventName: "PostToolUse", additionalContext: $note, updatedToolOutput: (.[1].tool_response | .stdout = $out | .stderr = "")}}' ;;
       codex) filter='{decision: "block", reason: ($note + "\n\n" + $out)}' ;;
-      *) echo "usage: secret-guard post claude|codex" >&2; exit 64 ;;
+      *) echo "usage: agent-guard post claude|codex" >&2; exit 64 ;;
     esac
     { jq -Rs . <<<"$clean"; printf '%s' "$input"; } | jq -cs --arg note "$note" ".[0] as \$out | $filter"
     ;;
   redact) redact <<<"$input" || true ;;
-  *) echo "usage: secret-guard pre | post claude|codex | redact" >&2; exit 64 ;;
+  *) echo "usage: agent-guard pre [claude|codex|pi] | post claude|codex | redact" >&2; exit 64 ;;
 esac
