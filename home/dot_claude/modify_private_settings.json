@@ -11,6 +11,9 @@
 {{- $config = mergeOverwrite $config $preferences -}}
 {{- $config = setValueAtPath (list "permissions" "defaultMode") "auto" $config -}}
 {{- $config = setValueAtPath (list "permissions" "blockWritesOutsideWorkingDirectories") true $config -}}
+{{- $ask := get (get $config "permissions") "ask" | default list -}}
+{{- range .agents.ask -}}{{- $ask = append $ask (printf "Bash(%s *)" .) -}}{{- end -}}
+{{- $config = setValueAtPath (list "permissions" "ask") ($ask | uniq) $config -}}
 {{- $_ := set $config "hooks" (includeTemplate "agent-guard-hooks" (dict "hooks" (get $config "hooks") "pre" "Bash|Read|Grep" "agent" "claude") | fromJson) -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}

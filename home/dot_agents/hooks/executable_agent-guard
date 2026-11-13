@@ -1,9 +1,6 @@
 #!/bin/bash
-# Agent hook that blocks secret-revealing tool calls, asks before commands listed in
-# agent-guard-ask unless the agent was started with AUTO=1, and redacts secrets from output.
-#   pre [agent]   PreToolUse JSON on stdin; exit 2 blocks the call. A listed command prints
-#                 Claude's ask decision, blocks in Codex (its hooks cannot ask) or, for Pi,
-#                 prints the reason to confirm
+# Agent hook that blocks secret-revealing tool calls and redacts secrets from output.
+#   pre           PreToolUse JSON on stdin; exit 2 blocks the call
 #   post claude   Claude Code PostToolUse JSON on stdin; replaces output that held a secret
 #   post codex    Codex PostToolUse JSON on stdin; replaces output that held a secret
 #   redact        plain text on stdin; prints it with secrets replaced
@@ -28,25 +25,6 @@ redact() {
   }
 }
 
-# Each line is a command and optional subcommand; flags may sit between them. One grep
-# screens the whole list; only a match pays for finding which entry it was.
-asks() {
-  local command=$1 words pattern i names=() patterns=()
-  while read -r -a words; do
-    pattern="(^|[;&|(\`!{/[:space:]\"'])${words[0]}"
-    [ "${#words[@]}" -gt 1 ] && pattern+="([[:space:]][^;&|]*)?[[:space:]]${words[*]:1}"
-    names+=("${words[*]}")
-    patterns+=("${pattern}([[:space:]\"']|\$)")
-  done <"$(dirname "$0")/agent-guard-ask"
-  grep -qE "$(IFS='|'; echo "${patterns[*]}")" <<<"$command" || return 1
-  for i in "${!patterns[@]}"; do
-    if grep -qE "${patterns[i]}" <<<"$command"; then
-      printf 'agent-guard: %s needs approval.' "${names[i]}"
-      return 0
-    fi
-  done
-}
-
 input=$(cat)
 case "${1:-}" in
   pre)
@@ -54,14 +32,6 @@ case "${1:-}" in
     if grep -qE "$blocked" <<<"$target"; then
       echo "Blocked by agent-guard: this would expose a secret. Use fnox exec or op run, or ask the user to run it." >&2
       exit 2
-    fi
-    command=$(jq -r '.tool_input.command // empty' <<<"$input")
-    if [ "${AUTO:-}" != 1 ] && [ -n "$command" ] && reason=$(asks "$command"); then
-      case "${2:-}" in
-        claude) jq -cn --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "ask", permissionDecisionReason: $reason}}' ;;
-        codex) echo "$reason Ask the user to run it, or to restart Codex with AUTO=1." >&2; exit 2 ;;
-        pi) printf '%s' "$reason" ;;
-      esac
     fi
     ;;
   post)
@@ -82,5 +52,5 @@ case "${1:-}" in
     { jq -Rs . <<<"$clean"; printf '%s' "$input"; } | jq -cs --arg note "$note" ".[0] as \$out | $filter"
     ;;
   redact) redact <<<"$input" || true ;;
-  *) echo "usage: agent-guard pre [claude|codex|pi] | post claude|codex | redact" >&2; exit 64 ;;
+  *) echo "usage: agent-guard pre | post claude|codex | redact" >&2; exit 64 ;;
 esac

@@ -3,11 +3,7 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := dict "$schema" "https://opencode.ai/config.json" "formatter" true "update" "disable" -}}
 {{- $config = mergeOverwrite $config $preferences -}}
-{{- /* OpenCode applies the last matching rule, so the shell asks follow the blanket allow. AUTO=1 does not apply here. */ -}}
 {{- $permissions := list (dict "action" "external_directory" "effect" "ask" "resource" "*") (dict "action" "shell" "effect" "allow" "resource" "*") -}}
-{{- range .agentGuard.ask -}}
-{{- $permissions = append $permissions (dict "action" "shell" "effect" "ask" "resource" (printf "%s *" .)) -}}
-{{- end -}}
 {{- $kept := list -}}
 {{- range get $config "permissions" | default list -}}
 {{- if not (has .action (list "external_directory" "shell")) -}}{{- $kept = append $kept . -}}{{- end -}}
