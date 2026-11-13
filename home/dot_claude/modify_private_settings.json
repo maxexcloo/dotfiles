@@ -7,10 +7,10 @@
 {{- $_ := set $preferences "enabledPlugins" (dict "agents@maxexcloo" true "frontend-design@claude-plugins-official" true) -}}
 {{- $_ := set $preferences "env" (dict "DISABLE_AUTOUPDATER" "1") -}}
 {{- $_ := set $preferences "extraKnownMarketplaces" (dict "maxexcloo" $marketplace) -}}
-{{- $_ := set $preferences "sandbox" (dict "allowUnsandboxedCommands" false "enabled" true "excludedCommands" (list "git commit *") "failIfUnavailable" true) -}}
+{{- /* Git signing needs the SSH agent outside the sandbox. */ -}}
+{{- $_ := set $preferences "sandbox" (dict "allowUnsandboxedCommands" false "enabled" true "excludedCommands" (list "git cherry-pick *" "git commit *" "git merge *" "git rebase *" "git revert *" "git tag *") "failIfUnavailable" true) -}}
 {{- if eq .chezmoi.os "darwin" -}}
 {{- $_ := set $preferences.sandbox "enableWeakerNetworkIsolation" true -}}
-{{- $_ := set $preferences.sandbox "network" (dict "allowUnixSockets" (list (joinPath .chezmoi.homeDir ".ssh/git-signing.sock"))) -}}
 {{- end -}}
 {{- $_ := set $preferences "pluginConfigs" (dict "cc-plugin-agents-md@builtin" (dict "options" (dict "instructionFiles" "claude-md-and-agents-md"))) -}}
 {{- $config = mergeOverwrite $config $preferences -}}
