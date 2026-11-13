@@ -10,7 +10,7 @@ run = "mise fmt"
 ["fmt:oxfmt"]
 description = "Format Project Files"
 dir = "{{cwd}}"
-run = "oxfmt --write --no-error-on-unmatched-pattern . '!**/{.mise.toml,mise.toml,.mise/config.toml,mise/config.toml,.config/mise.toml,.config/mise/config.toml,todo*.md}'"
+run = "oxfmt --write --no-error-on-unmatched-pattern . '!**/{.mise.toml,mise.toml,.mise/config.toml,mise/config.toml,.config/mise.toml,.config/mise/config.toml,todo.md}'"
 
 ["fmt:python"]
 description = "Sort Python Imports & Format Code"
