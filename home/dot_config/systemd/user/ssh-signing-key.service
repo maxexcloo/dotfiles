@@ -1,0 +1,15 @@
+[Unit]
+Description=Load the Git signing key into ssh-agent
+After=ssh-agent.socket
+Requires=ssh-agent.socket
+
+[Service]
+Environment=OP_CONNECT_HOST=http://127.0.0.1:8080 SSH_AUTH_SOCK=%t/ssh-agent.socket
+ExecStart=/bin/sh -c 'OP_CONNECT_TOKEN="$(cat %h/.config/op/connect/token)" %h/.local/share/mise/shims/fnox get GIT_SIGNING_KEY | ssh-add -q -'
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=30
+Type=oneshot
+
+[Install]
+WantedBy=default.target

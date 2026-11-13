@@ -11,3 +11,4 @@ BIFROST_CLAUDE_KEY = { env = false, provider = "automation", value = "Bifrost Ag
 BIFROST_CODEX_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-codex" }
 BIFROST_OPENCODE_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-opencode" }
 BIFROST_PI_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-pi" }
+GIT_SIGNING_KEY = { env = false, provider = "automation", value = "Signing Key/private key?ssh-format=openssh" }
