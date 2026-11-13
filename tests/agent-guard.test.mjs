@@ -23,7 +23,7 @@ const post = (stdout, environment) =>
 test("pre blocks dotenv files but not code that reads the environment", () => {
   const pre = (command) =>
     run(["pre"], JSON.stringify({ tool_input: { command } }), { ...env, AUTO: "1" });
-  for (const command of ["cat .env", "cat ./.env.local", "less app/cloudflared.env"])
+  for (const command of ["cat .env", "cat ./.env.local.bak", "less app/cloudflared.env"])
     assert.throws(() => pre(command), { status: 2 }, command);
   for (const command of ["node -e 'process.env.HOME'", "kubectl get -o jsonpath='{.env}'"])
     assert.equal(pre(command), "", command);
@@ -66,6 +66,7 @@ test("listed commands ask unless the agent was started with AUTO=1", () => {
     const ask = JSON.parse(pre("claude", "kubectl -n x apply -f app.yaml")).hookSpecificOutput;
     assert.equal(ask.permissionDecision, "ask");
     assert.match(pre("pi", "cd x && ssh host"), /ssh needs approval/);
+    assert.match(pre("pi", `bash -c "kubectl apply -f app.yaml"`), /kubectl apply needs approval/);
     assert.throws(() => pre("codex", "ssh host"), { status: 2 });
     assert.equal(pre("claude", "kubectl get pods; ssh-keygen -l"), "");
     assert.equal(pre("claude", "ssh host", { ...env, AUTO: "1" }), "");

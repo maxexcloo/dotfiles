@@ -10,7 +10,7 @@
 # Output that gitleaks cannot scan is withheld rather than passed through.
 set -euo pipefail
 
-blocked='\bop (read|inject)\b|\bop item get\b.*--(reveal|fields)|\bfnox get\b|(^|[;&|[:space:]])printenv\b|(^|[;&|][[:space:]]*)env[[:space:]]*($|[;&|>])|security find-(generic|internet)-password.*-w|(^|[/[:space:]"'"'"'=])\.env(\.[[:alnum:]_-]+)?($|[^.[:alnum:]_-])|[[:alnum:]_-]\.env($|[^.[:alnum:]_-])|(^|[/[:space:]"'"'"'=])secrets\.yaml|auth\.json|\.config/op/|rclone\.conf|\.kube/config|\.talos/config'
+blocked='\bop (read|inject)\b|\bop item get\b.*--(reveal|fields)|\bfnox get\b|(^|[;&|[:space:]])printenv\b|(^|[;&|][[:space:]]*)env[[:space:]]*($|[;&|>])|security find-(generic|internet)-password.*-w|(^|[/[:space:]"'"'"'=])\.env(\.[[:alnum:]_-]+)*($|[^.[:alnum:]_-])|[[:alnum:]_-]\.env($|[^.[:alnum:]_-])|(^|[/[:space:]"'"'"'=])secrets\.yaml|auth\.json|\.config/op/|rclone\.conf|\.kube/config|\.talos/config'
 
 withheld="[agent-guard withheld this output because it could not be scanned for secrets]"
 
@@ -28,18 +28,23 @@ redact() {
   }
 }
 
-# Each line is a command and optional subcommand; flags may sit between them.
+# Each line is a command and optional subcommand; flags may sit between them. One grep
+# screens the whole list; only a match pays for finding which entry it was.
 asks() {
-  local command=$1 words pattern
+  local command=$1 words pattern i names=() patterns=()
   while read -r -a words; do
-    pattern="(^|[;&|(\`!{/[:space:]])${words[0]}"
+    pattern="(^|[;&|(\`!{/[:space:]\"'])${words[0]}"
     [ "${#words[@]}" -gt 1 ] && pattern+="([[:space:]][^;&|]*)?[[:space:]]${words[*]:1}"
-    if grep -qE "${pattern}([[:space:]]|\$)" <<<"$command"; then
-      printf 'agent-guard: %s needs approval.' "${words[*]}"
+    names+=("${words[*]}")
+    patterns+=("${pattern}([[:space:]\"']|\$)")
+  done <"$(dirname "$0")/agent-guard-ask"
+  grep -qE "$(IFS='|'; echo "${patterns[*]}")" <<<"$command" || return 1
+  for i in "${!patterns[@]}"; do
+    if grep -qE "${patterns[i]}" <<<"$command"; then
+      printf 'agent-guard: %s needs approval.' "${names[i]}"
       return 0
     fi
-  done <"$(dirname "$0")/agent-guard-ask"
-  return 1
+  done
 }
 
 input=$(cat)
