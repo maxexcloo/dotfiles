@@ -5,7 +5,7 @@
 {{- $config = mergeOverwrite $config $preferences -}}
 {{- /* OpenCode applies the last matching rule, so the shell asks follow the blanket allow. AUTO=1 does not apply here. */ -}}
 {{- $permissions := list (dict "action" "external_directory" "effect" "ask" "resource" "*") (dict "action" "shell" "effect" "allow" "resource" "*") -}}
-{{- range includeTemplate "agent-guard-ask" . | fromJson -}}
+{{- range .agentGuard.ask -}}
 {{- $permissions = append $permissions (dict "action" "shell" "effect" "ask" "resource" (printf "%s *" .)) -}}
 {{- end -}}
 {{- $kept := list -}}

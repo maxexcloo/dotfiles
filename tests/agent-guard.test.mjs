@@ -67,7 +67,7 @@ test("listed commands ask unless the agent was started with AUTO=1", () => {
     assert.equal(ask.permissionDecision, "ask");
     assert.match(pre("pi", "cd x && ssh host"), /ssh needs approval/);
     assert.match(pre("pi", `bash -c "kubectl apply -f app.yaml"`), /kubectl apply needs approval/);
-    assert.equal(pre("codex", "ssh host"), "");
+    assert.throws(() => pre("codex", "ssh host"), { status: 2 });
     assert.equal(pre("claude", "kubectl get pods; ssh-keygen -l"), "");
     assert.equal(pre("claude", "ssh host", { ...env, AUTO: "1" }), "");
   } finally {
