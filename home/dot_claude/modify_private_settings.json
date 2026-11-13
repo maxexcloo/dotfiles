@@ -10,7 +10,7 @@
 {{- $_ := set $preferences "sandbox" (dict "allowUnsandboxedCommands" false "enabled" true "failIfUnavailable" true) -}}
 {{- if eq .chezmoi.os "darwin" -}}
 {{- $_ := set $preferences.sandbox "enableWeakerNetworkIsolation" true -}}
-{{- $_ := set $preferences.sandbox "network" (dict "allowUnixSockets" (list (joinPath .chezmoi.homeDir ".ssh/git-signing.sock") (joinPath .chezmoi.homeDir "Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"))) -}}
+{{- $_ := set $preferences.sandbox "network" (dict "allowUnixSockets" (list (joinPath .chezmoi.homeDir ".ssh/git-signing.sock"))) -}}
 {{- end -}}
 {{- $_ := set $preferences "pluginConfigs" (dict "cc-plugin-agents-md@builtin" (dict "options" (dict "instructionFiles" "claude-md-and-agents-md"))) -}}
 {{- $config = mergeOverwrite $config $preferences -}}
