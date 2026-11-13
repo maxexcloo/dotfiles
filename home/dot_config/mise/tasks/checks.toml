@@ -38,7 +38,7 @@ echo "No Mise configuration found; skipping."
 ["check:oxfmt"]
 description = "Check File Formatting"
 dir = "{{cwd}}"
-run = "oxfmt --check --no-error-on-unmatched-pattern . '!**/{.mise.toml,mise.toml,.mise/config.toml,mise/config.toml,.config/mise.toml,.config/mise/config.toml,todo*.md}'"
+run = "oxfmt --check --no-error-on-unmatched-pattern . '!**/{.mise.toml,mise.toml,.mise/config.toml,mise/config.toml,.config/mise.toml,.config/mise/config.toml,todo.md}'"
 
 ["check:python"]
 description = "Lint Python & Check Formatting"
