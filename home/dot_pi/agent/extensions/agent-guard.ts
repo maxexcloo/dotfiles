@@ -1,4 +1,6 @@
 import { execFileSync } from "node:child_process";
+import { homedir } from "node:os";
+import { isAbsolute, relative, resolve } from "node:path";
 
 const guard = `${process.env.HOME}/.agents/hooks/agent-guard`;
 const run = (mode: string, input: string, ...args: string[]) =>
@@ -12,7 +14,16 @@ export default function (pi) {
     } catch (error) {
       return { block: true, reason: String(error.stderr || error.message).trim() };
     }
-    if (ask && !(ctx.hasUI && (await ctx.ui.confirm(ask, event.input.command)))) {
+    if (!ask && (event.toolName === "edit" || event.toolName === "write")) {
+      const target = resolve(String(event.input.path).replace(/^~(?=\/|$)/, homedir()));
+      const inside = relative(process.cwd(), target);
+      if (inside === ".." || inside.startsWith("../") || isAbsolute(inside))
+        ask = `agent-guard: writing ${target} outside the working directory needs approval.`;
+    }
+    if (
+      ask &&
+      !(ctx.hasUI && (await ctx.ui.confirm(ask, event.input.command ?? event.input.path)))
+    ) {
       return { block: true, reason: `${ask} The user did not approve it.` };
     }
   });

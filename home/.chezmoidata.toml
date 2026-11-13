@@ -34,9 +34,10 @@ version = "v2.63.0"
 # renovate: datasource=docker depName=1password/connect-api
 version = "1.8.4"
 
-# Commands agents ask about before running unless started with AUTO=1; Linux adds its container and Tailscale daemons.
+# Commands agents ask about before running unless started with AUTO=1.
 [agentGuard]
 ask = [
+  "docker",
   "flux reconcile",
   "flux resume",
   "flux suspend",
@@ -56,8 +57,9 @@ ask = [
   "kubectl scale",
   "mise run apply",
   "mise run deploy",
+  "podman",
   "scp",
   "ssh",
+  "tailscale",
   "tofu apply",
 ]
-askLinux = ["docker", "podman", "tailscale"]

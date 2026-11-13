@@ -1,3 +1,0 @@
-{{- $ask := .agentGuard.ask -}}
-{{- if eq .chezmoi.os "linux" -}}{{- $ask = concat $ask .agentGuard.askLinux -}}{{- end -}}
-{{- $ask | sortAlpha | toJson -}}
