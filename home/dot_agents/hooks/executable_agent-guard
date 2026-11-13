@@ -2,8 +2,8 @@
 # Agent hook that blocks secret-revealing tool calls, asks before commands listed in
 # agent-guard-ask unless the agent was started with AUTO=1, and redacts secrets from output.
 #   pre [agent]   PreToolUse JSON on stdin; exit 2 blocks the call. A listed command prints
-#                 Claude's ask decision, blocks in Codex (its hooks cannot ask) or, for Pi,
-#                 prints the reason to confirm
+#                 Claude's ask decision or, for Pi, the reason to confirm; Codex hooks cannot
+#                 ask, so Codex skips the list
 #   post claude   Claude Code PostToolUse JSON on stdin; replaces output that held a secret
 #   post codex    Codex PostToolUse JSON on stdin; replaces output that held a secret
 #   redact        plain text on stdin; prints it with secrets replaced
@@ -59,7 +59,6 @@ case "${1:-}" in
     if [ "${AUTO:-}" != 1 ] && [ -n "$command" ] && reason=$(asks "$command"); then
       case "${2:-}" in
         claude) jq -cn --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "ask", permissionDecisionReason: $reason}}' ;;
-        codex) echo "$reason Ask the user to run it, or to restart Codex with AUTO=1." >&2; exit 2 ;;
         pi) printf '%s' "$reason" ;;
       esac
     fi
