@@ -21,8 +21,6 @@
 {{- $_ := set $preferences "pluginConfigs" (dict "cc-plugin-agents-md@builtin" (dict "options" (dict "instructionFiles" "claude-md-and-agents-md"))) -}}
 {{- $config = mergeOverwrite $config $preferences -}}
 {{- $config = setValueAtPath (list "permissions" "defaultMode") "auto" $config -}}
-{{- $ask := get (get $config "permissions") "ask" | default list -}}
-{{- $config = setValueAtPath (list "permissions" "ask") (append $ask "Bash(dangerouslyDisableSandbox:true)" | uniq) $config -}}
 {{- $_ := set $config "hooks" (includeTemplate "agent-guard-hooks" (dict "hooks" (get $config "hooks") "pre" "Bash|Read|Grep" "agent" "claude") | fromJson) -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
