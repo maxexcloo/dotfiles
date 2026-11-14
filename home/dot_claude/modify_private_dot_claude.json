@@ -9,6 +9,7 @@
 {{- $_ := unset $server "headersHelper" -}}
 {{- $_ := set $server "headers" (dict "x-bf-vk" $key) -}}
 {{- end -}}
+{{- $config = setValueAtPath (list "mcpServers" "atuin") (dict "type" "stdio" "command" "atuin" "args" (list "mcp")) $config -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
 {{- else -}}
