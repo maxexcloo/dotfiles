@@ -31,14 +31,15 @@ if status is-interactive
     abbr -a bash 'env HISTFILE=/dev/null bash'
     abbr -a du dust
     abbr -a find fd
-    alias fnox='op-connect fnox'
     abbr -a grep rg
+    abbr -a sh 'env HISTFILE=/dev/null sh'
+    abbr -a top btop
+
+    alias fnox='op-connect fnox'
     alias la='eza -la --group-directories-first --icons=auto'
     alias ll='eza -l --group-directories-first --icons=auto'
     alias ls='eza --group-directories-first --icons=auto'
     alias op='op-connect op'
-    abbr -a sh 'env HISTFILE=/dev/null sh'
-    abbr -a top btop
     alias tree='eza --icons=auto --tree'
 else
     mise activate fish --shims | source
