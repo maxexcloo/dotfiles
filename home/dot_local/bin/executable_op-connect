@@ -1,0 +1,6 @@
+#!/bin/sh
+# Runs a command with the 1Password Connect token, which shells do not export.
+set -e
+OP_CONNECT_TOKEN=$(cat "$HOME/.config/op/connect/token")
+export OP_CONNECT_TOKEN
+exec "$@"
