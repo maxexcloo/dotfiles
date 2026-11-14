@@ -1,4 +1,4 @@
-[tasks.update]
+[update]
 description = "Update This Workstation"
 run = '''
 set -eu
