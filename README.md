@@ -32,8 +32,9 @@ chezmoi apply
 On Linux, start Connect with `sudo podman-compose up -d` from
 `~/.config/services/onepassword-connect` instead.
 
-Edit preferences in `home/`, then run `chezmoi apply`. To sync another
-workstation, pull the revision you want and run the same commands.
+Edit preferences in `home/`, then run `chezmoi apply`. On each workstation,
+`chezmoi update` pulls and applies this repository, then upgrades Mise tools and
+syncs Homebrew with the Brewfile.
 `mise use --global` and `mise upgrade --global` edit the live Mise configuration,
 so copy those edits back into `home/`.
 
