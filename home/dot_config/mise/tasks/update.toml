@@ -1,0 +1,11 @@
+[tasks.update]
+description = "Update This Workstation"
+run = '''
+set -eu
+chezmoi update
+mise upgrade
+if command -v brew >/dev/null; then
+  brew bundle --global
+  brew bundle --global cleanup --force
+fi
+'''
