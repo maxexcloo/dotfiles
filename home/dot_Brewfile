@@ -1,47 +1,37 @@
-brew "atuin"
-brew "bat"
+tap "stablyai/orca"
+
 brew "btop"
-brew "dust"
 brew "eza"
-brew "fd"
-brew "fzf"
-brew "gitup"
+brew "fish"
+brew "git"
+brew "mas"
 brew "mise"
-brew "zoxide"
+brew "qemu"
+brew "rsync"
 
-if OS.mac?
-  tap "stablyai/orca"
+cask "1password"
+cask "appcleaner"
+cask "blueharvest"
+cask "brave-origin"
+cask "font-hack-nerd-font"
+cask "ghostty"
+cask "hammerspoon"
+cask "itsycal"
+cask "keepingyouawake"
+cask "keka"
+cask "openusage"
+cask "orbstack"
+cask "orca"
+cask "rectangle"
+cask "slack"
+cask "syncthing-app"
+cask "tailscale-app"
+cask "thaw@beta"
+cask "ungoogled-chromium"
+cask "utm"
+cask "visual-studio-code"
 
-  brew "fish"
-  brew "git"
-  brew "mas"
-  brew "qemu"
-  brew "rsync"
-
-  cask "1password"
-  cask "appcleaner"
-  cask "blueharvest"
-  cask "brave-origin"
-  cask "font-hack-nerd-font"
-  cask "ghostty"
-  cask "hammerspoon"
-  cask "itsycal"
-  cask "keepingyouawake"
-  cask "keka"
-  cask "openusage"
-  cask "orbstack"
-  cask "orca"
-  cask "rectangle"
-  cask "slack"
-  cask "syncthing-app"
-  cask "tailscale-app"
-  cask "thaw@beta"
-  cask "ungoogled-chromium"
-  cask "utm"
-  cask "visual-studio-code"
-
-  mas "Apple Configurator", id: 1037126344
-  mas "HomeClaw", id: 6759682551
-  mas "KeyPad", id: 1491684442
-  mas "Xcode", id: 497799835
-end
+mas "Apple Configurator", id: 1037126344
+mas "HomeClaw", id: 6759682551
+mas "KeyPad", id: 1491684442
+mas "Xcode", id: 497799835
