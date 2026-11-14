@@ -1,6 +1,5 @@
 {{- if ne .chezmoi.os "darwin" }}
 .hammerspoon
-.ssh
 Backups
 Documents
 Library
