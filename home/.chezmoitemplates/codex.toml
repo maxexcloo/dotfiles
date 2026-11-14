@@ -1,6 +1,7 @@
 approval_policy = "on-request"
 approvals_reviewer = "auto_review"
 check_for_update_on_startup = false
+disable_paste_burst = true
 model_reasoning_effort = "medium"
 plan_mode_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
