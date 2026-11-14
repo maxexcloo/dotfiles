@@ -12,8 +12,16 @@ trusted_config_paths = ["~/.local/share/orca/workspaces", "~/Projects"]
 prune_after = "0s"
 
 [tools]
+atuin = "latest"
+bat = "latest"
+# btop and eza publish no macOS binaries, so Homebrew installs them there.
+btop = { version = "latest", os = ["linux"] }
 claude-code = "latest"
 codex = "latest"
+dust = "latest"
+eza = { version = "latest", os = ["linux"] }
+fd = "latest"
+fzf = "latest"
 "github:stablyai/orca" = { version = "latest", os = ["linux"] }
 k9s = "latest"
 kubectl = { version = "latest", os = ["linux"] }
@@ -21,6 +29,8 @@ kubectl = { version = "latest", os = ["linux"] }
 "npm:agent-browser" = "latest"
 opencode = "latest"
 pi = "latest"
+"pipx:gitup" = "latest"
 rclone = "latest"
 ripgrep = "latest"
 talosctl = "latest"
+zoxide = "latest"

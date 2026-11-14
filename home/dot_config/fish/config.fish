@@ -5,7 +5,6 @@ if test (uname) = Darwin
     set -gx XDG_CACHE_HOME $HOME/Library/Caches
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
 else
-    fish_add_path /home/linuxbrew/.linuxbrew/bin
     set -gx OP_CONNECT_HOST http://127.0.0.1:8080
 end
 fish_add_path $HOME/.local/bin
@@ -24,9 +23,9 @@ if status is-interactive
     set -g fish_greeting ""
     set -g fish_history ""
 
+    mise activate fish | source
     atuin init fish | source
     fzf --fish | source
-    mise activate fish | source
     zoxide init fish --cmd cd | source
 
     abbr -a bash 'env HISTFILE=/dev/null bash'
