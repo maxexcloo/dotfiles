@@ -1,8 +1,6 @@
 #!/bin/bash
 # Agent hook that blocks secret-revealing tool calls and redacts secrets from output.
-#   pre [agent]   PreToolUse JSON on stdin; exit 2 blocks the call. Commands listed in
-#                 agent-guard-ask need approval unless the agent was started with AUTO=1:
-#                 Claude asks, Codex blocks (its hooks cannot ask) and Pi gets a reason to confirm
+#   pre           PreToolUse JSON on stdin; exit 2 blocks the call
 #   post claude   Claude Code PostToolUse JSON on stdin; replaces output that held a secret
 #   post codex    Codex PostToolUse JSON on stdin; replaces output that held a secret
 #   redact        plain text on stdin; prints it with secrets replaced
@@ -27,17 +25,6 @@ redact() {
   }
 }
 
-# Each line is a command and optional subcommand; flags may sit between them.
-asks() {
-  local words pattern patterns=()
-  while read -r -a words; do
-    pattern="(^|[;&|(\`!{/[:space:]\"'])${words[0]}"
-    [ "${#words[@]}" -gt 1 ] && pattern+="([[:space:]][^;&|]*)?[[:space:]]${words[*]:1}"
-    patterns+=("${pattern}([[:space:]\"']|\$)")
-  done <"$(dirname "$0")/agent-guard-ask"
-  grep -qE "$(IFS='|'; echo "${patterns[*]}")" <<<"$1"
-}
-
 input=$(cat)
 case "${1:-}" in
   pre)
@@ -45,15 +32,6 @@ case "${1:-}" in
     if grep -qE "$blocked" <<<"$target"; then
       echo "Blocked by agent-guard: this would expose a secret. Use fnox exec or op run, or ask the user to run it." >&2
       exit 2
-    fi
-    command=$(jq -r '.tool_input.command // empty' <<<"$input")
-    if [ "${AUTO:-}" != 1 ] && [ -n "$command" ] && asks "$command"; then
-      reason="agent-guard: this command needs approval; start the agent with AUTO=1 to skip."
-      case "${2:-}" in
-        claude) jq -cn --arg reason "$reason" '{hookSpecificOutput: {hookEventName: "PreToolUse", permissionDecision: "ask", permissionDecisionReason: $reason}}' ;;
-        codex) echo "$reason Codex cannot ask, so ask the user to run it." >&2; exit 2 ;;
-        pi) printf '%s' "$reason" ;;
-      esac
     fi
     ;;
   post)
@@ -74,5 +52,5 @@ case "${1:-}" in
     { jq -Rs . <<<"$clean"; printf '%s' "$input"; } | jq -cs --arg note "$note" ".[0] as \$out | $filter"
     ;;
   redact) redact <<<"$input" || true ;;
-  *) echo "usage: agent-guard pre [claude|codex|pi] | post claude|codex | redact" >&2; exit 64 ;;
+  *) echo "usage: agent-guard pre | post claude|codex | redact" >&2; exit 64 ;;
 esac

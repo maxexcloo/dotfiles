@@ -11,7 +11,19 @@
 {{- $config = mergeOverwrite $config $preferences -}}
 {{- $config = setValueAtPath (list "permissions" "defaultMode") "auto" $config -}}
 {{- $config = setValueAtPath (list "permissions" "blockWritesOutsideWorkingDirectories") true $config -}}
-{{- $_ := set $config "hooks" (includeTemplate "agent-guard-hooks" (dict "hooks" (get $config "hooks") "pre" "Bash|Read|Grep" "agent" "claude") | fromJson) -}}
+{{- $hooks := get $config "hooks" | default dict -}}
+{{- $entries := dict
+  "PreToolUse" (dict "matcher" "Bash|Read|Grep" "hooks" (list (dict "type" "command" "command" "$HOME/.agents/hooks/agent-guard pre")))
+  "PostToolUse" (dict "matcher" "Bash" "hooks" (list (dict "type" "command" "command" "$HOME/.agents/hooks/agent-guard post claude"))) -}}
+{{- /* Keep the guard first: Orca appends its own hooks after it. */ -}}
+{{- range $event, $entry := $entries -}}
+{{- $kept := list $entry -}}
+{{- range get $hooks $event | default list -}}
+{{- if not (contains "/.agents/hooks/" (toJson .)) -}}{{- $kept = append $kept . -}}{{- end -}}
+{{- end -}}
+{{- $_ := set $hooks $event $kept -}}
+{{- end -}}
+{{- $_ := set $config "hooks" $hooks -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
 {{- else -}}
