@@ -3,10 +3,11 @@ services:
   browserless:
     image: ghcr.io/browserless/chromium:{{ .services.browserless.version }}
     restart: unless-stopped
+    network_mode: host
     shm_size: 1gb
     environment:
       CONCURRENT: 4
+      HOST: 127.0.0.1
+      PORT: {{ .services.browserless.port }}
       QUEUED: 4
       TIMEOUT: 3600000
-    ports:
-      - "127.0.0.1:{{ .services.browserless.port }}:3000"

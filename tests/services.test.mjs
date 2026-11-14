@@ -102,7 +102,9 @@ test("Browserless uses the same configured port across both runtimes and the cli
     render("dot_config/services/browserless/compose.yaml.tmpl", "darwin", services),
   );
   assert.equal(compose.name, "browserless");
-  assert.deepEqual(compose.services.browserless.ports, ["127.0.0.1:19333:3000"]);
+  assert.equal(compose.services.browserless.network_mode, "host");
+  assert.equal(compose.services.browserless.environment.HOST, "127.0.0.1");
+  assert.equal(compose.services.browserless.environment.PORT, 19333);
   const linux = yaml(
     render("dot_config/services/browserless/compose.yaml.tmpl", "linux", services),
   );
