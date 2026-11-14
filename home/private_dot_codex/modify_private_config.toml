@@ -3,6 +3,7 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := includeTemplate "codex.toml" . | fromToml -}}
 {{- $config = mergeOverwrite $config $preferences -}}
+{{- $_ := unset $config "approvals_reviewer" -}}
 {{- $config = setValueAtPath (list "projects" .chezmoi.homeDir "trust_level") "trusted" $config -}}
 {{- $caches := list "Library/Caches" -}}
 {{- if ne .chezmoi.os "darwin" -}}{{- $caches = list ".cache" -}}{{- end -}}

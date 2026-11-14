@@ -1,6 +1,9 @@
 {{- /* chezmoi:modify-template */ -}}
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
+{{- range list ".local/share/orca/workspaces" "Projects" -}}
+{{- $config = setValueAtPath (list "projects" (joinPath $.chezmoi.homeDir .) "hasTrustDialogAccepted") true $config -}}
+{{- end -}}
 {{- $key := includeTemplate "bifrost-key" "claude" -}}
 {{- range $name, $managed := .mcp -}}
 {{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}

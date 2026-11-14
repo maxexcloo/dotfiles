@@ -33,22 +33,3 @@ version = "v2.63.1"
 [services.connect]
 # renovate: datasource=docker depName=1password/connect-api
 version = "1.8.4"
-
-# Commands Claude, Codex and Pi ask about (Codex blocks) unless started with AUTO=1.
-[agents]
-ask = [
-  "docker",
-  "flux reconcile",
-  "helm install",
-  "helm uninstall",
-  "helm upgrade",
-  "kubectl apply",
-  "kubectl delete",
-  "mise run apply",
-  "mise run deploy",
-  "podman",
-  "scp",
-  "ssh",
-  "tailscale",
-  "tofu apply",
-]

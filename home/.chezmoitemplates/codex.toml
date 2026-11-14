@@ -1,5 +1,4 @@
-approval_policy = "on-request"
-approvals_reviewer = "auto_review"
+approval_policy = "never"
 check_for_update_on_startup = false
 model_reasoning_effort = "medium"
 plan_mode_reasoning_effort = "medium"
