@@ -4,10 +4,8 @@
 {{- $preferences := includeTemplate "codex.toml" . | fromToml -}}
 {{- $config = mergeOverwrite $config $preferences -}}
 {{- $config = setValueAtPath (list "projects" .chezmoi.homeDir "trust_level") "trusted" $config -}}
-{{- $caches := list "Library/Caches" -}}
-{{- if ne .chezmoi.os "darwin" -}}{{- $caches = list ".cache" -}}{{- end -}}
-{{- $roots := list -}}
-{{- range append $caches ".local/state" -}}{{- $roots = append $roots (joinPath $.chezmoi.homeDir .) -}}{{- end -}}
+{{- $cache := ternary "Library/Caches" ".cache" (eq .chezmoi.os "darwin") -}}
+{{- $roots := list (joinPath .chezmoi.homeDir $cache) (joinPath .chezmoi.homeDir ".local/state") -}}
 {{- $config = setValueAtPath (list "sandbox_workspace_write" "writable_roots") $roots $config -}}
 {{- $config = setValueAtPath (list "sandbox_workspace_write" "network_access") true $config -}}
 {{- $key := includeTemplate "bifrost-key" "codex" -}}

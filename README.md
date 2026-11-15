@@ -13,8 +13,10 @@ On macOS, install Homebrew, then the packages and applications in
 image. Enable the 1Password desktop integration for SSH authentication
 on macOS.
 
-Fnox and the 1Password CLI read vaults through the machine's 1Password Connect
-server. Save its token as `token` beside the Connect credentials file.
+Fnox signs in to 1Password through the desktop app on macOS. On Linux, keep a
+service account token as `OP_SERVICE_ACCOUNT_TOKEN` in the unmanaged
+`~/.config/fnox/service-account.toml`. Projects that select the `connect` fnox
+profile use this machine's 1Password Connect server.
 
 From this checkout, bootstrap the shared Mise directory with a temporary chezmoi,
 then install the global tools it declares:
