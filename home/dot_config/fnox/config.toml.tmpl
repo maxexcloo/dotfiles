@@ -35,3 +35,13 @@ BIFROST_CODEX_KEY = { env = false, provider = "automation", value = "Bifrost Age
 BIFROST_OPENCODE_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-opencode" }
 BIFROST_PI_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-pi" }
 GIT_SIGNING_KEY = { env = false, provider = "automation", value = "Signing Key/private key?ssh-format=openssh" }
+
+# This host's Connect server token, for projects that select the profile; op:// rejects ':' in titles, so these are item IDs.
+[profiles.connect.secrets]
+{{- if $linux }}
+# "Connect Token: mercury.mbk.excloo.net"
+OP_CONNECT_TOKEN = { provider = "homelab", value = "7ulpapdlecoyo4giire5kaddkq/credential" }
+{{- else }}
+# "Connect Token: macbook-pro.mbk.excloo.net"
+OP_CONNECT_TOKEN = { provider = "homelab", value = "zkkyb66yspbl563pwdlaem4mky/credential" }
+{{- end }}
