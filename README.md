@@ -7,9 +7,10 @@ instructions and my own skills live in the separate
 
 ## Usage
 
-Install Homebrew, then the packages and applications in `home/dot_Brewfile` with
-`brew bundle --file home/dot_Brewfile`; after setup, `brew bundle --global` keeps
-them in sync. Enable the 1Password desktop integration for SSH authentication
+On macOS, install Homebrew, then the packages and applications in
+`home/dot_Brewfile` with `brew bundle --file home/dot_Brewfile`; after setup,
+`brew bundle --global` keeps them in sync. Linux hosts get Mise from their
+image. Enable the 1Password desktop integration for SSH authentication
 on macOS.
 
 Fnox and the 1Password CLI read vaults through the machine's 1Password Connect
