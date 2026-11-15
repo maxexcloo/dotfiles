@@ -1,3 +1,0 @@
-#!/bin/sh
-# Stands in for op-connect when tests and checks render templates without 1Password.
-exec "$@"

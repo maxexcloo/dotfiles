@@ -1,9 +1,32 @@
+{{- $linux := eq .chezmoi.os "linux" -}}
+{{- if $linux -}}
+# Linux hosts have no 1Password app: a service account signs in, its token kept in this unmanaged file.
+import = ["service-account.toml"]
+
+{{ end -}}
 [daemon]
 enabled = true
 
 [providers.automation]
 type = "1password"
 vault = "Automation"
+{{- if $linux }}
+token = { secret = "OP_SERVICE_ACCOUNT_TOKEN" }
+{{- end }}
+
+[providers.homelab]
+type = "1password"
+vault = "Homelab"
+{{- if $linux }}
+token = { secret = "OP_SERVICE_ACCOUNT_TOKEN" }
+{{- end }}
+
+[providers.kubelab-syd]
+type = "1password"
+vault = "Kubelab SYD"
+{{- if $linux }}
+token = { secret = "OP_SERVICE_ACCOUNT_TOKEN" }
+{{- end }}
 
 [secrets]
 # Bifrost virtual keys for the agents' MCP access; copies of 1Password "Bifrost" (Kubelab SYD), update both together.

@@ -1,6 +1,5 @@
 if test (uname) = Darwin
     fish_add_path /opt/homebrew/bin
-    set -gx OP_CONNECT_HOST https://connect-api.onepassword-connect.orb.local
     set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
     set -gx XDG_CACHE_HOME $HOME/Library/Caches
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
@@ -35,11 +34,9 @@ if status is-interactive
     abbr -a sh 'env HISTFILE=/dev/null sh'
     abbr -a top btop
 
-    alias fnox='op-connect fnox'
     alias la='eza -la --group-directories-first --icons=auto'
     alias ll='eza -l --group-directories-first --icons=auto'
     alias ls='eza --group-directories-first --icons=auto'
-    alias op='op-connect op'
     alias tree='eza --icons=auto --tree'
 else
     mise activate fish --shims | source
