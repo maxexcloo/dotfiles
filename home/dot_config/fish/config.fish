@@ -18,7 +18,6 @@ set -gx FZF_CTRL_T_OPTS "--preview 'bat --color=always -- {}'"
 set -gx FZF_DEFAULT_COMMAND $FZF_CTRL_T_COMMAND
 set -gx LESSHISTFILE /dev/null
 set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
-set -gx OP_CONNECT_TOKEN (cat $HOME/.config/op/connect/token)
 
 if status is-interactive
     set -g fish_greeting ""
@@ -33,11 +32,14 @@ if status is-interactive
     abbr -a du dust
     abbr -a find fd
     abbr -a grep rg
+    abbr -a sh 'env HISTFILE=/dev/null sh'
+    abbr -a top btop
+
+    alias fnox='op-connect fnox'
     alias la='eza -la --group-directories-first --icons=auto'
     alias ll='eza -l --group-directories-first --icons=auto'
     alias ls='eza --group-directories-first --icons=auto'
-    abbr -a sh 'env HISTFILE=/dev/null sh'
-    abbr -a top btop
+    alias op='op-connect op'
     alias tree='eza --icons=auto --tree'
 else
     mise activate fish --shims | source

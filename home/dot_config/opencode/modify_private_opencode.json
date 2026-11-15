@@ -20,6 +20,8 @@ its meta-tools in a second interpreter. */ -}}
 {{- $server := index $config "mcp" "servers" $name -}}
 {{- $_ := set $server "headers" (dict "Authorization" (printf "Bearer %s" $key)) -}}
 {{- end -}}
+{{- $config = setValueAtPath (list "mcp" "servers" "atuin") (dict "type" "local" "command" (list "atuin" "mcp")) $config -}}
+{{- $_ := unset (get $config "mcp") "atuin" -}}
 {{- $settings := dict "apiKey" $key "baseURL" .bifrost.baseUrl -}}
 {{- $bifrost := dict "name" "Bifrost" "package" "aisdk:@ai-sdk/openai-compatible" "settings" $settings -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $bifrost $config -}}

@@ -1,6 +1,14 @@
 auto_sync = true
 case_sensitive = false
 filter_mode_shell_up_key_binding = "directory"
+history_filter = [
+  '^\s*atuin (key|store rekey)\b',
+  '(?i)(_key|token|secret|passw(or)?d)\w*=\S',
+  '(?i)--(key|password|secret|token) \S',
+  '(?i)\bset -\w+ \w*(_key|token|secret|passw(or)?d)\w* \S',
+  '(?i)authorization:\s*(basic|bearer)\s',
+  '://[^/\s:@]+:[^/\s@]+@',
+]
 inline_height = 10
 search_mode = "fuzzy"
 show_tabs = false

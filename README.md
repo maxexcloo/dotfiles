@@ -37,9 +37,6 @@ workstation, pull the revision you want and run the same commands.
 `mise use --global` and `mise upgrade --global` edit the live Mise configuration,
 so copy those edits back into `home/`.
 
-Run `atuin mcp install` once per machine to register Atuin's MCP server with
-installed agents.
-
 ## Shared Agent Guidance
 
 Clone the Agents repository beside this checkout; `chezmoi apply` links it into

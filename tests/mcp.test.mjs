@@ -67,6 +67,7 @@ for (const [client, path, section, credential] of [
         assert.ok(servers[name][credential]);
         if (client === "OpenCode") assert.equal(servers[name].codemode, false);
       }
+      assert.equal([servers.atuin.command].flat()[0], "atuin");
       if (existing) {
         assert.equal(result.unrelated, true);
         assert.equal(servers.home_assistant.timeout, client === "Pi" ? 15 : 12);

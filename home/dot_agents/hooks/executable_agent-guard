@@ -43,7 +43,7 @@ case "${1:-}" in
   pre)
     target=$(jq -r '.tool_input | .command // .file_path // .filePath // .path // empty' <<<"$input" | sed 's/\.env\.example//g')
     if grep -qE "$blocked" <<<"$target"; then
-      echo "Blocked by agent-guard: this would expose a secret. Use fnox exec or op run, or ask the user to run it." >&2
+      echo "Blocked by agent-guard: this would expose a secret. Use op-connect fnox exec, or ask the user to run it." >&2
       exit 2
     fi
     command=$(jq -r '.tool_input.command // empty' <<<"$input")

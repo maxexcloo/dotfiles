@@ -17,6 +17,7 @@
 {{- $_ := unset $server "bearer_token_env_var" -}}
 {{- $_ := set $server "http_headers" (dict "Authorization" (printf "Bearer %s" $key)) -}}
 {{- end -}}
+{{- $config = setValueAtPath (list "mcp_servers" "atuin") (dict "command" "atuin" "args" (list "mcp")) $config -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
 {{- else -}}

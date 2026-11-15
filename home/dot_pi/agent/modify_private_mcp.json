@@ -10,6 +10,7 @@
 It also bounds tool calls, hence 15s rather than the 60s default. */ -}}
 {{- $_ := set $server "timeout" 15 -}}
 {{- end -}}
+{{- $config = setValueAtPath (list "mcpServers" "atuin") (dict "command" "atuin" "args" (list "mcp")) $config -}}
 {{- if deepEqual $original $config -}}
 {{ .chezmoi.stdin -}}
 {{- else -}}
