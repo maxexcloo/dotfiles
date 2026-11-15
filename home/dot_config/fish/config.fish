@@ -1,5 +1,6 @@
 if test (uname) = Darwin
     fish_add_path /opt/homebrew/bin
+    set -gx OP_CONNECT_HOST https://connect-api.onepassword-connect.orb.local
     set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
     set -gx XDG_CACHE_HOME $HOME/Library/Caches
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
