@@ -2,8 +2,10 @@
 depends = [
   "check:actions",
   "check:mise",
+  "check:oxfmt",
   "check:templates",
   "check:updates",
+  "check:whitespace",
   "hooks:check",
   "test",
 ]
@@ -21,7 +23,7 @@ done
 exit "$status"
 '''
 
-# Hk's oxfmt step skips templated code, so check its rendered output.
+# Oxfmt skips templated code, so check its rendered output.
 [tasks."check:templates"]
 env = { PATH = "{{config_root}}/tests/bin:{{env.PATH}}" }
 run = '''

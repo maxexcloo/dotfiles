@@ -1,3 +1,3 @@
 {
-  "ignorePatterns": ["**/modify_*", ".mise.toml", "home/dot_config/mise/**/*.toml"]
+  "ignorePatterns": ["**/modify_*", "home/dot_config/mise/**/*.toml"]
 }
