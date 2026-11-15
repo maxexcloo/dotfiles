@@ -3,7 +3,7 @@
 {{- $config := deepCopy $original -}}
 {{- $preferences := dict "$schema" "https://opencode.ai/config.json" "formatter" true "update" "disable" -}}
 {{- $config = mergeOverwrite $config $preferences -}}
-{{- $permissions := list (dict "action" "external_directory" "effect" "ask" "resource" "*") (dict "action" "shell" "effect" "allow" "resource" "*") -}}
+{{- $permissions := list (dict "action" "external_directory" "effect" "deny" "resource" "*") (dict "action" "shell" "effect" "allow" "resource" "*") -}}
 {{- $kept := list -}}
 {{- range get $config "permissions" | default list -}}
 {{- if not (has .action (list "external_directory" "shell")) -}}{{- $kept = append $kept . -}}{{- end -}}

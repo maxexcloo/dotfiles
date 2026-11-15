@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { copyFileSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, symlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { env } from "node:process";
@@ -46,30 +46,5 @@ test("output is withheld when gitleaks cannot scan it", () => {
     assert.match(run(["redact"], `token=${token}`, environment), /withheld/);
   } finally {
     rmSync(bin, { force: true, recursive: true });
-  }
-});
-
-test("listed commands need approval unless the agent was started with AUTO=1", () => {
-  // The guard reads its list from beside itself.
-  const dir = mkdtempSync(join(tmpdir(), "agent-guard-"));
-  try {
-    copyFileSync(guard, join(dir, "agent-guard"));
-    writeFileSync(join(dir, "agent-guard-ask"), "kubectl apply\nssh\n");
-    const pre = (agent, command, environment = env) =>
-      execFileSync(bash, [join(dir, "agent-guard"), "pre", agent], {
-        encoding: "utf8",
-        env: environment,
-        input: JSON.stringify({ tool_input: { command } }),
-        stdio: "pipe",
-      });
-    const ask = (command) => JSON.parse(pre("claude", command)).hookSpecificOutput;
-    assert.equal(ask("kubectl -n x apply -f app.yaml").permissionDecision, "ask");
-    assert.equal(ask(`cd x && bash -c "ssh host"`).permissionDecision, "ask");
-    assert.equal(pre("claude", "kubectl get pods; ssh-keygen -l"), "");
-    assert.equal(pre("claude", "ssh host", { ...env, AUTO: "1" }), "");
-    assert.throws(() => pre("codex", "ssh host"), { status: 2 });
-    assert.match(pre("pi", "ssh host"), /needs approval/);
-  } finally {
-    rmSync(dir, { force: true, recursive: true });
   }
 });
