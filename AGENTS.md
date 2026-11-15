@@ -1,7 +1,6 @@
 # Dotfiles
 
 - Keep workstation preferences in the mirrored chezmoi source tree under `home/`.
-- Keep only credential references (1Password titles) in source.
 - Secrets that only local tools read belong in the 1Password Automation vault, through the `automation` fnox provider.
 - Changing an agent hook's command drops Codex's trust in it; ask the user to re-trust it in Codex's `/hooks` on each host.
 - Keep credential-bearing targets private and merge their preferences with native chezmoi modify templates.
@@ -12,5 +11,5 @@
 - Workstation Compose definitions live under `.config/services`; Homelab owns Mercury’s boot configuration.
 - Preserve Connect’s existing rootful Podman secret and volume on Linux; keep the `onepassword-connect` Compose project, named volume and OrbStack hostname on macOS. A runtime migration must not recreate credentials or data.
 - Keep application-managed hooks, caches, history, account state and generated host inventories outside this repository.
-- Preserve application destination paths and unrelated local state when changing source attributes or templates.
+- Preserve application destination paths when changing source attributes or templates.
 - Use chezmoi's normal conflict handling for apply; do not force routine updates.
