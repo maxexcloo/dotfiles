@@ -40,7 +40,7 @@ version = "1.8.4"
 
 [services.dsh]
 port = 3080
-scheme = "https"
+scheme = "http"
 
 [services.syncthing]
 port = 8384

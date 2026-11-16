@@ -11,8 +11,8 @@
 - Keep personal user application runtimes here: native systemd user units and
   rootless Quadlets on Linux, workstation Compose under `.config/services` where
   needed, including user HTTPS proxies. Keep runtime ports and image versions
-  here. Homelab owns infrastructure, public hostnames and non-secret host credential
-  references; derive host membership and URLs from its public inventory at chezmoi
+  here. Homelab owns infrastructure, public hostnames and protected host secret
+  placement; derive host membership and URLs from its public inventory at chezmoi
   apply, without a second inventory.
 - Preserve Connect’s existing rootful Podman secret and volume on Linux; keep the `onepassword-connect` Compose project, named volume and OrbStack hostname on macOS. A runtime migration must not recreate credentials or data.
 - Keep application-managed hooks, caches, history, account state and generated host inventories outside this repository.

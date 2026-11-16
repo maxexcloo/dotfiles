@@ -17,14 +17,10 @@ Library
 {{- end }}
 {{- end }}
 {{- if not (hasKey $services "dsh") }}
-.config/dsh/tls.sh
 .config/systemd/user/dsh.service
 {{- end }}
 {{- if not (or (hasKey $services "agent-browser") (hasKey $services "dsh")) }}
 .config/systemd/user/default.target.d/agents.conf
-{{- end }}
-{{- if not (hasKey $services "syncthing") }}
-.config/syncthing/auth.sh
 {{- end }}
 {{- $proxy := false -}}
 {{- range $name, $runtime := .services -}}
@@ -36,7 +32,6 @@ Library
 {{- end }}
 {{- if not $proxy }}
 .config/containers/systemd/traefik.container
-.config/traefik/create-secret.sh
 .config/traefik/routes.yaml
 .config/traefik/traefik.yaml
 {{- end }}

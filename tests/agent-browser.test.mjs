@@ -61,7 +61,7 @@ test("native user applications follow Homelab endpoints and host membership", ()
       const destination = join(temp, hostname);
       const directory = join(destination, ".agent-browser");
       mkdirSync(directory, { recursive: true });
-      for (const parent of ["containers", "dsh", "syncthing", "systemd"])
+      for (const parent of ["containers", "dsh", "systemd"])
         mkdirSync(join(destination, ".config", parent), { recursive: true });
       const target = join(directory, "config.json");
       const existing = { timeout: 5000, cdp: "ws://previous.example.test/chromium" };
@@ -98,7 +98,6 @@ test("native user applications follow Homelab endpoints and host membership", ()
           join(destination, ".config/containers/systemd"),
           join(destination, ".config/dsh"),
           join(destination, ".config/traefik"),
-          join(destination, ".config/syncthing"),
         ],
         {
           env: {
@@ -125,8 +124,6 @@ test("native user applications follow Homelab endpoints and host membership", ()
           unit,
           /--port 13080 --public-url https:\/\/code.example.test\/ --trusted-host code.example.test/,
         );
-        assert.match(unit, /ExecStartPre=%h\/.config\/dsh\/tls.sh/);
-        assert.equal(statSync(join(destination, ".config/dsh/tls.sh")).mode & 0o111, 0o111);
         assert.match(
           readFileSync(join(destination, ".config/systemd/user/agent-browser.service"), "utf8"),
           /--port 14848 --allowed-origins https:\/\/browser.example.test/,
@@ -165,7 +162,7 @@ test("native user applications follow Homelab endpoints and host membership", ()
         assert.deepEqual(Object.keys(routes.routers), ["agent-browser", "dsh", "syncthing"]);
         assert.equal(routes.routers.dsh.rule, "Host(`code.example.test`)");
         assert.equal(routes.routers.dsh.tls.certResolver, "cloudflare");
-        assert.equal(routes.services.dsh.loadBalancer.servers[0].url, "https://127.0.0.1:13080");
+        assert.equal(routes.services.dsh.loadBalancer.servers[0].url, "http://127.0.0.1:13080");
         assert.equal(
           routes.services["agent-browser"].loadBalancer.servers[0].url,
           "http://127.0.0.1:14848",
@@ -175,8 +172,6 @@ test("native user applications follow Homelab endpoints and host membership", ()
           "http://127.0.0.1:18384",
         );
         assert.equal(routes.services.syncthing.loadBalancer.passHostHeader, false);
-        assert.equal(routes.services.dsh.loadBalancer.serversTransport, "dsh");
-        assert.deepEqual(routes.serversTransports.dsh.rootCAs, ["/etc/traefik-dsh.crt"]);
         assert.equal(
           yaml(join(destination, ".config/traefik/traefik.yaml")).entryPoints.websecure.address,
           "127.0.0.1:18443",

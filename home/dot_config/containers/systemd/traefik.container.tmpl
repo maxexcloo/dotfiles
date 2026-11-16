@@ -1,26 +1,16 @@
-{{- $services := includeTemplate "homelab-services" . | fromJson -}}
 [Unit]
 Description=Private HTTPS Proxy
-{{ if hasKey $services "dsh" -}}
-After=dsh.service
-Requires=dsh.service
-{{ end -}}
 
 [Container]
 ContainerName=traefik
 Image=docker.io/library/traefik:{{ .services.traefik.version }}
 Exec=--configFile=/etc/traefik/traefik.yaml
 Network=host
-Secret=traefik-cloudflare,type=env,target=CF_DNS_API_TOKEN
+EnvironmentFile=/etc/homelab/traefik.env
 Volume=%h/.config/traefik:/etc/traefik:ro,Z
-{{ if hasKey $services "dsh" -}}
-Volume=%S/dsh/server.crt:/etc/traefik-dsh.crt:ro,Z
-{{ end -}}
 Volume=traefik-data:/data:Z
 
 [Service]
-Environment=PATH=%h/.local/share/mise/shims:/usr/local/bin:/usr/bin
-ExecStartPre=%h/.local/share/mise/shims/fnox exec --redact --config /etc/homelab/fnox.toml --only CF_DNS_API_TOKEN -- %h/.config/traefik/create-secret.sh
 Restart=on-failure
 
 [Install]
