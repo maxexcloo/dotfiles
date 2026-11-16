@@ -27,24 +27,28 @@ test("native user applications follow Homelab endpoints and host membership", ()
       services: {
         "mars/syncthing": {
           machine: "mars",
+          hostnames: ["mars.example.test"],
           scheme: "http",
           url: "http://mars.example.test:8384",
         },
         "mercury/agent-browser": {
           machine: "mercury",
           hostname: "browser.example.test",
+          hostnames: ["browser.example.test"],
           scheme: "https",
           url: "https://browser.example.test",
         },
         "mercury/dsh": {
           machine: "mercury",
-          hostname: "code.example.test",
+          hostname: "dsh.example.test",
+          hostnames: ["dsh.example.test", "code.example.test"],
           scheme: "https",
-          url: "https://code.example.test",
+          url: "https://dsh.example.test",
         },
         "mercury/syncthing": {
           machine: "mercury",
           hostname: "sync.example.test",
+          hostnames: ["sync.example.test"],
           scheme: "https",
           url: "https://sync.example.test",
         },
@@ -122,7 +126,7 @@ test("native user applications follow Homelab endpoints and host membership", ()
         const unit = readFileSync(dsh, "utf8");
         assert.match(
           unit,
-          /--port 13080 --public-url https:\/\/code.example.test\/ --trusted-host code.example.test/,
+          /--port 13080 --public-url https:\/\/dsh.example.test\/ --trusted-host dsh.example.test --trusted-host code.example.test/,
         );
         assert.match(
           readFileSync(join(destination, ".config/systemd/user/agent-browser.service"), "utf8"),
@@ -160,7 +164,11 @@ test("native user applications follow Homelab endpoints and host membership", ()
           );
         const routes = yaml(join(destination, ".config/traefik/routes.yaml")).http;
         assert.deepEqual(Object.keys(routes.routers), ["agent-browser", "dsh", "syncthing"]);
-        assert.equal(routes.routers.dsh.rule, "Host(`code.example.test`)");
+        assert.equal(
+          routes.routers.dsh.rule,
+          "Host(`dsh.example.test`) || Host(`code.example.test`)",
+        );
+        assert.equal(routes.routers["agent-browser"].rule, "Host(`browser.example.test`)");
         assert.equal(routes.routers.dsh.tls.certResolver, "cloudflare");
         assert.equal(routes.services.dsh.loadBalancer.servers[0].url, "http://127.0.0.1:13080");
         assert.equal(
