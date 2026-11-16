@@ -1,0 +1,11 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $config := .chezmoi.stdin | default "{}" | fromJson -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{- $config = omit $config "cdp" "cdpHeaders" -}}
+{{- $_ := set $config "executablePath" "/Applications/Chromium.app/Contents/MacOS/Chromium" -}}
+{{- else -}}
+{{- $service := index (includeTemplate "homelab-services" . | fromJson) "agent-browser" -}}
+{{- $config = omit $config "cdpHeaders" "executablePath" -}}
+{{- $_ := set $config "cdp" (printf "%s/chromium" (replace "http://" "ws://" $service.browser_upstream)) -}}
+{{- end -}}
+{{- $config | toPrettyJson -}}

@@ -5,6 +5,21 @@ Backups
 Documents
 Library
 {{- end }}
+{{- $services := dict -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{- $services = includeTemplate "homelab-services" . | fromJson -}}
+{{- end }}
+{{- if not (hasKey $services "agent-browser") }}
+.config/containers/systemd/browserless.container
+.config/systemd/user/agent-browser.service
 {{- if ne .chezmoi.os "darwin" }}
 .agent-browser/config.json
+{{- end }}
+{{- end }}
+{{- if not (hasKey $services "dsh") }}
+.config/dsh/tls.sh
+.config/systemd/user/dsh.service
+{{- end }}
+{{- if not (or (hasKey $services "agent-browser") (hasKey $services "dsh")) }}
+.config/systemd/user/default.target.d/agents.conf
 {{- end }}

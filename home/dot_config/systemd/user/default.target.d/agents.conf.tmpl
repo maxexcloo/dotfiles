@@ -1,0 +1,3 @@
+{{- $services := includeTemplate "homelab-services" . | fromJson -}}
+[Unit]
+Wants={{ if hasKey $services "agent-browser" }}agent-browser.service {{ end }}{{ if hasKey $services "dsh" }}dsh.service{{ end }}
