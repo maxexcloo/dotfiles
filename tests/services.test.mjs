@@ -94,3 +94,14 @@ test("Linux Compose reuses Connect’s rootful external volume and secret", () =
     ]);
   }
 });
+
+test("Linux Browserless consumes its external token inside the container", () => {
+  const config = yaml(render("dot_config/services/browserless/compose.yaml.tmpl", "linux"));
+  assert.deepEqual(config.secrets, { "browserless-token": { external: true } });
+  assert.deepEqual(config.services.browserless.secrets, ["browserless-token"]);
+  assert.match(config.services.browserless.command[2], /cat \/run\/secrets\/browserless-token/);
+  assert.equal(config.services.browserless.environment.TOKEN, undefined);
+  const mac = yaml(render("dot_config/services/browserless/compose.yaml.tmpl"));
+  assert.equal(mac.secrets, undefined);
+  assert.equal(mac.services.browserless.command, undefined);
+});

@@ -32,8 +32,12 @@ token = { secret = "OP_SERVICE_ACCOUNT_TOKEN" }
 # Bifrost virtual keys for the agents' MCP access; copies of 1Password "Bifrost" (Kubelab SYD), update both together.
 BIFROST_CLAUDE_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-claude" }
 BIFROST_CODEX_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-codex" }
+BIFROST_DSH_KEY = { env = "exec", provider = "automation", value = "Bifrost Agents/virtual-key-dsh" }
 BIFROST_OPENCODE_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-opencode" }
 BIFROST_PI_KEY = { env = false, provider = "automation", value = "Bifrost Agents/virtual-key-pi" }
+{{- if $linux }}
+BROWSERLESS_TOKEN = { env = "exec", provider = "automation", value = "Browserless/{{ .chezmoi.hostname }}" }
+{{- end }}
 GIT_SIGNING_KEY = { env = false, provider = "automation", value = "Signing Key/private key?ssh-format=openssh" }
 
 # This host's Connect server token, for projects that select the profile; op:// rejects ':' in titles, so these are item IDs.

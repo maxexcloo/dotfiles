@@ -5,9 +5,22 @@ services:
     restart: unless-stopped
     network_mode: host
     shm_size: 1gb
+{{- if eq .chezmoi.os "linux" }}
+    command:
+      - /bin/sh
+      - -ec
+      - export TOKEN="$$(cat /run/secrets/browserless-token)"; exec ./scripts/start.sh
+    secrets:
+      - browserless-token
+{{- end }}
     environment:
       CONCURRENT: 4
       HOST: 127.0.0.1
       PORT: {{ .services.browserless.port }}
       QUEUED: 4
       TIMEOUT: 3600000
+{{- if eq .chezmoi.os "linux" }}
+secrets:
+  browserless-token:
+    external: true
+{{- end }}
