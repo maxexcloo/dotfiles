@@ -1,3 +1,0 @@
-["dsh:serve"]
-description = "Serve The Persistent dsh Web UI"
-run = 'exec fnox exec --redact --config "${XDG_CONFIG_HOME:-$HOME/.config}/dsh/fnox.toml" --only BIFROST_DSH_KEY -- dsh --profile web --patch "${XDG_CONFIG_HOME:-$HOME/.config}/dsh/bifrost.yaml" --no-open "$@"'
