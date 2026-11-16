@@ -18,3 +18,4 @@
 - Keep application-managed hooks, caches, history, account state and generated host inventories outside this repository.
 - Preserve application destination paths when changing source attributes or templates.
 - Use chezmoi's normal conflict handling for apply; do not force routine updates.
+- On SELinux hosts, restart affected Quadlets after chezmoi replaces bind-mounted configuration so Podman's native `:Z` mount relabels the new files.
