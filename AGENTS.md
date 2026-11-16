@@ -10,8 +10,10 @@
 - Linux hosts apply this source too: limit macOS-only targets with `.chezmoiignore` or `.chezmoi.os` blocks.
 - Keep personal user application runtimes here: native systemd user units and
   rootless Quadlets on Linux, workstation Compose under `.config/services` where
-  needed. Homelab owns host infrastructure and the public inventory; derive host
-  endpoints from that inventory when applying chezmoi, without a second inventory.
+  needed, including user HTTPS proxies. Keep runtime ports and image versions
+  here. Homelab owns infrastructure, public hostnames and non-secret host credential
+  references; derive host membership and URLs from its public inventory at chezmoi
+  apply, without a second inventory.
 - Preserve Connect’s existing rootful Podman secret and volume on Linux; keep the `onepassword-connect` Compose project, named volume and OrbStack hostname on macOS. A runtime migration must not recreate credentials or data.
 - Keep application-managed hooks, caches, history, account state and generated host inventories outside this repository.
 - Preserve application destination paths when changing source attributes or templates.

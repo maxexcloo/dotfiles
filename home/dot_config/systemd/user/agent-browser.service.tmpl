@@ -6,7 +6,7 @@ Description=Agent Browser Console
 Type=forking
 Environment=PATH=%h/.local/share/mise/shims:/usr/local/bin:/usr/bin
 PIDFile=%t/agent-browser/dashboard.pid
-ExecStart=%h/.local/share/mise/shims/agent-browser dashboard start --port {{ $service.upstream | splitList ":" | last }} --allowed-origins {{ $service.url }}
+ExecStart=%h/.local/share/mise/shims/agent-browser dashboard start --port {{ index .services "agent-browser" "port" }} --allowed-origins {{ $service.url }}
 ExecStop=%h/.local/share/mise/shims/agent-browser dashboard stop
 Restart=on-failure
 StandardOutput=null

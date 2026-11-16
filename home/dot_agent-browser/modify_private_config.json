@@ -4,8 +4,7 @@
 {{- $config = omit $config "cdp" "cdpHeaders" -}}
 {{- $_ := set $config "executablePath" "/Applications/Chromium.app/Contents/MacOS/Chromium" -}}
 {{- else -}}
-{{- $service := index (includeTemplate "homelab-services" . | fromJson) "agent-browser" -}}
 {{- $config = omit $config "cdpHeaders" "executablePath" -}}
-{{- $_ := set $config "cdp" (printf "%s/chromium" (replace "http://" "ws://" $service.browser_upstream)) -}}
+{{- $_ := set $config "cdp" (printf "ws://127.0.0.1:%v/chromium" .services.browserless.port) -}}
 {{- end -}}
 {{- $config | toPrettyJson -}}

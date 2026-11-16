@@ -1,4 +1,3 @@
-{{- $service := index (includeTemplate "homelab-services" . | fromJson) "agent-browser" -}}
 [Unit]
 Description=Browser Automation
 
@@ -7,7 +6,7 @@ ContainerName=browserless
 Image=ghcr.io/browserless/chromium:{{ .services.browserless.version }}
 Environment=CONCURRENT=4
 Environment=HOST=127.0.0.1
-Environment=PORT={{ $service.browser_upstream | splitList ":" | last }}
+Environment=PORT={{ .services.browserless.port }}
 Environment=QUEUED=4
 Environment=TIMEOUT=3600000
 Network=host
