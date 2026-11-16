@@ -1,0 +1,16 @@
+- id: agent-default-model
+  config:
+    model: deepseek/deepseek-flash
+    provider: bifrost
+- id: llm-pi-ai
+  config:
+    providers:
+      bifrost:
+        api: openai-completions
+        apiKeyEnv: BIFROST_DSH_KEY
+        baseURL: {{ .bifrost.baseUrl }}
+        models:
+          - id: deepseek/deepseek-flash
+            compat:
+              supportsDeveloperRole: false
+              thinkingFormat: deepseek

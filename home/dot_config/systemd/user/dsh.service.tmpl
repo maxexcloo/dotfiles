@@ -1,0 +1,14 @@
+{{- $service := index (includeTemplate "homelab-services" . | fromJson) "dsh" -}}
+[Unit]
+Description=DeepSeek Harness
+
+[Service]
+Environment=PATH=%h/.local/share/mise/shims:/usr/local/bin:/usr/bin
+ExecStart=%h/.local/share/mise/shims/fnox exec --redact --config %h/.config/dsh/fnox.toml --only BIFROST_DSH_KEY -- %h/.local/share/mise/shims/dsh --profile web --patch %h/.config/dsh/bifrost.yaml --no-open --host 127.0.0.1 --port {{ .services.dsh.port }} --public-url {{ $service.url }}/ --trusted-host {{ $service.hostname }}
+Restart=on-failure
+RuntimeDirectory=dsh
+RuntimeDirectoryMode=0700
+StandardOutput=truncate:%t/dsh/launch-output
+StandardError=inherit
+UMask=0077
+WorkingDirectory=%h

@@ -1,0 +1,15 @@
+certificatesResolvers:
+  cloudflare:
+    acme:
+      dnsChallenge:
+        provider: cloudflare
+      storage: /data/acme.json
+entryPoints:
+  websecure:
+    address: 127.0.0.1:{{ .services.traefik.port }}
+log:
+  format: json
+providers:
+  file:
+    filename: /etc/traefik/routes.yaml
+    watch: true

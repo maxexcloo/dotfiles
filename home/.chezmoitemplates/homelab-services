@@ -1,0 +1,11 @@
+{{- $inventory := output "curl" "-fsSL" "https://raw.githubusercontent.com/maxexcloo/homelab/main/inventory.json" | mustFromJson -}}
+{{- $host := .chezmoi.hostname | splitList "." | first | lower -}}
+{{- $services := dict -}}
+{{- if hasKey $inventory.machines $host -}}
+{{- range $key, $service := $inventory.services -}}
+{{- if eq $service.machine $host -}}
+{{- $_ := set $services ($key | splitList "/" | last) $service -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- $services | toJson -}}

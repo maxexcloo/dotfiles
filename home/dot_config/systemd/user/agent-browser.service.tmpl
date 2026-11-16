@@ -1,0 +1,13 @@
+{{- $service := index (includeTemplate "homelab-services" . | fromJson) "agent-browser" -}}
+[Unit]
+Description=Agent Browser Console
+
+[Service]
+Type=forking
+Environment=PATH=%h/.local/share/mise/shims:/usr/local/bin:/usr/bin
+PIDFile=%t/agent-browser/dashboard.pid
+ExecStart=%h/.local/share/mise/shims/agent-browser dashboard start --port {{ index .services "agent-browser" "port" }} --allowed-origins {{ $service.url }}
+ExecStop=%h/.local/share/mise/shims/agent-browser dashboard stop
+Restart=on-failure
+StandardOutput=null
+UMask=0077

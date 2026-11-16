@@ -25,6 +25,10 @@ url = "https://bifrost.excloo.com/mcp/reactive-resume"
 [mcp.unifi_network]
 url = "https://bifrost.excloo.com/mcp/unifi-network"
 
+[services.agent-browser]
+port = 4848
+scheme = "http"
+
 [services.browserless]
 port = 9222
 # renovate: datasource=docker depName=ghcr.io/browserless/chromium
@@ -33,3 +37,16 @@ version = "v2.63.1"
 [services.connect]
 # renovate: datasource=docker depName=1password/connect-api
 version = "1.8.4"
+
+[services.dsh]
+port = 3080
+scheme = "http"
+
+[services.syncthing]
+port = 8384
+scheme = "http"
+
+[services.traefik]
+port = 8443
+# renovate: datasource=docker depName=traefik
+version = "v3.7.18"

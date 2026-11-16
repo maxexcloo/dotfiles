@@ -8,7 +8,12 @@
 - Other repositories consume the shared Mise tasks and `.github/actions/mise` at `@main` (an accepted risk, as the owner controls every consumer). Check their `.mise.toml` and workflows before changing or removing shared behaviour; keep changes backwards compatible.
 - Every tool a CI job runs must be in its `with.tools` or declared by the repository with `project-tools: true`.
 - Linux hosts apply this source too: limit macOS-only targets with `.chezmoiignore` or `.chezmoi.os` blocks.
-- Workstation Compose definitions live under `.config/services`; Homelab owns Mercury’s boot configuration.
+- Keep personal user application runtimes here: native systemd user units and
+  rootless Quadlets on Linux, workstation Compose under `.config/services` where
+  needed, including user HTTPS proxies. Keep runtime ports and image versions
+  here. Homelab owns infrastructure, public hostnames and protected host secret
+  placement; derive host membership and URLs from its public inventory at chezmoi
+  apply, without a second inventory.
 - Preserve Connect’s existing rootful Podman secret and volume on Linux; keep the `onepassword-connect` Compose project, named volume and OrbStack hostname on macOS. A runtime migration must not recreate credentials or data.
 - Keep application-managed hooks, caches, history, account state and generated host inventories outside this repository.
 - Preserve application destination paths when changing source attributes or templates.
