@@ -1,0 +1,2 @@
+[secrets]
+BIFROST_DSH_KEY = { provider = "automation", value = "Bifrost Agents/virtual-key-dsh" }
