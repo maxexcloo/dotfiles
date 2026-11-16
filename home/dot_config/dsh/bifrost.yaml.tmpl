@@ -9,8 +9,8 @@
         api: openai-completions
         apiKeyEnv: BIFROST_DSH_KEY
         baseURL: {{ .bifrost.baseUrl }}
-        compat:
-          supportsDeveloperRole: false
-          thinkingFormat: deepseek
         models:
           - id: deepseek/deepseek-flash
+            compat:
+              supportsDeveloperRole: false
+              thinkingFormat: deepseek
