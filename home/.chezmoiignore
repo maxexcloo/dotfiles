@@ -7,5 +7,4 @@ Library
 {{- end }}
 {{- if ne .chezmoi.os "darwin" }}
 .agent-browser/config.json
-.config/services/onepassword-connect
 {{- end }}

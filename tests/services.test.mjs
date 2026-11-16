@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -27,14 +27,12 @@ const yaml = (input) =>
   );
 const serviceRoot = "dot_config/services/onepassword-connect";
 
-test("Connect configuration follows its platform owner without reading credentials", () => {
+test("Service configuration can bootstrap into a fresh home before credential templates", () => {
   const temp = mkdtempSync(join(tmpdir(), "dotfiles-services-"));
   try {
     for (const platform of ["linux", "darwin"]) {
       const destination = join(temp, platform);
-      const connect = join(destination, ".config/services/onepassword-connect");
-      mkdirSync(connect, { recursive: true });
-      writeFileSync(join(connect, "compose.yaml"), "old Compose definition\n");
+      mkdirSync(join(destination, ".config"), { recursive: true });
       execFileSync(
         "chezmoi",
         [
@@ -53,9 +51,7 @@ test("Connect configuration follows its platform owner without reading credentia
         { env: { ...process.env, PATH: `${root}tests/bin:${process.env.PATH}` } },
       );
       const file = "compose.yaml";
-      assert.ok(existsSync(join(connect, file)));
-      if (platform === "linux")
-        assert.equal(readFileSync(join(connect, file), "utf8"), "old Compose definition\n");
+      assert.ok(existsSync(join(destination, ".config/services/onepassword-connect", file)));
     }
   } finally {
     rmSync(temp, { recursive: true, force: true });
@@ -77,5 +73,24 @@ test("Connect keeps its macOS project, named volume and read-only credential mou
       target: "/home/opuser/.op/1password-credentials.json",
       bind: { create_host_path: false },
     });
+  }
+});
+
+test("Linux Compose reuses Connect’s rootful external volume and secret", () => {
+  const config = yaml(render(`${serviceRoot}/compose.yaml.tmpl`, "linux"));
+  assert.equal(config.name, "onepassword-connect");
+  assert.deepEqual(config.volumes, { data: { external: true, name: "onepassword-connect" } });
+  assert.deepEqual(config.secrets, { "onepassword-connect-credentials": { external: true } });
+  assert.deepEqual(config.services["connect-api"].ports, ["127.0.0.1:8080:8080"]);
+  for (const name of ["connect-api", "connect-sync"]) {
+    assert.deepEqual(config.services[name].volumes, ["data:/home/opuser/.op/data"]);
+    assert.deepEqual(config.services[name].secrets, [
+      {
+        source: "onepassword-connect-credentials",
+        target: "/home/opuser/.op/1password-credentials.json",
+        uid: "999",
+        mode: "0400",
+      },
+    ]);
   }
 });
