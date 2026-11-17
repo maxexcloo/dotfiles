@@ -14,7 +14,6 @@ prune_after = "0s"
 [tools]
 atuin = "latest"
 bat = "latest"
-# btop and eza publish no macOS binaries, so Homebrew installs them there.
 btop = { version = "latest", os = ["linux"] }
 claude-code = "latest"
 codex = "latest"
