@@ -1,0 +1,47 @@
+[bootstrap.packages]
+"brew:btop" = "latest"
+"brew:eza" = "latest"
+"brew:fish" = "latest"
+"brew:qemu" = "latest"
+"brew-cask:1password" = "latest"
+"brew-cask:appcleaner" = "latest"
+"brew-cask:blueharvest" = "latest"
+"brew-cask:brave-origin" = "latest"
+"brew-cask:font-hack-nerd-font" = "latest"
+"brew-cask:ghostty" = "latest"
+"brew-cask:hammerspoon" = "latest"
+"brew-cask:itsycal" = "latest"
+"brew-cask:keepingyouawake" = "latest"
+"brew-cask:keka" = "latest"
+"brew-cask:orbstack" = "latest"
+"brew-cask:rectangle" = "latest"
+"brew-cask:syncthing-app" = "latest"
+"brew-cask:tailscale-app" = "latest"
+"brew-cask:thaw@beta" = "latest"
+"brew-cask:ungoogled-chromium" = "latest"
+"brew-cask:utm" = "latest"
+"brew-cask:visual-studio-code" = "latest"
+"mas:1037126344" = "latest"                # Apple Configurator
+"mas:1491684442" = "latest"                # KeyPad
+"mas:497799835" = "latest"                 # Xcode
+"mas:6759682551" = "latest"                # HomeClaw
+
+[bootstrap.packages."macos-app:openusage"]
+artifact = "OpenUsage.app"
+sha256 = "4ccb4a3a8de96534191ed81e67921fb8646a66488426aeb16302b2b31be65d01"
+url = "https://github.com/robinebers/openusage/releases/download/v{{version}}/OpenUsage-{{version}}.dmg"
+version = "0.7.16"
+
+[bootstrap.packages."macos-app:orca"]
+artifact = "Orca.app"
+os = "macos/arm64"
+sha256 = "d939acb63a194b54a789ec3ab7658b96837b6ebbc80ec61970fc387c07bf3316"
+url = "https://github.com/stablyai/orca/releases/download/v{{version}}/orca-macos-arm64.dmg"
+version = "1.4.261"
+
+[bootstrap.packages."macos-app:twilight"]
+artifact = "Twilight.app"
+os = "macos/arm64"
+sha256 = "e8b78b0c3198d3cb0f546a7fd8fe8ddd06cff915cddef4aded6798c75e66399f"
+url = "https://github.com/Neguete10/twilight/releases/download/v{{version}}/Twilight-{{version}}.dmg"
+version = "7.2.0"
