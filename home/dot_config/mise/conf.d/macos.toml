@@ -13,6 +13,7 @@
 "brew-cask:itsycal" = "latest"
 "brew-cask:keepingyouawake" = "latest"
 "brew-cask:keka" = "latest"
+"brew-cask:openusage" = "latest"
 "brew-cask:orbstack" = "latest"
 "brew-cask:rectangle" = "latest"
 "brew-cask:syncthing-app" = "latest"
@@ -25,12 +26,6 @@
 "mas:1491684442" = "latest"                # KeyPad
 "mas:497799835" = "latest"                 # Xcode
 "mas:6759682551" = "latest"                # HomeClaw
-
-[bootstrap.packages."macos-app:openusage"]
-artifact = "OpenUsage.app"
-sha256 = "4ccb4a3a8de96534191ed81e67921fb8646a66488426aeb16302b2b31be65d01"
-url = "https://github.com/robinebers/openusage/releases/download/v{{version}}/OpenUsage-{{version}}.dmg"
-version = "0.7.16"
 
 [bootstrap.packages."macos-app:orca"]
 artifact = "Orca.app"

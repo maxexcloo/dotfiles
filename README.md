@@ -37,7 +37,6 @@ On Linux, start Connect with `sudo podman-compose up -d` from
 `~/.config/services/onepassword-connect` instead.
 
 On macOS, run `mise bootstrap packages upgrade` to update installed packages.
-Turn off **Check Automatically** in OpenUsage to stay on 0.7.16.
 
 When migrating an existing Mac, use a shell outside `/opt/homebrew` during
 the cutover if Fish is your login shell. Mise leaves
