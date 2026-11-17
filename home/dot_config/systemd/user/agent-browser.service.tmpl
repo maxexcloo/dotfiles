@@ -9,5 +9,4 @@ PIDFile=%t/agent-browser/dashboard.pid
 ExecStart=%h/.local/share/mise/shims/agent-browser dashboard start --port {{ index .services "agent-browser" "port" }} --allowed-origins {{ $service.url }}
 ExecStop=%h/.local/share/mise/shims/agent-browser dashboard stop
 Restart=on-failure
-StandardOutput=null
 UMask=0077
