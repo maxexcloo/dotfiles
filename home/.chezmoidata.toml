@@ -30,9 +30,17 @@ port = 4848
 scheme = "http"
 
 [services.browserless]
+image = "ghcr.io/browserless/chromium"
 port = 9222
+shmSize = "1g"
 # renovate: datasource=docker depName=ghcr.io/browserless/chromium
 version = "v2.63.2"
+
+[services.browserless.environment]
+CONCURRENT = 10
+HOST = "127.0.0.1"
+QUEUED = 20
+TIMEOUT = 1800000
 
 [services.connect]
 # renovate: datasource=docker depName=1password/connect-api

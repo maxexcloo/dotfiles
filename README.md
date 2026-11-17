@@ -26,14 +26,15 @@ mise exec chezmoi@latest -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise install
 mise run setup
 chezmoi apply "$HOME/.config/services"
+docker compose -f ~/.config/services/browserless/compose.yaml up -d
 docker compose -f ~/.config/services/onepassword-connect/compose.yaml up -d
 mise run check
 chezmoi status
 chezmoi apply
 ```
 
-On Linux, start Connect with `sudo podman-compose up -d` from
-`~/.config/services/onepassword-connect` instead.
+On Linux, systemd starts Browserless through its Quadlet. Start Connect with
+`sudo podman-compose up -d` from `~/.config/services/onepassword-connect`.
 
 Edit preferences in `home/`, then run `chezmoi apply`. To sync another
 workstation, pull the revision you want and run the same commands.

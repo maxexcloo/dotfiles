@@ -1,16 +1,16 @@
+{{- $browserless := .services.browserless -}}
 [Unit]
 Description=Browser Automation
 
 [Container]
 ContainerName=browserless
-Image=ghcr.io/browserless/chromium:{{ .services.browserless.version }}
-Environment=CONCURRENT=10
-Environment=HOST=127.0.0.1
-Environment=PORT={{ .services.browserless.port }}
-Environment=QUEUED=20
-Environment=TIMEOUT=1800000
+Image={{ $browserless.image }}:{{ $browserless.version }}
+{{- range $name, $value := $browserless.environment }}
+Environment={{ $name }}={{ $value }}
+{{- end }}
+Environment=PORT={{ $browserless.port }}
 Network=host
-ShmSize=1g
+ShmSize={{ $browserless.shmSize }}
 
 [Service]
 Restart=on-failure

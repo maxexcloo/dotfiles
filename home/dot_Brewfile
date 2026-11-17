@@ -25,7 +25,6 @@ cask "rectangle"
 cask "syncthing-app"
 cask "tailscale-app"
 cask "thaw@beta"
-cask "ungoogled-chromium"
 cask "utm"
 cask "visual-studio-code"
 
