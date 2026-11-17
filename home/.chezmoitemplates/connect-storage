@@ -1,0 +1,9 @@
+Secret=onepassword-connect-credentials,target=/home/opuser/.op/1password-credentials.json,uid=999,mode=0400
+Volume=onepassword-connect:/home/opuser/.op/data
+
+[Service]
+ExecStartPre=/usr/bin/podman volume exists onepassword-connect
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

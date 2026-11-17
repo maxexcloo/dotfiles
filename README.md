@@ -29,11 +29,10 @@ mise run setup
 chezmoi apply "$HOME/.config/services"
 ```
 
-On first setup, start the Compose projects from their directories under
-`~/.config/services`:
-
-- macOS: run `docker compose up -d` in `browserless` and `onepassword-connect`.
-- Linux: run `sudo podman-compose up -d` in `onepassword-connect`.
+On macOS, run `docker compose up -d` in `browserless` and `onepassword-connect`
+under `~/.config/services`. On Mercury, install the rendered Connect Quadlets
+from `~/.config/services/onepassword-connect` into `/etc/containers/systemd`,
+reload systemd and start `onepassword-connect-api` and `onepassword-connect-sync`.
 
 Run `chezmoi apply` to finish setup and apply future updates. On macOS, run
 `mise bootstrap packages upgrade` to update workstation packages.

@@ -1,11 +1,14 @@
 {{- if ne .chezmoi.os "darwin" }}
 .config/mise/conf.d/macos.toml
 .config/services/browserless
+.config/services/onepassword-connect/compose.yaml
 .local/bin/orca
 .hammerspoon
 Backups
 Documents
 Library
+{{- else }}
+.config/services/onepassword-connect/*.container
 {{- end }}
 {{- $services := dict -}}
 {{- if eq .chezmoi.os "linux" -}}
