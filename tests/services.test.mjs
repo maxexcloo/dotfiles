@@ -77,11 +77,16 @@ test("Connect keeps its macOS project, named volume and read-only credential mou
 });
 
 test("Linux Compose reuses Connect’s rootful external volume and secret", () => {
-  const config = yaml(render(`${serviceRoot}/compose.yaml.tmpl`, "linux"));
+  const services = { connect: { port: 18080 } };
+  const config = yaml(render(`${serviceRoot}/compose.yaml.tmpl`, "linux", services));
   assert.equal(config.name, "onepassword-connect");
   assert.deepEqual(config.volumes, { data: { external: true, name: "onepassword-connect" } });
   assert.deepEqual(config.secrets, { "onepassword-connect-credentials": { external: true } });
-  assert.deepEqual(config.services["connect-api"].ports, ["127.0.0.1:8080:8080"]);
+  assert.deepEqual(config.services["connect-api"].ports, ["127.0.0.1:18080:8080"]);
+  assert.match(
+    render("dot_config/fish/config.fish.tmpl", "linux", services),
+    /set -gx OP_CONNECT_HOST http:\/\/127\.0\.0\.1:18080\n/,
+  );
   for (const name of ["connect-api", "connect-sync"]) {
     assert.deepEqual(config.services[name].volumes, ["data:/home/opuser/.op/data"]);
     assert.deepEqual(config.services[name].secrets, [

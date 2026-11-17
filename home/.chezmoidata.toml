@@ -43,6 +43,7 @@ QUEUED = 20
 TIMEOUT = 1800000
 
 [services.connect]
+port = 8080
 # renovate: datasource=docker depName=1password/connect-api
 version = "1.8.4"
 
