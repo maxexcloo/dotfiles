@@ -13,7 +13,6 @@
 "brew-cask:hammerspoon" = "latest"
 "brew-cask:itsycal" = "latest"
 "brew-cask:keepingyouawake" = "latest"
-"brew-cask:keka" = "latest"
 "brew-cask:orbstack" = "latest"
 "brew-cask:rectangle" = "latest"
 "brew-cask:syncthing-app" = "latest"
@@ -25,6 +24,14 @@
 "mas:1491684442" = "latest"                # KeyPad
 "mas:497799835" = "latest"                 # Xcode
 "mas:6759682551" = "latest"                # HomeClaw
+
+[bootstrap.packages."macos-app:keka"]
+adopt = true
+artifact = "Keka.app"
+os = "macos/arm64"
+sha256 = "9878b94156fdd1c7e83f0e1a8a8e2114e057070f628569c705637c2f800a2f28"
+url = "https://github.com/aonez/Keka/releases/download/v{{version}}/Keka-{{version}}.zip"
+version = "1.6.8"
 
 [bootstrap.packages."macos-app:orca"]
 artifact = "Orca.app"
