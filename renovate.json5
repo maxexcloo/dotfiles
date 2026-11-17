@@ -1,4 +1,32 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: ["github>maxexcloo/dotfiles//renovate/default.json5"],
+  customManagers: [
+    {
+      customType: "regex",
+      datasourceTemplate: "custom.macos-app",
+      description: "Update mise macOS app versions and release asset checksums together",
+      managerFilePatterns: ["home/dot_config/mise/conf.d/macos.toml"],
+      matchStrings: [
+        'sha256 = "(?<currentDigest>[a-f0-9]{64})"\\r?\\nurl = "https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/v\\{\\{version\\}\\}/(?<asset>[^"/]+)"\\r?\\nversion = "(?<currentValue>[^"\\r\\n]+)"',
+      ],
+      packageNameTemplate: "{{{depName}}}#{{{asset}}}",
+      versioningTemplate: "semver",
+    },
+  ],
+  customDatasources: {
+    "macos-app": {
+      defaultRegistryUrlTemplate: 'https://api.github.com/repos/{{{lookup (split packageName "#") 0}}}/releases/latest',
+      transformTemplates: [
+        '($version := $substring(tag_name, 1); $asset := $replace("{{{lookup (split packageName "#") 1}}}", /\\x7b\\x7bversion\\x7d\\x7d/, $version); {"sourceUrl": "https://github.com/{{{lookup (split packageName "#") 0}}}", "releases": [assets[name = $asset and $contains($string(digest), /^sha256:[a-f0-9]{64}$/)].{"version": $version, "digest": $substringAfter(digest, "sha256:"), "releaseTimestamp": $$.published_at}]})',
+      ],
+    },
+  },
+  packageRules: [
+    {
+      matchDatasources: ["custom.macos-app"],
+      matchUpdateTypes: ["digest"],
+      enabled: false,
+    },
+  ],
 }
