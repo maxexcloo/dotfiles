@@ -7,11 +7,10 @@ instructions and my own skills live in the separate
 
 ## Usage
 
-On macOS, install Homebrew, then the packages and applications in
-`home/dot_Brewfile` with `brew bundle --file home/dot_Brewfile`; after setup,
-`brew bundle --global` keeps them in sync. Linux hosts get Mise from their
-image. Enable the 1Password desktop integration for SSH authentication
-on macOS.
+On Apple Silicon Macs, install [standalone Mise](https://mise.jdx.dev/installing-mise.html#macos)
+and add `~/.local/bin` to `PATH`. Sign in to the Mac App Store for app
+installation and enable 1Password's desktop integration for SSH authentication.
+Linux hosts get Mise from their image.
 
 Fnox signs in to 1Password through the desktop app on macOS. On Linux, keep a
 service account token as `OP_SERVICE_ACCOUNT_TOKEN` in the unmanaged
@@ -19,11 +18,13 @@ service account token as `OP_SERVICE_ACCOUNT_TOKEN` in the unmanaged
 profile use this machine's 1Password Connect server.
 
 From this checkout, bootstrap the shared Mise directory with a temporary chezmoi,
-then install the global tools it declares:
+then install the global tools and workstation packages it declares:
 
 ```sh
+mkdir -p "$HOME/.config"
 mise exec chezmoi@latest -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise install
+mise bootstrap packages apply
 mise run setup
 chezmoi apply "$HOME/.config/services"
 docker compose -f ~/.config/services/onepassword-connect/compose.yaml up -d
@@ -34,6 +35,16 @@ chezmoi apply
 
 On Linux, start Connect with `sudo podman-compose up -d` from
 `~/.config/services/onepassword-connect` instead.
+
+On macOS, run `mise bootstrap packages upgrade` to update installed packages.
+
+When migrating an existing Mac, use a shell outside `/opt/homebrew` during
+the cutover if Fish is your login shell. Mise leaves
+[Homebrew-owned casks](https://mise.jdx.dev/bootstrap/packages/brew-cask.html#casks-installed-by-homebrew)
+under Brew's control. Uninstall those casks while retaining their app data,
+then retire Homebrew before applying the Mise packages to the shared prefix.
+Move any existing direct-download app bundles out of `/Applications` before
+applying their pins. Remove the old `~/.Brewfile` after the cutover.
 
 Edit preferences in `home/`, then run `chezmoi apply`. To sync another
 workstation, pull the revision you want and run the same commands.
