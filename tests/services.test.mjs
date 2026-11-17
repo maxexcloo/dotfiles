@@ -50,8 +50,14 @@ test("Service configuration can bootstrap into a fresh home before credential te
         ],
         { env: { ...process.env, PATH: `${root}tests/bin:${process.env.PATH}` } },
       );
-      const file = "compose.yaml";
-      assert.ok(existsSync(join(destination, ".config/services/onepassword-connect", file)));
+      const connect = join(destination, ".config/services/onepassword-connect");
+      assert.equal(existsSync(join(connect, "compose.yaml")), platform === "darwin");
+      for (const service of ["api", "sync"]) {
+        assert.equal(
+          existsSync(join(connect, `onepassword-connect-${service}.container`)),
+          platform === "linux",
+        );
+      }
     }
   } finally {
     rmSync(temp, { recursive: true, force: true });
@@ -76,26 +82,27 @@ test("Connect keeps its macOS project, named volume and read-only credential mou
   }
 });
 
-test("Linux Compose reuses Connect’s rootful external volume and secret", () => {
+test("Connect Quadlets reuse the rootful volume and secret and keep the API on loopback", () => {
   const services = { connect: { port: 18080 } };
-  const config = yaml(render(`${serviceRoot}/compose.yaml.tmpl`, "linux", services));
-  assert.equal(config.name, "onepassword-connect");
-  assert.deepEqual(config.volumes, { data: { external: true, name: "onepassword-connect" } });
-  assert.deepEqual(config.secrets, { "onepassword-connect-credentials": { external: true } });
-  assert.deepEqual(config.services["connect-api"].ports, ["127.0.0.1:18080:8080"]);
+  for (const [component, setting] of [
+    ["api", "PublishPort=127.0.0.1:18080:8080"],
+    ["sync", "Environment=OP_HTTP_PORT=8081"],
+  ]) {
+    const unit = render(
+      `${serviceRoot}/onepassword-connect-${component}.container.tmpl`,
+      "linux",
+      services,
+    );
+    assert.ok(unit.split("\n").includes(setting));
+    assert.match(unit, /\nVolume=onepassword-connect:\/home\/opuser\/\.op\/data\n/);
+    assert.match(
+      unit,
+      /\nSecret=onepassword-connect-credentials,target=\/home\/opuser\/\.op\/1password-credentials\.json,uid=999,mode=0400\n/,
+    );
+    assert.match(unit, /\nExecStartPre=\/usr\/bin\/podman volume exists onepassword-connect\n/);
+  }
   assert.match(
     render("dot_config/fish/config.fish.tmpl", "linux", services),
     /set -gx OP_CONNECT_HOST http:\/\/127\.0\.0\.1:18080\n/,
   );
-  for (const name of ["connect-api", "connect-sync"]) {
-    assert.deepEqual(config.services[name].volumes, ["data:/home/opuser/.op/data"]);
-    assert.deepEqual(config.services[name].secrets, [
-      {
-        source: "onepassword-connect-credentials",
-        target: "/home/opuser/.op/1password-credentials.json",
-        uid: "999",
-        mode: "0400",
-      },
-    ]);
-  }
 });
