@@ -65,10 +65,16 @@ test("native user applications follow Homelab endpoints and host membership", ()
       const destination = join(temp, hostname);
       const directory = join(destination, ".agent-browser");
       mkdirSync(directory, { recursive: true });
-      for (const parent of ["containers", "dsh", "systemd"])
+      for (const parent of ["containers", "dsh", "services", "systemd"])
         mkdirSync(join(destination, ".config", parent), { recursive: true });
       const target = join(directory, "config.json");
-      const existing = { timeout: 5000, cdp: "ws://previous.example.test/chromium" };
+      const existing = {
+        timeout: 5000,
+        cdp: "ws://previous.example.test/chromium",
+        ...(platform === "darwin" && {
+          executablePath: "/Applications/Chromium.app/Contents/MacOS/Chromium",
+        }),
+      };
       writeFileSync(target, JSON.stringify(existing));
       execFileSync(
         "chezmoi",
@@ -101,6 +107,7 @@ test("native user applications follow Homelab endpoints and host membership", ()
           join(destination, ".config/systemd/user"),
           join(destination, ".config/containers/systemd"),
           join(destination, ".config/dsh"),
+          join(destination, ".config/services"),
           join(destination, ".config/traefik"),
         ],
         {
@@ -112,12 +119,36 @@ test("native user applications follow Homelab endpoints and host membership", ()
         },
       );
       const actual = JSON.parse(readFileSync(target, "utf8"));
+      const browserlessCompose = join(destination, ".config/services/browserless/compose.yaml");
+      const browserlessQuadlet = join(
+        destination,
+        ".config/containers/systemd/browserless.container",
+      );
       const dsh = join(destination, ".config/systemd/user/dsh.service");
       const proxy = join(destination, ".config/containers/systemd/traefik.container");
+      const yaml = (path) =>
+        JSON.parse(
+          execFileSync(
+            "chezmoi",
+            [
+              "--config",
+              "/dev/null",
+              "--config-format",
+              "toml",
+              "execute-template",
+              "--with-stdin",
+              "{{ .chezmoi.stdin | fromYaml | toJson }}",
+            ],
+            { input: readFileSync(path), encoding: "utf8" },
+          ),
+        );
       if (platform === "darwin") {
-        assert.equal(actual.executablePath, "/Applications/Chromium.app/Contents/MacOS/Chromium");
-        assert.equal(actual.cdp, undefined);
-        assert.equal(actual.timeout, 5000);
+        assert.deepEqual(actual, { timeout: 5000, cdp: "ws://127.0.0.1:19222/chromium" });
+        const browserless = yaml(browserlessCompose).services.browserless;
+        assert.equal(browserless.network_mode, "host");
+        assert.equal(browserless.environment.HOST, "127.0.0.1");
+        assert.equal(browserless.environment.PORT, "19222");
+        assert.equal(existsSync(browserlessQuadlet), false);
         assert.equal(existsSync(dsh), false);
         assert.equal(existsSync(proxy), false);
       } else if (hostname.startsWith("Mercury")) {
@@ -132,13 +163,8 @@ test("native user applications follow Homelab endpoints and host membership", ()
           readFileSync(join(destination, ".config/systemd/user/agent-browser.service"), "utf8"),
           /--port 14848 --allowed-origins https:\/\/browser.example.test/,
         );
-        assert.match(
-          readFileSync(
-            join(destination, ".config/containers/systemd/browserless.container"),
-            "utf8",
-          ),
-          /Environment=PORT=19222/,
-        );
+        assert.match(readFileSync(browserlessQuadlet, "utf8"), /Environment=PORT=19222/);
+        assert.equal(existsSync(browserlessCompose), false);
         assert.match(
           readFileSync(
             join(destination, ".config/systemd/user/default.target.d/agents.conf"),
@@ -146,22 +172,6 @@ test("native user applications follow Homelab endpoints and host membership", ()
           ),
           /Wants=agent-browser.service dsh.service/,
         );
-        const yaml = (path) =>
-          JSON.parse(
-            execFileSync(
-              "chezmoi",
-              [
-                "--config",
-                "/dev/null",
-                "--config-format",
-                "toml",
-                "execute-template",
-                "--with-stdin",
-                "{{ .chezmoi.stdin | fromYaml | toJson }}",
-              ],
-              { input: readFileSync(path), encoding: "utf8" },
-            ),
-          );
         const routes = yaml(join(destination, ".config/traefik/routes.yaml")).http;
         assert.deepEqual(Object.keys(routes.routers), ["agent-browser", "dsh", "syncthing"]);
         assert.equal(

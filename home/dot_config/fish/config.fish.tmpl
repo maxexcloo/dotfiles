@@ -5,7 +5,7 @@ if test (uname) = Darwin
     set -gx XDG_CACHE_HOME $HOME/Library/Caches
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
 else
-    set -gx OP_CONNECT_HOST http://127.0.0.1:8080
+    set -gx OP_CONNECT_HOST http://127.0.0.1:{{ .services.connect.port }}
 end
 fish_add_path $HOME/.local/bin
 

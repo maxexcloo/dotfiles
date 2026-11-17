@@ -19,7 +19,6 @@
 "brew-cask:syncthing-app" = "latest"
 "brew-cask:tailscale-app" = "latest"
 "brew-cask:thaw@beta" = "latest"
-"brew-cask:ungoogled-chromium" = "latest"
 "brew-cask:utm" = "latest"
 "brew-cask:visual-studio-code" = "latest"
 "mas:1037126344" = "latest"                # Apple Configurator

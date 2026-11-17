@@ -1,0 +1,12 @@
+{{- $browserless := .services.browserless -}}
+services:
+  browserless:
+    image: {{ $browserless.image }}:{{ $browserless.version }}
+    environment:
+      {{- range $name, $value := $browserless.environment }}
+      {{ $name }}: {{ printf "%v" $value | quote }}
+      {{- end }}
+      PORT: {{ printf "%v" $browserless.port | quote }}
+    network_mode: host
+    restart: unless-stopped
+    shm_size: {{ $browserless.shmSize }}

@@ -27,16 +27,16 @@ mise install
 mise bootstrap packages apply
 mise run setup
 chezmoi apply "$HOME/.config/services"
-docker compose -f ~/.config/services/onepassword-connect/compose.yaml up -d
-mise run check
-chezmoi status
-chezmoi apply
 ```
 
-On Linux, start Connect with `sudo podman-compose up -d` from
-`~/.config/services/onepassword-connect` instead.
+On first setup, start the Compose projects from their directories under
+`~/.config/services`:
 
-On macOS, run `mise bootstrap packages upgrade` to update installed packages.
+- macOS: run `docker compose up -d` in `browserless` and `onepassword-connect`.
+- Linux: run `sudo podman-compose up -d` in `onepassword-connect`.
+
+Run `chezmoi apply` to finish setup and apply future updates. On macOS, run
+`mise bootstrap packages upgrade` to update workstation packages.
 
 When migrating an existing Mac, use a shell outside `/opt/homebrew` during
 the cutover if Fish is your login shell. Mise leaves
@@ -45,11 +45,6 @@ under Brew's control. Uninstall those casks while retaining their app data,
 then retire Homebrew before applying the Mise packages to the shared prefix.
 Move any existing direct-download app bundles out of `/Applications` before
 applying their pins. Remove the old `~/.Brewfile` after the cutover.
-
-Edit preferences in `home/`, then run `chezmoi apply`. To sync another
-workstation, pull the revision you want and run the same commands.
-`mise use --global` and `mise upgrade --global` edit the live Mise configuration,
-so copy those edits back into `home/`.
 
 ## Shared Agent Guidance
 

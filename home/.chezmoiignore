@@ -1,5 +1,6 @@
 {{- if ne .chezmoi.os "darwin" }}
 .config/mise/conf.d/macos.toml
+.config/services/browserless
 .local/bin/orca
 .hammerspoon
 Backups
