@@ -36,9 +36,9 @@ version = "1.6.8"
 [bootstrap.packages."macos-app:orca"]
 artifact = "Orca.app"
 os = "macos/arm64"
-sha256 = "d939acb63a194b54a789ec3ab7658b96837b6ebbc80ec61970fc387c07bf3316"
+sha256 = "7673fee81db265afeb3f96ec954fa36483024adacf6a23f61e4405bcb3f439fd"
 url = "https://github.com/stablyai/orca/releases/download/v{{version}}/orca-macos-arm64.dmg"
-version = "1.4.261"
+version = "1.4.262"
 
 [bootstrap.packages."macos-app:twilight"]
 artifact = "Twilight.app"
