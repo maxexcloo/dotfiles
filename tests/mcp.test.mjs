@@ -19,7 +19,7 @@ const convert = (input, expression) =>
   execute(["execute-template", "--with-stdin", expression], input);
 
 for (const [client, path, section, credential] of [
-  ["Claude", "home/dot_claude/modify_private_dot_claude.json", "mcpServers", "headers"],
+  ["Claude", "home/modify_private_dot_claude.json", "mcpServers", "headers"],
   ["Codex", "home/private_dot_codex/modify_private_config.toml", "mcp_servers", "http_headers"],
   ["OpenCode", "home/dot_config/opencode/modify_private_opencode.json", "mcp.servers", "headers"],
   ["Pi", "home/dot_pi/agent/modify_private_mcp.json", "mcpServers", "headers"],
