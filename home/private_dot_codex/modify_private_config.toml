@@ -7,8 +7,10 @@
 {{- range glob (joinPath .chezmoi.homeDir "Projects/*/.git") -}}
 {{- $config = setValueAtPath (list "projects" (dir .) "trust_level") "trusted" $config -}}
 {{- end -}}
-{{- $cache := ternary "Library/Caches" ".cache" (eq .chezmoi.os "darwin") -}}
-{{- $roots := list (joinPath .chezmoi.homeDir $cache) (joinPath .chezmoi.homeDir ".local/state") -}}
+{{- $roots := list (joinPath .chezmoi.homeDir ".cache") (joinPath .chezmoi.homeDir ".local/state") -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{- $roots = append $roots (joinPath .chezmoi.homeDir "Library/Caches") -}}
+{{- end -}}
 {{- $config = setValueAtPath (list "sandbox_workspace_write" "writable_roots") $roots $config -}}
 {{- $config = setValueAtPath (list "sandbox_workspace_write" "network_access") true $config -}}
 {{- $key := includeTemplate "bifrost-key" "codex" -}}
