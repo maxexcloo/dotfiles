@@ -3,7 +3,9 @@ Volume=onepassword-connect:/home/opuser/.op/data
 
 [Service]
 ExecStartPre=/usr/bin/podman volume exists onepassword-connect
-Restart=on-failure
+# Root's user podman-restart.service stops all rootful containers when a sudo session ends.
+Restart=always
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
