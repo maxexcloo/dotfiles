@@ -104,11 +104,15 @@ test("native user applications follow Homelab endpoints and host membership", ()
           }),
           "apply",
           directory,
-          join(destination, ".config/systemd/user"),
-          join(destination, ".config/containers/systemd"),
           join(destination, ".config/dsh"),
           join(destination, ".config/services"),
-          join(destination, ".config/traefik"),
+          ...(platform === "darwin"
+            ? []
+            : [
+                join(destination, ".config/systemd/user"),
+                join(destination, ".config/containers/systemd"),
+                join(destination, ".config/traefik"),
+              ]),
         ],
         {
           env: {
