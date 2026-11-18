@@ -8,7 +8,10 @@ Backups
 Documents
 Library
 {{- else }}
+.config/containers
 .config/services/onepassword-connect/*.container
+.config/systemd
+.config/traefik
 {{- end }}
 {{- $services := dict -}}
 {{- if eq .chezmoi.os "linux" -}}
