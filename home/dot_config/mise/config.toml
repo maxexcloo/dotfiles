@@ -1,6 +1,8 @@
 [env]
 GOPATH = "{{xdg_cache_home}}/go"
 PI_SKIP_VERSION_CHECK = "1"
+# Browser specs run in CI; a local install stays inside the project's node_modules.
+PLAYWRIGHT_BROWSERS_PATH = "0"
 PYTEST_ADDOPTS = "-p no:cacheprovider"
 PYTHONPYCACHEPREFIX = "{{xdg_cache_home}}/pycache"
 RUFF_CACHE_DIR = "{{xdg_cache_home}}/ruff"
