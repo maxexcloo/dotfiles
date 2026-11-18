@@ -1,4 +1,5 @@
 [env]
+GOPATH = "{{xdg_cache_home}}/go"
 PI_SKIP_VERSION_CHECK = "1"
 PYTEST_ADDOPTS = "-p no:cacheprovider"
 PYTHONPYCACHEPREFIX = "{{xdg_cache_home}}/pycache"
