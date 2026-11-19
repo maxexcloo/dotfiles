@@ -25,7 +25,7 @@ mkdir -p "$HOME/.config"
 mise exec chezmoi@latest -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise install
 mise bootstrap packages apply
-mise run setup
+mise exec -- chezmoi --source "$PWD" init
 chezmoi apply "$HOME/.config/services"
 ```
 
