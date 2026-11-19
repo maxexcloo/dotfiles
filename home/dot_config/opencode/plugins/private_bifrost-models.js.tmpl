@@ -3,7 +3,7 @@ import { Model, Plugin, Provider } from "@opencode/plugin";
 // Bifrost owns the catalogue. These prefixes are hidden because the client
 // reaches them natively, or because they duplicate another Bifrost provider.
 const apiKey = {{ includeTemplate "bifrost-key" "opencode" | toJson }};
-const baseURL = {{ .bifrost.baseUrl | toJson }};
+const baseURL = {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath | toJson }};
 const providerID = Provider.ID.make("bifrost");
 // deepseek, openrouter and opencode-go/zen are reached natively.
 // cliproxy-openai duplicates the OpenAI login; the anthropic, google and grok

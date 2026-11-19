@@ -10,10 +10,10 @@
 {{- end -}}
 {{- $_ := set $config "permissions" (concat $kept $permissions) -}}
 {{- $key := includeTemplate "bifrost-key" "opencode" -}}
-{{- range $name, $server := .mcp -}}
+{{- range $name, $path := .mcp -}}
 {{- $config = setValueAtPath (list "mcp" "servers" $name "oauth") false $config -}}
 {{- $config = setValueAtPath (list "mcp" "servers" $name "type") "remote" $config -}}
-{{- $config = setValueAtPath (list "mcp" "servers" $name "url") $server.url $config -}}
+{{- $config = setValueAtPath (list "mcp" "servers" $name "url") (printf "%s%s" $.bifrost.origin $path) $config -}}
 {{- /* Bifrost's Code Mode owns tool discovery; OpenCode's own Code Mode would wrap
 its meta-tools in a second interpreter. */ -}}
 {{- $config = setValueAtPath (list "mcp" "servers" $name "codemode") false $config -}}
@@ -21,7 +21,7 @@ its meta-tools in a second interpreter. */ -}}
 {{- $_ := set $server "headers" (dict "Authorization" (printf "Bearer %s" $key)) -}}
 {{- end -}}
 {{- $config = setValueAtPath (list "mcp" "servers" "atuin") (dict "type" "local" "command" (list "atuin" "mcp")) $config -}}
-{{- $settings := dict "apiKey" $key "baseURL" .bifrost.baseUrl -}}
+{{- $settings := dict "apiKey" $key "baseURL" (printf "%s%s" .bifrost.origin .bifrost.inferencePath) -}}
 {{- $bifrost := dict "name" "Bifrost" "package" "aisdk:@ai-sdk/openai-compatible" "settings" $settings -}}
 {{- $config = setValueAtPath (list "providers" "bifrost") $bifrost $config -}}
 {{- if deepEqual $original $config -}}

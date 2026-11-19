@@ -5,8 +5,8 @@
 {{- $config = setValueAtPath (list "projects" (dir .) "hasTrustDialogAccepted") true $config -}}
 {{- end -}}
 {{- $key := includeTemplate "bifrost-key" "claude" -}}
-{{- range $name, $managed := .mcp -}}
-{{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}
+{{- range $name, $path := .mcp -}}
+{{- $config = setValueAtPath (list "mcpServers" $name "url") (printf "%s%s" $.bifrost.origin $path) $config -}}
 {{- $server := index $config "mcpServers" $name -}}
 {{- $_ := set $server "type" "http" -}}
 {{- $_ := set $server "headers" (dict "x-bf-vk" $key) -}}

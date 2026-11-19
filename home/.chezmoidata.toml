@@ -1,29 +1,16 @@
 [bifrost]
-baseUrl = "https://bifrost.excloo.com/v1"
+inferencePath = "/v1"
+origin = "https://bifrost.excloo.com"
 
-[mcp.actual_budget]
-url = "https://bifrost.excloo.com/mcp/actual-budget"
-
-[mcp.home_assistant]
-url = "https://bifrost.excloo.com/mcp/home-assistant"
-
-[mcp.immich]
-url = "https://bifrost.excloo.com/mcp/immich"
-
-[mcp.karakeep]
-url = "https://bifrost.excloo.com/mcp/karakeep"
-
-[mcp.kubernetes]
-url = "https://bifrost.excloo.com/mcp/kubernetes"
-
-[mcp.larapaper]
-url = "https://bifrost.excloo.com/mcp/larapaper"
-
-[mcp.reactive_resume]
-url = "https://bifrost.excloo.com/mcp/reactive-resume"
-
-[mcp.unifi_network]
-url = "https://bifrost.excloo.com/mcp/unifi-network"
+[mcp]
+actual_budget = "/mcp/actual-budget"
+home_assistant = "/mcp/home-assistant"
+immich = "/mcp/immich"
+karakeep = "/mcp/karakeep"
+kubernetes = "/mcp/kubernetes"
+larapaper = "/mcp/larapaper"
+reactive_resume = "/mcp/reactive-resume"
+unifi_network = "/mcp/unifi-network"
 
 [services.agent-browser]
 port = 4848

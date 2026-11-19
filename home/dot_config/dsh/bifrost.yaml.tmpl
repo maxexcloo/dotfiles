@@ -8,7 +8,7 @@
       bifrost:
         api: openai-completions
         apiKeyEnv: BIFROST_DSH_KEY
-        baseURL: {{ .bifrost.baseUrl }}
+        baseURL: {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath }}
         models:
           - id: deepseek/deepseek-flash
             compat:
