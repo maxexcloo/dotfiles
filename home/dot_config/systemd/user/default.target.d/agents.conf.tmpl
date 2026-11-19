@@ -1,3 +1,5 @@
 {{- $services := includeTemplate "homelab-services" . | fromJson -}}
+{{- if or (hasKey $services "agent-browser") (hasKey $services "dsh") -}}
 [Unit]
 Wants={{ if hasKey $services "agent-browser" }}agent-browser.service {{ end }}{{ if hasKey $services "dsh" }}dsh.service{{ end }}
+{{ end -}}

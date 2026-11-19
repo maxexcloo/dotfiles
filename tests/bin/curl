@@ -1,2 +1,3 @@
 #!/bin/sh
-printf '%s\n' '{"machines":{},"services":{}}'
+empty='{"machines":{},"services":{}}'
+printf '%s\n' "${HOMELAB_TEST_INVENTORY:-$empty}"

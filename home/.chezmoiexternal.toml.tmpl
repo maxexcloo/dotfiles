@@ -17,26 +17,17 @@ url = "https://github.com/blader/humanizer/archive/refs/tags/v4.0.0.tar.gz"
 include = ["*/LICENSE", "*/README.md", "*/SKILL.md"]
 
 # Single files, as the Orca source archive is about 90 MB.
-[".agents/skills/orca-cli/LICENSE"]
+{{- $orca := index (include "dot_config/mise/conf.d/macos.toml" | fromToml) "bootstrap" "packages" "macos-app:orca" "version" }}
+{{ range $skill := list "orca-cli" "orchestration" -}}
+[".agents/skills/{{ $skill }}/LICENSE"]
 type = "file"
-# renovate: datasource=github-releases depName=stablyai/orca
-url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.263/LICENSE"
+url = "https://raw.githubusercontent.com/stablyai/orca/v{{ $orca }}/LICENSE"
 
-[".agents/skills/orca-cli/SKILL.md"]
+[".agents/skills/{{ $skill }}/SKILL.md"]
 type = "file"
-# renovate: datasource=github-releases depName=stablyai/orca
-url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.263/skills/orca-cli/SKILL.md"
+url = "https://raw.githubusercontent.com/stablyai/orca/v{{ $orca }}/skills/{{ $skill }}/SKILL.md"
 
-[".agents/skills/orchestration/LICENSE"]
-type = "file"
-# renovate: datasource=github-releases depName=stablyai/orca
-url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.263/LICENSE"
-
-[".agents/skills/orchestration/SKILL.md"]
-type = "file"
-# renovate: datasource=github-releases depName=stablyai/orca
-url = "https://raw.githubusercontent.com/stablyai/orca/v1.4.263/skills/orchestration/SKILL.md"
-
+{{ end -}}
 [".agents/skills/terrashark"]
 type = "archive"
 exact = true

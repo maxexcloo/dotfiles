@@ -2,8 +2,8 @@
 {{- $original := .chezmoi.stdin | default "{}" | fromJson -}}
 {{- $config := deepCopy $original -}}
 {{- $key := includeTemplate "bifrost-key" "pi" -}}
-{{- range $name, $managed := .mcp -}}
-{{- $config = setValueAtPath (list "mcpServers" $name "url") $managed.url $config -}}
+{{- range $name, $path := .mcp -}}
+{{- $config = setValueAtPath (list "mcpServers" $name "url") (printf "%s%s" $.bifrost.origin $path) $config -}}
 {{- $server := index $config "mcpServers" $name -}}
 {{- $_ := set $server "headers" (dict "Authorization" (printf "Bearer %s" $key)) -}}
 {{- /* Per-request cap covers the connect, so a downed endpoint fails in seconds instead of 60.

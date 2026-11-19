@@ -14,8 +14,8 @@
 {{- $config = setValueAtPath (list "sandbox_workspace_write" "writable_roots") $roots $config -}}
 {{- $config = setValueAtPath (list "sandbox_workspace_write" "network_access") true $config -}}
 {{- $key := includeTemplate "bifrost-key" "codex" -}}
-{{- range $name, $server := .mcp -}}
-{{- $config = setValueAtPath (list "mcp_servers" $name "url") $server.url $config -}}
+{{- range $name, $path := .mcp -}}
+{{- $config = setValueAtPath (list "mcp_servers" $name "url") (printf "%s%s" $.bifrost.origin $path) $config -}}
 {{- $server := index $config "mcp_servers" $name -}}
 {{- $_ := set $server "http_headers" (dict "Authorization" (printf "Bearer %s" $key)) -}}
 {{- end -}}

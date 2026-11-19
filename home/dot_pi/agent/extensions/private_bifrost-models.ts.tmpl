@@ -1,7 +1,7 @@
 // Bifrost owns the catalogue. These prefixes are hidden because the client
 // reaches them natively, or because they duplicate another Bifrost provider.
 const apiKey = {{ includeTemplate "bifrost-key" "pi" | toJson }};
-const baseUrl = {{ .bifrost.baseUrl | toJson }};
+const baseUrl = {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath | toJson }};
 // Pi signs in to OpenCode once for both Go and Zen, so it keeps those aliases.
 // Its OpenAI sign-in covers the cliproxy-openai channel; the anthropic, google
 // and grok channels are the only way in, so they stay.

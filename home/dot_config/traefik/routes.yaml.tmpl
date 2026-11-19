@@ -1,10 +1,9 @@
-{{- $services := includeTemplate "homelab-services" . | fromJson -}}
+{{- $hosted := includeTemplate "homelab-services" . | fromJson -}}
+{{- $services := includeTemplate "homelab-https-services" (dict "runtimes" .services "hosted" $hosted) | fromJson -}}
 {{- $routers := dict -}}
 {{- $backends := dict -}}
-{{- range $name, $runtime := .services -}}
-{{- if and (hasKey $runtime "port") (hasKey $services $name) -}}
-{{- $service := index $services $name -}}
-{{- if eq $service.scheme "https" -}}
+{{- range $name, $service := $services -}}
+{{- $runtime := index $.services $name -}}
 {{- $rules := list -}}
 {{- range $service.hostnames -}}
 {{- $rules = append $rules (printf "Host(`%s`)" .) -}}
@@ -15,7 +14,5 @@
 {{- $_ := set $backend "passHostHeader" false -}}
 {{- end -}}
 {{- $_ := set $backends $name (dict "loadBalancer" $backend) -}}
-{{- end -}}
-{{- end -}}
 {{- end -}}
 {{ dict "http" (dict "routers" $routers "services" $backends) | toYaml -}}

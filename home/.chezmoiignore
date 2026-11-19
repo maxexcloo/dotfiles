@@ -7,12 +7,6 @@
 Backups
 Documents
 Library
-{{- else }}
-.config/containers
-.config/services/onepassword-connect/*.container
-.config/systemd
-.config/traefik
-{{- end }}
 {{- $services := dict -}}
 {{- if eq .chezmoi.os "linux" -}}
 {{- $services = includeTemplate "homelab-services" . | fromJson -}}
@@ -20,26 +14,19 @@ Library
 {{- if not (hasKey $services "agent-browser") }}
 .config/containers/systemd/browserless.container
 .config/systemd/user/agent-browser.service
-{{- if ne .chezmoi.os "darwin" }}
 .agent-browser/config.json
-{{- end }}
 {{- end }}
 {{- if not (hasKey $services "dsh") }}
 .config/systemd/user/dsh.service
 {{- end }}
-{{- if not (or (hasKey $services "agent-browser") (hasKey $services "dsh")) }}
-.config/systemd/user/default.target.d/agents.conf
-{{- end }}
-{{- $proxy := false -}}
-{{- range $name, $runtime := .services -}}
-{{- if and (hasKey $runtime "port") (hasKey $services $name) -}}
-{{- if eq (index $services $name).scheme "https" -}}
-{{- $proxy = true -}}
-{{- end -}}
-{{- end -}}
-{{- end }}
-{{- if not $proxy }}
+{{- if not (includeTemplate "homelab-https-services" (dict "runtimes" .services "hosted" $services) | fromJson) }}
 .config/containers/systemd/traefik.container
 .config/traefik/routes.yaml
 .config/traefik/traefik.yaml
+{{- end }}
+{{- else }}
+.config/containers
+.config/services/onepassword-connect/*.container
+.config/systemd
+.config/traefik
 {{- end }}

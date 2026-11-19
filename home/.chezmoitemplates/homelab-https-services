@@ -1,0 +1,7 @@
+{{- $services := dict -}}
+{{- range $name, $runtime := .runtimes -}}
+{{- if and (hasKey $runtime "port") (hasKey $.hosted $name) (eq (index $.hosted $name).scheme "https") -}}
+{{- $_ := set $services $name (index $.hosted $name) -}}
+{{- end -}}
+{{- end -}}
+{{- $services | toJson -}}

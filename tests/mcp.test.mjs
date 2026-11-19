@@ -9,9 +9,8 @@ const env = { ...process.env, PATH: `${root}tests/bin:${process.env.PATH}` };
 const execute = (args, input = "") =>
   execFileSync("chezmoi", [...base, ...args], { env, input, encoding: "utf8" });
 const inventory = JSON.parse(execute(["execute-template", "{{ .mcp | toJson }}"]));
-for (const [name, server] of Object.entries(inventory))
-  server.url = `https://managed.example/mcp/${name}`;
-const override = ["--override-data", JSON.stringify({ mcp: inventory })];
+const origin = "https://managed.example";
+const override = ["--override-data", JSON.stringify({ bifrost: { origin } })];
 const nest = (path, value) =>
   path.split(".").reduceRight((inner, key) => ({ [key]: inner }), value);
 const dig = (path, value) => path.split(".").reduce((inner, key) => inner[key], value);
@@ -42,7 +41,7 @@ for (const [client, path, section, credential] of [
         headers: { Authorization: "fixture" },
       };
       const sameUrl = {
-        url: inventory.home_assistant.url,
+        url: origin + inventory.home_assistant,
         headers: { Authorization: "other-fixture" },
       };
       const config = existing
@@ -62,8 +61,8 @@ for (const [client, path, section, credential] of [
       const output = render(encode(config));
       const result = decode(output);
       const servers = dig(section, result);
-      for (const [name, managed] of Object.entries(inventory)) {
-        assert.equal(servers[name].url, managed.url);
+      for (const [name, path] of Object.entries(inventory)) {
+        assert.equal(servers[name].url, origin + path);
         assert.ok(servers[name][credential]);
         if (client === "OpenCode") assert.equal(servers[name].codemode, false);
       }

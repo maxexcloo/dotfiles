@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import {
-  chmodSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -20,8 +19,6 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 test("native user applications follow Homelab endpoints and host membership", () => {
   const temp = mkdtempSync(join(tmpdir(), "dotfiles-user-apps-"));
   try {
-    const bin = join(temp, "bin");
-    mkdirSync(bin);
     const inventory = {
       machines: { mercury: {}, mars: {} },
       services: {
@@ -54,8 +51,6 @@ test("native user applications follow Homelab endpoints and host membership", ()
         },
       },
     };
-    writeFileSync(join(bin, "curl"), '#!/bin/sh\nprintf "%s\\n" "$HOMELAB_TEST_INVENTORY"\n');
-    chmodSync(join(bin, "curl"), 0o700);
     for (const [platform, hostname] of [
       ["linux", "Mercury.example.test"],
       ["darwin", "MacBook-Pro"],
@@ -76,52 +71,54 @@ test("native user applications follow Homelab endpoints and host membership", ()
         }),
       };
       writeFileSync(target, JSON.stringify(existing));
-      execFileSync(
-        "chezmoi",
-        [
-          "--source",
-          root,
-          "--config",
-          "/dev/null",
-          "--config-format",
-          "toml",
-          "--destination",
-          destination,
-          "--persistent-state",
-          join(destination, "state.boltdb"),
-          "--cache",
-          join(temp, "cache"),
-          "--override-data",
-          JSON.stringify({
-            chezmoi: { os: platform, hostname },
-            services: {
-              "agent-browser": { port: 14848 },
-              browserless: { port: 19222 },
-              dsh: { port: 13080 },
-              syncthing: { port: 18384 },
-              traefik: { port: 18443 },
+      const apply = (services) =>
+        execFileSync(
+          "chezmoi",
+          [
+            "--source",
+            root,
+            "--config",
+            "/dev/null",
+            "--config-format",
+            "toml",
+            "--destination",
+            destination,
+            "--persistent-state",
+            join(destination, "state.boltdb"),
+            "--cache",
+            join(temp, "cache"),
+            "--override-data",
+            JSON.stringify({
+              chezmoi: { os: platform, hostname },
+              services: {
+                "agent-browser": { port: 14848 },
+                browserless: { port: 19222 },
+                dsh: { port: 13080 },
+                syncthing: { port: 18384 },
+                traefik: { port: 18443 },
+              },
+            }),
+            "apply",
+            directory,
+            join(destination, ".config/dsh"),
+            join(destination, ".config/services"),
+            ...(platform === "darwin"
+              ? []
+              : [
+                  join(destination, ".config/systemd/user"),
+                  join(destination, ".config/containers/systemd"),
+                  join(destination, ".config/traefik"),
+                ]),
+          ],
+          {
+            env: {
+              ...process.env,
+              PATH: `${root}tests/bin:${process.env.PATH}`,
+              HOMELAB_TEST_INVENTORY: JSON.stringify({ ...inventory, services }),
             },
-          }),
-          "apply",
-          directory,
-          join(destination, ".config/dsh"),
-          join(destination, ".config/services"),
-          ...(platform === "darwin"
-            ? []
-            : [
-                join(destination, ".config/systemd/user"),
-                join(destination, ".config/containers/systemd"),
-                join(destination, ".config/traefik"),
-              ]),
-        ],
-        {
-          env: {
-            ...process.env,
-            PATH: `${bin}:${process.env.PATH}`,
-            HOMELAB_TEST_INVENTORY: JSON.stringify(inventory),
           },
-        },
-      );
+        );
+      apply(inventory.services);
       const actual = JSON.parse(readFileSync(target, "utf8"));
       const browserlessCompose = join(destination, ".config/services/browserless/compose.yaml");
       const browserlessQuadlet = join(
@@ -169,13 +166,8 @@ test("native user applications follow Homelab endpoints and host membership", ()
         );
         assert.match(readFileSync(browserlessQuadlet, "utf8"), /Environment=PORT=19222/);
         assert.equal(existsSync(browserlessCompose), false);
-        assert.match(
-          readFileSync(
-            join(destination, ".config/systemd/user/default.target.d/agents.conf"),
-            "utf8",
-          ),
-          /Wants=agent-browser.service dsh.service/,
-        );
+        const agents = join(destination, ".config/systemd/user/default.target.d/agents.conf");
+        assert.match(readFileSync(agents, "utf8"), /Wants=agent-browser.service dsh.service/);
         const routes = yaml(join(destination, ".config/traefik/routes.yaml")).http;
         assert.deepEqual(Object.keys(routes.routers), ["agent-browser", "dsh", "syncthing"]);
         assert.equal(
@@ -202,6 +194,10 @@ test("native user applications follow Homelab endpoints and host membership", ()
           readFileSync(join(destination, ".config/containers/systemd/traefik.container"), "utf8"),
           /Volume=%h\/.config\/traefik:\/etc\/traefik:ro,Z/,
         );
+        apply({ "mercury/dsh": inventory.services["mercury/dsh"] });
+        assert.match(readFileSync(agents, "utf8"), /^Wants=dsh\.service$/m);
+        apply({});
+        assert.equal(existsSync(agents), false);
       } else {
         assert.deepEqual(actual, existing);
         assert.equal(existsSync(dsh), false);
