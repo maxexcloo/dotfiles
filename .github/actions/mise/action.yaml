@@ -36,7 +36,7 @@ runs:
       name: Install Project Tools
       shell: bash
       run: |
-        tools=$(mise ls --local --json | jq -r 'keys | join(" ")')
+        tools=$(mise ls --no-global --json | jq -r 'keys | join(" ")')
         if [ -n "$tools" ]; then
           # shellcheck disable=SC2086
           mise install $tools
