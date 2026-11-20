@@ -4,7 +4,7 @@
 - Secrets that only local tools read belong in the 1Password Automation vault, through the `automation` fnox provider.
 - Changing an agent hook's command drops Codex's trust in it; ask the user to re-trust it in Codex's `/hooks` on each host.
 - Keep credential-bearing targets private and merge their preferences with native chezmoi modify templates.
-- Keep shared agent instructions and self-written skills in `../agents`. Manage their workstation links and skill discovery configuration here. Install upstream skills through native chezmoi externals; keep personal rules in the Agents repository rather than patching upstream packages.
+- Keep shared agent instructions and self-written skills in `../agents`. Manage their workstation links and skill discovery configuration here. Install upstream skills through native chezmoi externals; keep personal rules in the Agents repository rather than patching upstream packages. Let a tool that ships its own skills and refreshes them install those itself, so its copies keep matching the binary; `orca-cli` and `orchestration` work that way.
 - Other repositories consume the shared Mise tasks and `.github/actions/mise` at `@main` (an accepted risk, as the owner controls every consumer). Check their `.mise.toml` and workflows before changing or removing shared behaviour; keep changes backwards compatible.
 - Every tool a CI job runs must be in its `with.tools` or declared by the repository with `project-tools: true`.
 - Linux hosts apply this source too: limit macOS-only targets with `.chezmoiignore` or `.chezmoi.os` blocks.

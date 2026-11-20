@@ -16,18 +16,8 @@ stripComponents = 1
 url = "https://github.com/blader/humanizer/archive/refs/tags/v4.0.0.tar.gz"
 include = ["*/LICENSE", "*/README.md", "*/SKILL.md"]
 
-# Single files, as the Orca source archive is about 90 MB.
-{{- $orca := index (include "dot_config/mise/conf.d/macos.toml" | fromToml) "bootstrap" "packages" "macos-app:orca" "version" }}
-{{ range $skill := list "orca-cli" "orchestration" -}}
-[".agents/skills/{{ $skill }}/LICENSE"]
-type = "file"
-url = "https://raw.githubusercontent.com/stablyai/orca/v{{ $orca }}/LICENSE"
-
-[".agents/skills/{{ $skill }}/SKILL.md"]
-type = "file"
-url = "https://raw.githubusercontent.com/stablyai/orca/v{{ $orca }}/skills/{{ $skill }}/SKILL.md"
-
-{{ end -}}
+# Orca's own skills (orca-cli, orchestration) are installed by Orca itself, which
+# keeps them matched to the binary on each host; see .chezmoiscripts.
 [".agents/skills/terrashark"]
 type = "archive"
 exact = true
