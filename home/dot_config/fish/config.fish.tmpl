@@ -5,9 +5,7 @@ if test (uname) = Darwin
     test -f $HOME/.orbstack/shell/init2.fish; and source $HOME/.orbstack/shell/init2.fish
 else
     set -gx OP_CONNECT_HOST http://127.0.0.1:{{ .services.connect.port }}
-    if not set -q ORCA_USER_DATA_PATH; and test -d "$HOME/.orca"
-        set -gx ORCA_USER_DATA_PATH "$HOME/.orca"
-    end
+    set -gx ORCA_USER_DATA_PATH "$HOME/.orca"
 end
 fish_add_path $HOME/.local/bin
 
