@@ -1,3 +1,12 @@
+{{- $services := dict -}}
+{{- if eq .chezmoi.os "linux" -}}
+{{- $services = includeTemplate "homelab-services" . | fromJson -}}
+{{- end }}
+{{- if not (hasKey $services "dsh") }}
+.config/dsh
+.config/mise/conf.d/dsh.toml
+.config/systemd/user/dsh.service
+{{- end }}
 {{- if ne .chezmoi.os "darwin" }}
 .config/mise/conf.d/macos.toml
 .config/services/browserless
@@ -7,17 +16,10 @@
 Backups
 Documents
 Library
-{{- $services := dict -}}
-{{- if eq .chezmoi.os "linux" -}}
-{{- $services = includeTemplate "homelab-services" . | fromJson -}}
-{{- end }}
 {{- if not (hasKey $services "agent-browser") }}
 .config/containers/systemd/browserless.container
 .config/systemd/user/agent-browser.service
 .agent-browser/config.json
-{{- end }}
-{{- if not (hasKey $services "dsh") }}
-.config/systemd/user/dsh.service
 {{- end }}
 {{- if not (includeTemplate "homelab-https-services" (dict "runtimes" .services "hosted" $services) | fromJson) }}
 .config/containers/systemd/traefik.container

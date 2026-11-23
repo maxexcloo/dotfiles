@@ -57,10 +57,11 @@ test("native user applications follow Homelab endpoints and host membership", ()
       ["linux", "mars"],
       ["linux", "unknown"],
     ]) {
+      const runsDsh = platform === "linux" && hostname.startsWith("Mercury");
       const destination = join(temp, hostname);
       const directory = join(destination, ".agent-browser");
       mkdirSync(directory, { recursive: true });
-      for (const parent of ["containers", "dsh", "services", "systemd"])
+      for (const parent of ["containers", "dsh", "mise/conf.d", "services", "systemd"])
         mkdirSync(join(destination, ".config", parent), { recursive: true });
       const target = join(directory, "config.json");
       const existing = {
@@ -100,7 +101,8 @@ test("native user applications follow Homelab endpoints and host membership", ()
             }),
             "apply",
             directory,
-            join(destination, ".config/dsh"),
+            ...(runsDsh && services["mercury/dsh"] ? [join(destination, ".config/dsh")] : []),
+            join(destination, ".config/mise/conf.d"),
             join(destination, ".config/services"),
             ...(platform === "darwin"
               ? []
@@ -126,6 +128,9 @@ test("native user applications follow Homelab endpoints and host membership", ()
         ".config/containers/systemd/browserless.container",
       );
       const dsh = join(destination, ".config/systemd/user/dsh.service");
+      assert.equal(existsSync(join(destination, ".config/dsh/bifrost.yaml")), runsDsh);
+      assert.equal(existsSync(join(destination, ".config/dsh/fnox.toml")), runsDsh);
+      assert.equal(existsSync(join(destination, ".config/mise/conf.d/dsh.toml")), runsDsh);
       const proxy = join(destination, ".config/containers/systemd/traefik.container");
       const yaml = (path) =>
         JSON.parse(
