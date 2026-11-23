@@ -34,9 +34,13 @@ const load = async () => {
       const model = Model.Info.default(providerID, Model.ID.make(entry.id));
       return {
         ...model,
-        name: entry.id,
+        name: entry.name ?? entry.id,
         cost: cost(entry),
-        limit: { ...model.limit, context: context(entry) },
+        limit: {
+          ...model.limit,
+          context: context(entry),
+          output: entry.max_output_tokens ?? model.limit.output,
+        },
       };
     });
 };
