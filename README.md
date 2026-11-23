@@ -18,15 +18,15 @@ service account token as `OP_SERVICE_ACCOUNT_TOKEN` in the unmanaged
 profile use this machine's 1Password Connect server.
 
 From this checkout, bootstrap the shared Mise directory with a temporary chezmoi,
-then install the global tools and workstation packages it declares:
+then install the global tools and workstation packages it declares. Apply the
+Fnox configuration before rendering agent settings that use it.
 
 ```sh
 mkdir -p "$HOME/.config"
 mise exec chezmoi@latest -- chezmoi --source "$PWD" apply "$HOME/.config/mise"
 mise install
 mise bootstrap packages apply
-mise exec -- chezmoi --source "$PWD" init
-chezmoi apply "$HOME/.config/services"
+mise exec -- chezmoi --source "$PWD" apply --init "$HOME/.config/fnox" "$HOME/.config/services"
 ```
 
 On macOS, run `docker compose up -d` in `browserless` and `onepassword-connect`
@@ -34,8 +34,8 @@ under `~/.config/services`. On Mercury, install the rendered Connect Quadlets
 from `~/.config/services/onepassword-connect` into `/etc/containers/systemd`,
 reload systemd and start `onepassword-connect-api` and `onepassword-connect-sync`.
 
-Run `chezmoi apply` to finish setup and apply future updates. On macOS, run
-`mise bootstrap packages upgrade` to update workstation packages.
+Run `mise exec -- chezmoi apply` to finish setup and apply future updates. On
+macOS, run `mise bootstrap packages upgrade` to update workstation packages.
 
 When migrating an existing Mac, use a shell outside `/opt/homebrew` during
 the cutover if Fish is your login shell. Mise leaves
