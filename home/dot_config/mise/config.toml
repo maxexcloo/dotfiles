@@ -26,7 +26,6 @@ fzf = "latest"
 k9s = "latest"
 kubectl = { version = "latest", os = ["linux"] }
 mas = { version = "latest", os = ["macos"] }
-"npm:@deepseek-ai/dsh" = "latest"
 "npm:agent-browser" = "latest"
 opencode = "latest"
 pi = "latest"
