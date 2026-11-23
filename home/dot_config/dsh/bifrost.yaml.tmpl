@@ -1,7 +1,3 @@
-- id: agent-default-model
-  config:
-    model: deepseek/deepseek-flash
-    provider: bifrost
 - id: llm-pi-ai
   config:
     providers:
@@ -10,7 +6,8 @@
         apiKeyEnv: BIFROST_DSH_KEY
         baseURL: {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath }}
         models:
-          - id: deepseek/deepseek-flash
+          - id: cloud/auto
             compat:
               supportsDeveloperRole: false
               thinkingFormat: deepseek
+          - id: local/auto
