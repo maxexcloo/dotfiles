@@ -1,6 +1,13 @@
 const apiKey = {{ includeTemplate "bifrost-key" "pi" | toJson }};
 const baseUrl = {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath | toJson }};
 const hidden = /^({{ join "|" .bifrost.hiddenProviders }})\//;
+type CatalogueModel = {
+  id: string;
+  name?: string;
+  context_length?: number;
+  max_output_tokens?: number;
+  pricing?: Record<string, string>;
+};
 const contextWindow = (entry: { id: string; context_length?: number }) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 // Bifrost prices in USD per token; Pi prices in USD per million tokens.
@@ -12,33 +19,48 @@ const cost = (entry: { pricing?: Record<string, string> }) => ({
   cacheWrite: perMillion(entry.pricing?.input_cache_write),
 });
 
-const load = async (signal?: AbortSignal) => {
+const load = async (signal: AbortSignal) => {
   const response = await fetch(`${baseUrl}/models`, {
     headers: { Authorization: `Bearer ${apiKey}` },
     signal,
   });
   if (!response.ok) throw new Error(`bifrost models: ${response.status}`);
-  const { data } = await response.json();
+  const { data }: { data: CatalogueModel[] } = await response.json();
   return data
-    .filter((entry: { id: string }) => !hidden.test(entry.id))
-    .map((entry: { id: string; context_length?: number; pricing?: Record<string, string> }) => ({
+    .filter((entry) => !hidden.test(entry.id))
+    .map((entry) => ({
       type: "chat" as const,
       id: entry.id,
-      name: entry.id,
+      name: entry.name ?? entry.id,
       reasoning: true,
       input: ["text", "image"] as ("text" | "image")[],
       cost: cost(entry),
       contextWindow: contextWindow(entry),
-      maxTokens: 65536,
+      maxTokens: entry.max_output_tokens ?? 65536,
     }));
 };
 
-export default function (pi) {
+export default async function (pi) {
+  let models =
+    process.env.PI_OFFLINE === "1"
+      ? []
+      : await load(AbortSignal.timeout(5000)).catch((error) => {
+          console.error(error);
+          return [];
+        });
   pi.registerProvider("bifrost", {
     name: "Bifrost",
     baseUrl,
     apiKey,
     api: "openai-completions",
-    refreshModels: async (refresh?: { signal?: AbortSignal }) => load(refresh?.signal),
+    models,
+    async refreshModels({ allowNetwork, signal }: { allowNetwork: boolean; signal: AbortSignal }) {
+      if (allowNetwork) {
+        const refreshed = await load(signal);
+        signal.throwIfAborted();
+        models = refreshed;
+      }
+      return models;
+    },
   });
 }
