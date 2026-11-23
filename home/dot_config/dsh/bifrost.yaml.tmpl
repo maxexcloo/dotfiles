@@ -5,6 +5,7 @@
         api: openai-completions
         apiKeyEnv: BIFROST_DSH_KEY
         baseURL: {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath }}
+        displayName: Bifrost
         models:
           - id: cloud/auto
             compat:
