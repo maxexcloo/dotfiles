@@ -32,3 +32,6 @@ Library
 .config/systemd
 .config/traefik
 {{- end }}
+{{- if ne .chezmoi.hostname "mercury" }}
+.config/systemd/user/orca-serve-.service.d
+{{- end }}
