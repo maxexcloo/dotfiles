@@ -1,14 +1,10 @@
 import { Model, Plugin, Provider } from "@opencode/plugin";
 
-// Bifrost owns the catalogue. These prefixes are hidden because the client
-// reaches them natively, or because they duplicate another Bifrost provider.
 const apiKey = {{ includeTemplate "bifrost-key" "opencode" | toJson }};
 const baseURL = {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath | toJson }};
 const providerID = Provider.ID.make("bifrost");
-// deepseek, openrouter and opencode-go/zen are reached natively.
-// cliproxy-openai duplicates the OpenAI login; the anthropic, google and grok
-// channels are the only way in, so they stay.
-const hidden = /^(deepseek|openrouter|opencode-go|opencode-zen|cliproxy-openai)\//;
+// These providers have direct logins. Bifrost retains their cloud routing models.
+const hidden = /^(deepseek|opencode-go|opencode-zen|xiaomi)\//;
 const context = (entry) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 // Bifrost prices in USD per token; OpenCode prices in USD per million tokens.

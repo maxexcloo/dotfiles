@@ -1,11 +1,5 @@
-// Bifrost owns the catalogue. These prefixes are hidden because the client
-// reaches them natively, or because they duplicate another Bifrost provider.
 const apiKey = {{ includeTemplate "bifrost-key" "pi" | toJson }};
 const baseUrl = {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath | toJson }};
-// Pi signs in to OpenCode once for both Go and Zen, so it keeps those aliases.
-// Its OpenAI sign-in covers the cliproxy-openai channel; the anthropic, google
-// and grok channels are the only way in, so they stay.
-const hidden = /^(deepseek|openrouter|cliproxy-openai)\//;
 const contextWindow = (entry: { id: string; context_length?: number }) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 // Bifrost prices in USD per token; Pi prices in USD per million tokens.
@@ -24,9 +18,8 @@ const load = async (signal?: AbortSignal) => {
   });
   if (!response.ok) throw new Error(`bifrost models: ${response.status}`);
   const { data } = await response.json();
-  return data
-    .filter((entry: { id: string }) => !hidden.test(entry.id))
-    .map((entry: { id: string; context_length?: number; pricing?: Record<string, string> }) => ({
+  return data.map(
+    (entry: { id: string; context_length?: number; pricing?: Record<string, string> }) => ({
       type: "chat" as const,
       id: entry.id,
       name: entry.id,
@@ -35,7 +28,8 @@ const load = async (signal?: AbortSignal) => {
       cost: cost(entry),
       contextWindow: contextWindow(entry),
       maxTokens: 65536,
-    }));
+    }),
+  );
 };
 
 export default function (pi) {
