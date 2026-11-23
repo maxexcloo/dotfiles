@@ -46,4 +46,4 @@ scheme = "http"
 [services.traefik]
 port = 8443
 # renovate: datasource=docker depName=traefik
-version = "v3.7.19"
+version = "v3.8.0"
