@@ -3,8 +3,7 @@ import { Model, Plugin, Provider } from "@opencode/plugin";
 const apiKey = {{ includeTemplate "bifrost-key" "opencode" | toJson }};
 const baseURL = {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath | toJson }};
 const providerID = Provider.ID.make("bifrost");
-// These providers have direct logins. Bifrost retains their cloud routing models.
-const hidden = /^(deepseek|opencode-go|opencode-zen|xiaomi)\//;
+const hidden = /^({{ join "|" .bifrost.hiddenProviders }})\//;
 const context = (entry) =>
   entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
 // Bifrost prices in USD per token; OpenCode prices in USD per million tokens.
