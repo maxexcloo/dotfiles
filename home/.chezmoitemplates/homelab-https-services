@@ -1,6 +1,6 @@
 {{- $services := dict -}}
 {{- range $name, $runtime := .runtimes -}}
-{{- if and (hasKey $runtime "port") (hasKey $.hosted $name) (eq (index $.hosted $name).scheme "https") -}}
+{{- if and (hasKey $runtime "port") (hasKey $.hosted $name) (eq (index $.hosted $name).scheme "https") (eq (int (index $.hosted $name).port) 443) -}}
 {{- $_ := set $services $name (index $.hosted $name) -}}
 {{- end -}}
 {{- end -}}

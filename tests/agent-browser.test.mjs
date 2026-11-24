@@ -22,9 +22,17 @@ test("native user applications follow Homelab endpoints and host membership", ()
     const inventory = {
       machines: { mercury: {}, mars: {} },
       services: {
+        "mars/polaris": {
+          machine: "mars",
+          hostnames: ["polaris.mars.example.test"],
+          port: 443,
+          scheme: "https",
+          url: "https://polaris.mars.example.test",
+        },
         "mars/syncthing": {
           machine: "mars",
           hostnames: ["mars.example.test"],
+          port: 8384,
           scheme: "http",
           url: "http://mars.example.test:8384",
         },
@@ -32,6 +40,7 @@ test("native user applications follow Homelab endpoints and host membership", ()
           machine: "mercury",
           hostname: "browser.example.test",
           hostnames: ["browser.example.test"],
+          port: 443,
           scheme: "https",
           url: "https://browser.example.test",
         },
@@ -39,6 +48,7 @@ test("native user applications follow Homelab endpoints and host membership", ()
           machine: "mercury",
           hostname: "dsh.example.test",
           hostnames: ["dsh.example.test", "code.example.test"],
+          port: 443,
           scheme: "https",
           url: "https://dsh.example.test",
         },
@@ -46,6 +56,7 @@ test("native user applications follow Homelab endpoints and host membership", ()
           machine: "mercury",
           hostname: "sync.example.test",
           hostnames: ["sync.example.test"],
+          port: 443,
           scheme: "https",
           url: "https://sync.example.test",
         },
@@ -206,7 +217,18 @@ test("native user applications follow Homelab endpoints and host membership", ()
       } else {
         assert.deepEqual(actual, existing);
         assert.equal(existsSync(dsh), false);
-        assert.equal(existsSync(proxy), false);
+        assert.equal(existsSync(proxy), hostname === "mars");
+        if (hostname === "mars") {
+          const routes = yaml(join(destination, ".config/traefik/routes.yaml")).http;
+          assert.deepEqual(Object.keys(routes.routers), ["polaris"]);
+          assert.equal(routes.routers.polaris.rule, "Host(`polaris.mars.example.test`)");
+          assert.equal(routes.routers.polaris.tls.certResolver, "cloudflare");
+          assert.deepEqual(routes.services.polaris.loadBalancer, {
+            servers: [{ url: "https://127.0.0.1:47990" }],
+            serversTransport: "polaris",
+          });
+          assert.deepEqual(routes.serversTransports, { polaris: { insecureSkipVerify: true } });
+        }
       }
     }
   } finally {

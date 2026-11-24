@@ -2,6 +2,7 @@
 {{- $services := includeTemplate "homelab-https-services" (dict "runtimes" .services "hosted" $hosted) | fromJson -}}
 {{- $routers := dict -}}
 {{- $backends := dict -}}
+{{- $transports := dict -}}
 {{- range $name, $service := $services -}}
 {{- $runtime := index $.services $name -}}
 {{- $rules := list -}}
@@ -10,9 +11,17 @@
 {{- end -}}
 {{- $_ := set $routers $name (dict "entryPoints" (list "websecure") "rule" (join " || " $rules) "service" $name "tls" (dict "certResolver" "cloudflare")) -}}
 {{- $backend := dict "servers" (list (dict "url" (printf "%s://127.0.0.1:%v" $runtime.scheme $runtime.port))) -}}
+{{- if and (hasKey $runtime "selfSigned") $runtime.selfSigned -}}
+{{- $_ := set $transports $name (dict "insecureSkipVerify" true) -}}
+{{- $_ := set $backend "serversTransport" $name -}}
+{{- end -}}
 {{- if eq $name "syncthing" -}}
 {{- $_ := set $backend "passHostHeader" false -}}
 {{- end -}}
 {{- $_ := set $backends $name (dict "loadBalancer" $backend) -}}
 {{- end -}}
-{{ dict "http" (dict "routers" $routers "services" $backends) | toYaml -}}
+{{- $http := dict "routers" $routers "services" $backends -}}
+{{- if $transports -}}
+{{- $_ := set $http "serversTransports" $transports -}}
+{{- end -}}
+{{ dict "http" $http | toYaml -}}
