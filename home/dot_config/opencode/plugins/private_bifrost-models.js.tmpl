@@ -5,7 +5,7 @@ const baseURL = {{ printf "%s%s" .bifrost.origin .bifrost.inferencePath | toJson
 const providerID = Provider.ID.make("bifrost");
 const hidden = /^({{ join "|" .bifrost.hiddenProviders }})\//;
 const context = (entry) =>
-  entry.context_length ?? (entry.id.startsWith("local/") ? 262144 : 1048576);
+  entry.context_length ?? (entry.id.startsWith("local/") ? {{ .bifrost.localContext }} : {{ .bifrost.defaultContext }});
 // Bifrost prices in USD per token; OpenCode prices in USD per million tokens.
 const perMillion = (value) => Number(value) * 1_000_000;
 const cost = (entry) =>

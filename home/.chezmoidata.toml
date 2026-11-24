@@ -1,5 +1,7 @@
 [bifrost]
+defaultContext = 1048576
 inferencePath = "/v1"
+localContext = 262144
 origin = "https://bifrost.excloo.com"
 hiddenProviders = ["deepseek", "opencode-go", "opencode-zen", "openrouter", "xiaomi"]
 
