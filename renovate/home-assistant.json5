@@ -16,10 +16,14 @@
   ],
   packageRules: [
     {
-      // The test fixtures pin one Home Assistant release, so both must move together.
       groupName: "Home Assistant",
       matchDepNames: ["homeassistant", "pytest-homeassistant-custom-component"],
       separateMajorMinor: false,
+    },
+    {
+      matchDepNames: ["homeassistant"],
+      // Wait for a fixture update alongside the requirements, HACS and README pins.
+      minimumGroupSize: 4,
     },
   ],
 }
