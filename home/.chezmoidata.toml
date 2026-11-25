@@ -24,7 +24,7 @@ image = "ghcr.io/browserless/chromium"
 port = 9222
 shmSize = "1g"
 # renovate: datasource=docker depName=ghcr.io/browserless/chromium
-version = "v2.64.3"
+version = "v2.64.4"
 
 [services.browserless.environment]
 CONCURRENT = 10
