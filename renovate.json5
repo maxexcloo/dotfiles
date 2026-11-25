@@ -18,7 +18,7 @@
     "macos-app": {
       defaultRegistryUrlTemplate: 'https://api.github.com/repos/{{{lookup (split packageName "#") 0}}}/releases?per_page=100',
       transformTemplates: [
-        '{"sourceUrl": "https://github.com/{{{lookup (split packageName "#") 0}}}", "releases": [$[prerelease = false and $substring(tag_name, 0, 1) = "v"].($version := $substring(tag_name, 1); $asset := $replace("{{{lookup (split packageName "#") 1}}}", /\\x7b\\x7bversion\\x7d\\x7d/, $version); $published := published_at; assets[name = $asset and $contains($string(digest), /^sha256:[a-f0-9]{64}$/)].{"version": $version, "digest": $substringAfter(digest, "sha256:"), "releaseTimestamp": $published})]}',
+        '{"sourceUrl": "https://github.com/{{{lookup (split packageName "#") 0}}}", "releases": [$[draft = false and prerelease = false and $substring(tag_name, 0, 1) = "v"].($version := $substring(tag_name, 1); $asset := $replace("{{{lookup (split packageName "#") 1}}}", /\\x7b\\x7bversion\\x7d\\x7d/, $version); $published := published_at; assets[name = $asset and $contains($string(digest), /^sha256:[a-f0-9]{64}$/)].{"version": $version, "digest": $substringAfter(digest, "sha256:"), "releaseTimestamp": $published})]}',
       ],
     },
   },
